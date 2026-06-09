@@ -990,8 +990,11 @@
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
-          const res = await fetch(`${cleanUrl}/games`, { 
+          const res = await fetch(`${cleanUrl}/juegos`, { 
             mode: 'cors',
+            headers: {
+              "ngrok-skip-browser-warning": "true"
+            },
             signal: controller.signal
           });
           
