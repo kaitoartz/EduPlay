@@ -133,11 +133,19 @@
       "g5": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDlvZ2dleXJ5YXl6bWI2OWNsbDJvNzRuNTh3ZHFrc3BmNnY2d2xrMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qX9oszuvxWoMwmVl8x/giphy_s.gif",
       "g6": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcnJ4cnFqczJwcjE4cmd4YnUwbTlmNjc5dDQ0cWxiMHNzcjhmZGVoMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2xD3RrcxB20kTDuWeY/giphy_s.gif",
       "crehabitat_thumb.jpg": "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExemgwZmJsNm5qc29qZnBrYnpiYWM0YXBoazc4YjhtejYwczI4bm82MyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MbQPlY8F3nTuXldD4z/giphy_s.gif",
-      "extintor_thumb.jpg": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWJlNTdzbGw3Mjg4c2p6M3V0ZnJjcGtvZzk3ZTdvaDR6enY5eHQ1ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/vEHJ3rEPheP5JjpktJ/giphy.gif"
+      "extintor_thumb.jpg": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWJlNTdzbGw3Mjg4c2p6M3V0ZnJjcGtvZzk3ZTdvaDR6enY5eHQ1ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/vEHJ3rEPheP5JjpktJ/giphy.gif",
+      // Mapeo para las URLs falsas del backend de May
+      "https://url-falsa.com/juego1.png": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnBub3J5MTV1dTA2c3kzeHJ6azIwYXdoaXRlMjNjZmdpMnpiaGU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/71fMwwGrFRszyoHhUy/giphy_s.gif",
+      "https://url-falsa.com/juego2.png": "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2Q5MnNrY3Vxc3VkNGk3NXA5M21ubHhvbjJuazJ3enFqdHpuamNwcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/f0Dy5NDc1jBzpcbff9/giphy_s.gif",
+      "https://url-falsa.com/juego3.png": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExamdvNDV2b3J1Y3Q2OHNpd3A1MWV3NnVtbW14d2tveTllOTkyb2gyZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/e9BAkE9fnOEHgddk15/giphy_s.gif",
+      // Mapeo por títulos por si acaso
+      "Aventura Matemática": "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnBub3J5MTV1dTA2c3kzeHJ6azIwYXdoaXRlMjNjZmdpMnpiaGU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/71fMwwGrFRszyoHhUy/giphy_s.gif",
+      "Letras Locas": "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2Q5MnNrY3Vxc3VkNGk3NXA5M21ubHhvbjJuazJ3enFqdHpuamNwcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/f0Dy5NDc1jBzpcbff9/giphy_s.gif",
+      "Explorador de Ciencias": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExamdvNDV2b3J1Y3Q2OHNpd3A1MWV3NnVtbW14d2tveTllOTkyb2gyZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/e9BAkE9fnOEHgddk15/giphy_s.gif"
     };
 
-    const getImageUrl = (imageVal, id, isHovered) => {
-      let url = PREVIEW_IMAGES[imageVal] || PREVIEW_IMAGES[id] || imageVal;
+    const getImageUrl = (imageVal, id, title, isHovered) => {
+      let url = PREVIEW_IMAGES[imageVal] || PREVIEW_IMAGES[title] || PREVIEW_IMAGES[id] || imageVal;
       if (!url) return null;
       if (isHovered && url.includes('_s.gif')) {
         return url.replace('_s.gif', '.gif');
@@ -239,7 +247,7 @@
         setIsHovered(false);
       };
 
-      const finalImageUrl = getImageUrl(image, id, isHovered);
+      const finalImageUrl = getImageUrl(image, id, title, isHovered);
 
       return (
         <motion.div
@@ -947,8 +955,8 @@
       const [params, setParams] = useState({});
       
       // Estado de la API
-      const [apiUrl, setApiUrl] = useState(() => localStorage.getItem('eduplay_api_url') || 'https://playhouse-strained-dimly.ngrok-free.dev');
-      const [inputUrl, setInputUrl] = useState(() => localStorage.getItem('eduplay_api_url') || 'https://playhouse-strained-dimly.ngrok-free.dev');
+      const [apiUrl, setApiUrl] = useState(() => localStorage.getItem('eduplay_api_url') || '');
+      const [inputUrl, setInputUrl] = useState(() => localStorage.getItem('eduplay_api_url') || '');
       const [apiStatus, setApiStatus] = useState('disconnected'); // 'disconnected' | 'connecting' | 'connected'
       const [games, setGames] = useState(MOCK_GAMES);
       const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -982,30 +990,10 @@
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
-          // Manejar de forma inteligente si la URL ya incluye el path del endpoint
-          let endpoint = cleanUrl;
-          if (!cleanUrl.endsWith('/juegos') && !cleanUrl.endsWith('/games')) {
-            endpoint = `${cleanUrl}/juegos`;
-          }
-
-          let res;
-          try {
-            res = await fetch(endpoint, { 
-              mode: 'cors',
-              signal: controller.signal
-            });
-          } catch (fetchErr) {
-            // Si falla con /juegos, intentamos /games de respaldo en caso de que use la nomenclatura antigua
-            if (endpoint.endsWith('/juegos')) {
-              const fallbackEndpoint = endpoint.replace('/juegos', '/games');
-              res = await fetch(fallbackEndpoint, {
-                mode: 'cors',
-                signal: controller.signal
-              });
-            } else {
-              throw fetchErr;
-            }
-          }
+          const res = await fetch(`${cleanUrl}/games`, { 
+            mode: 'cors',
+            signal: controller.signal
+          });
           
           clearTimeout(timeoutId);
 
