@@ -78,6 +78,31 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
+    /* Spotlight mask overlay styling */
+    .card-spotlight-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      user-select: none;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: #09090b; /* Deep zinc-950 backdrop for galaxy */
+      mask-image: radial-gradient(
+        180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        black 20%,
+        transparent 100%
+      );
+      -webkit-mask-image: radial-gradient(
+        180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        black 20%,
+        transparent 100%
+      );
+    }
+    .group:hover .card-spotlight-overlay {
+      opacity: 1;
+    }
   </style>
 
   <!-- React & ReactDOM -->
@@ -96,6 +121,10 @@
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.min.js"></script>
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
@@ -122,11 +151,11 @@
     };
 
     const MOCK_GAMES = [
-      { id: "g1", title: "Aventura Matemática", subject: "Matemáticas", level: "8-10", duration: "10 min", points: 150, color: "from-blue-500 to-cyan-400", bg: "bg-blue-50", icon: Zap, image: "g1", description: "Resuelve acertijos matemáticos y sube de nivel entrenando tu cerebro." },
-      { id: "g2", title: "Memoria Espacial", subject: "Memoria", level: "5-7", duration: "5 min", points: 100, color: "from-purple-500 to-pink-400", bg: "bg-purple-50", icon: Brain, image: "g2", description: "Pon a prueba tu retención visual y memoriza los patrones en el espacio." },
+      { id: "g1", title: "Aventura Matemática", subject: "Matemáticas", level: "8-10", duration: "10 min", points: 150, color: "from-blue-500 to-cyan-400", bg: "bg-blue-50", icon: Zap, image: "g1", description: "Resuelve acertijos matemáticos y sube de nivel entrenando tu cerebro.", tag: "Nuevo" },
+      { id: "g2", title: "Memoria Espacial", subject: "Memoria", level: "5-7", duration: "5 min", points: 100, color: "from-purple-500 to-pink-400", bg: "bg-purple-50", icon: Brain, image: "g2", description: "Pon a prueba tu retención visual y memoriza los patrones en el espacio.", tag: "Trending" },
       { id: "g3", title: "Laboratorio Químico", subject: "Ciencias", level: "11-13", duration: "15 min", points: 200, color: "from-green-500 to-emerald-400", bg: "bg-green-50", icon: FlaskConical, image: "g3", description: "Combina elementos y experimenta en nuestro laboratorio virtual interactivo.", locked: true },
       { id: "g4", title: "Lógica de Bloques", subject: "Programación", level: "11-13", duration: "20 min", points: 250, color: "from-orange-500 to-yellow-400", bg: "bg-orange-50", icon: Code, image: "g4", description: "Aprende las bases de la programación ordenando bloques de código lógico.", locked: true },
-      { id: "g5", title: "Palabras Mágicas", subject: "Lectura", level: "5-7", duration: "10 min", points: 120, color: "from-red-500 to-rose-400", bg: "bg-red-50", icon: BookOpen, image: "g5", description: "Completa oraciones y expande tu vocabulario de forma divertida." },
+      { id: "g5", title: "Palabras Mágicas", subject: "Lectura", level: "5-7", duration: "10 min", points: 120, color: "from-red-500 to-rose-400", bg: "bg-red-50", icon: BookOpen, image: "g5", description: "Completa oraciones y expande tu vocabulario de forma divertida.", tag: "Early Access" },
       { id: "g6", title: "Safari en Inglés", subject: "Inglés", level: "8-10", duration: "15 min", points: 180, color: "from-indigo-500 to-violet-400", bg: "bg-indigo-50", icon: Globe, image: "g6", description: "Explora la sabana y aprende los nombres de los animales en inglés." },
       { id: "g7", title: "Defensa de la Tierra", subject: "Ecología", level: "8-10", duration: "12 min", points: 160, color: "from-emerald-500 to-teal-400", bg: "bg-emerald-50", icon: Shield, image: "crehabitat_thumb.jpg", description: "Protege los hábitats de la Tierra y aprende a reciclar salvando especies.", locked: true }
     ];
@@ -195,6 +224,147 @@
     };
 
     // --- REUSABLE COMPONENTS ---
+    const GalaxyCanvas = ({ isActive, mouseX = 0, mouseY = 0 }) => {
+      const canvasRef = React.useRef(null);
+
+      React.useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let stars = [];
+        let width = canvas.width = canvas.offsetWidth || 300;
+        let height = canvas.height = canvas.offsetHeight || 400;
+
+        // Nebula states
+        let nebulaAngle = 0;
+
+        // Initialize stars
+        const starCount = 45;
+        const colors = [
+          'rgba(255, 255, 255, ',
+          'rgba(173, 216, 230, ', // Light blue
+          'rgba(253, 224, 71, ',  // Yellow-500
+          'rgba(244, 63, 94, '    // Rose-500
+        ];
+
+        for (let i = 0; i < starCount; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: Math.random() * 1.5 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.15,
+            twinkleSpeed: Math.random() * 0.03 + 0.01,
+            phase: Math.random() * Math.PI * 2,
+            colorPrefix: colors[Math.floor(Math.random() * colors.length)]
+          });
+        }
+
+        const handleResize = () => {
+          if (!canvas) return;
+          width = canvas.width = canvas.offsetWidth;
+          height = canvas.height = canvas.offsetHeight;
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        const render = () => {
+          ctx.clearRect(0, 0, width, height);
+
+          // 1. Draw Space Background (Zinc-950 gradient)
+          const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+          bgGrad.addColorStop(0, '#09090b');
+          bgGrad.addColorStop(1, '#020205');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(0, 0, width, height);
+
+          // 2. Draw 2 Animated Nebulas (Radial Gradients with dynamic coordinates)
+          nebulaAngle += 0.003;
+          const neb1X = width / 2 + Math.cos(nebulaAngle) * (width * 0.15);
+          const neb1Y = height / 2 + Math.sin(nebulaAngle) * (height * 0.15);
+          const neb1 = ctx.createRadialGradient(neb1X, neb1Y, 10, neb1X, neb1Y, Math.max(width, height) * 0.6);
+          neb1.addColorStop(0, 'rgba(37, 99, 235, 0.25)'); // Blue-600 tint
+          neb1.addColorStop(0.5, 'rgba(139, 92, 246, 0.12)'); // Violet-500 tint
+          neb1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = neb1;
+          ctx.fillRect(0, 0, width, height);
+
+          const neb2X = width / 2 - Math.sin(nebulaAngle * 0.8) * (width * 0.2);
+          const neb2Y = height / 2 - Math.cos(nebulaAngle * 0.8) * (height * 0.2);
+          const neb2 = ctx.createRadialGradient(neb2X, neb2Y, 5, neb2X, neb2Y, Math.max(width, height) * 0.5);
+          neb2.addColorStop(0, 'rgba(6, 182, 212, 0.2)'); // Cyan-500 tint
+          neb2.addColorStop(0.5, 'rgba(236, 72, 153, 0.08)'); // Pink-500 tint
+          neb2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = neb2;
+          ctx.fillRect(0, 0, width, height);
+
+          // 3. Parallax offset calculated from cursor position
+          // Shift drawing of stars slightly opposite to mouse movement from center
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const parallaxX = -(mouseX - centerX) * 0.08;
+          const parallaxY = -(mouseY - centerY) * 0.08;
+
+          // 4. Draw Stars
+          stars.forEach(star => {
+            // Twinkle logic
+            star.phase += star.twinkleSpeed;
+            const opacity = (Math.sin(star.phase) + 1) / 2 * 0.7 + 0.3;
+
+            // Update star position (ambient slow drift)
+            star.x += star.speedX;
+            star.y += star.speedY;
+
+            // Wrap around screen edges
+            if (star.x < 0) star.x = width;
+            if (star.x > width) star.x = 0;
+            if (star.y < 0) star.y = height;
+            if (star.y > height) star.y = 0;
+
+            // Apply Parallax shift
+            let drawX = star.x + parallaxX;
+            let drawY = star.y + parallaxY;
+
+            // Wrap parallaxed positions too to avoid empty spots
+            if (drawX < 0) drawX += width;
+            if (drawX > width) drawX -= width;
+            if (drawY < 0) drawY += height;
+            if (drawY > height) drawY -= height;
+
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, star.size, 0, Math.PI * 2);
+            ctx.fillStyle = star.colorPrefix + opacity + ')';
+            ctx.fill();
+          });
+
+          animationFrameId = requestAnimationFrame(render);
+        };
+
+        if (isActive) {
+          render();
+        } else {
+          // Static starfield when inactive to prevent blank frame during transit
+          ctx.clearRect(0, 0, width, height);
+          ctx.fillStyle = '#09090b';
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        return () => {
+          cancelAnimationFrame(animationFrameId);
+          window.removeEventListener('resize', handleResize);
+        };
+      }, [isActive, mouseX, mouseY]);
+
+      return (
+        <canvas 
+          ref={canvasRef} 
+          className="absolute inset-0 w-full h-full pointer-events-none rounded-[1.8rem]"
+          style={{ display: 'block' }}
+        />
+      );
+    };
     const Button = ({ children, variant = 'primary', size = 'md', className = '', onClick, ...props }) => {
       const base = "inline-flex items-center justify-center rounded-2xl font-bold transition-all duration-300 relative overflow-hidden group";
       const variants = {
@@ -224,27 +394,136 @@
       </span>
     );
 
-    const PremiumGameCard = ({ id, title, subject, level, duration, points, color, bg, icon: Icon, image, description, locked, onClick }) => {
+    const CardContentLayout = ({ id, title, subject, level, duration, points, bg, icon: Icon, finalImageUrl, description, locked, isDarkTheme, tag }) => {
+      return (
+        <div className={`relative p-6 h-full flex flex-col z-10 overflow-hidden ${isDarkTheme ? 'bg-transparent text-white' : 'bg-white text-zinc-900'}`}>
+          {!isDarkTheme && <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full ${bg} opacity-50 blur-2xl group-hover:blur-3xl transition-all duration-500`} />}
+          
+          {/* Image Preview Banner */}
+          {finalImageUrl && (
+            <div className={`relative w-full h-44 rounded-2xl overflow-hidden mb-5 border shadow-inner z-20 ${isDarkTheme ? 'border-zinc-800' : 'border-zinc-100/80'}`} style={{ transform: "translateZ(30px)" }}>
+              {/* Animated Badge */}
+              {tag && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+                  className="absolute top-3 left-3 z-30"
+                >
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider shadow-md ${
+                    tag === 'Nuevo' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' :
+                    tag === 'Trending' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' :
+                    'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                  }`}>
+                    <Sparkles size={10} className="animate-pulse" /> {tag}
+                  </span>
+                </motion.div>
+              )}
+              <img 
+                src={finalImageUrl} 
+                alt={title} 
+                className={`w-full h-full object-cover transition-transform duration-700 scale-100 group-hover:scale-105 ${locked ? 'filter grayscale contrast-125 opacity-70' : ''} ${isDarkTheme ? 'opacity-85' : ''}`}
+                loading="lazy"
+              />
+              {locked && (
+                <div className="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center text-white">
+                    <Lock size={20} />
+                  </div>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
+            </div>
+          )}
+
+          <div className="flex justify-between items-start mb-4 relative z-20" style={{ transform: "translateZ(30px)" }}>
+            <Badge className={isDarkTheme ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/50 shadow-sm' : 'bg-zinc-100 text-zinc-700 border border-zinc-200/50 shadow-sm'}>
+              <Icon size={14} className="opacity-70"/> {subject}
+            </Badge>
+            {locked ? (
+              <Badge className="bg-purple-100 text-purple-700 border border-purple-200 shadow-sm font-bold flex items-center gap-1">
+                <Lock size={10} /> Próximamente
+              </Badge>
+            ) : (
+              <Badge className={isDarkTheme ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 shadow-sm' : 'bg-yellow-50 text-yellow-600 border border-yellow-200 shadow-sm'}>
+                <Star size={14} fill="currentColor" /> {points}
+              </Badge>
+            )}
+          </div>
+          
+          <div className="flex-grow relative z-20" style={{ transform: "translateZ(40px)" }}>
+            <h3 className={`text-2xl font-bold mb-2 transition-colors ${isDarkTheme ? 'text-white group-hover:text-cyan-400' : 'text-zinc-900 group-hover:text-blue-600'}`}>{title}</h3>
+            
+            {/* Expandable Footer Container using Grid dynamic row sizing */}
+            <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out opacity-80 group-hover:opacity-100">
+              <div className="overflow-hidden">
+                {description && (
+                  <p className={`text-sm mb-4 leading-relaxed ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>{description}</p>
+                )}
+              </div>
+            </div>
+
+            <div className={`flex items-center gap-4 text-sm font-medium ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>
+              <span className="flex items-center gap-1.5"><User size={16}/> Lvl {level}</span>
+              <span className="flex items-center gap-1.5"><Play size={16}/> {duration}</span>
+            </div>
+          </div>
+          
+          <div className="mt-6 flex items-center justify-between relative z-20" style={{ transform: "translateZ(20px)" }}>
+            <div className="flex -space-x-3">
+              {[1,2,3].map(i => (
+                <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+title}&backgroundColor=e2e8f0`} className={`w-10 h-10 rounded-full border-2 shadow-sm ${isDarkTheme ? 'border-zinc-800' : 'border-white'}`} alt="player" />
+              ))}
+            </div>
+            {locked ? (
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200'}`}>
+                <Lock size={18}/>
+              </div>
+            ) : (
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${isDarkTheme ? 'bg-blue-600 text-white group-hover:bg-cyan-500 group-hover:scale-110 shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-zinc-900 text-white group-hover:bg-blue-600 group-hover:scale-110'}`}>
+                <Play size={20} fill="currentColor" className="ml-1"/>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const PremiumGameCard = ({ id, title, subject, level, duration, points, color, bg, icon: Icon, image, description, locked, tag, onClick }) => {
+      const cardRef = React.useRef(null);
       const x = useMotionValue(0);
       const y = useMotionValue(0);
       const [isHovered, setIsHovered] = useState(false);
+      const [mouseX, setMouseX] = useState(0);
+      const [mouseY, setMouseY] = useState(0);
 
       const mouseXSpring = useSpring(x);
       const mouseYSpring = useSpring(y);
 
-      const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7.5deg", "-7.5deg"]);
-      const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7.5deg", "7.5deg"]);
+      // Specular shine speculative angle & Tilt angle capped to max 15deg (was 7.5deg)
+      const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+      const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
 
       const handleMouseMove = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const width = rect.width;
         const height = rect.height;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const xPct = mouseX / width - 0.5;
-        const yPct = mouseY / height - 0.5;
+        const mX = e.clientX - rect.left;
+        const mY = e.clientY - rect.top;
+        
+        // Direct CSS variable updates for spotlight and shine positioning
+        if (cardRef.current) {
+          cardRef.current.style.setProperty('--mouse-x', `${mX}px`);
+          cardRef.current.style.setProperty('--mouse-y', `${mY}px`);
+        }
+
+        const xPct = mX / width - 0.5;
+        const yPct = mY / height - 0.5;
         x.set(xPct);
         y.set(yPct);
+
+        setMouseX(mX);
+        setMouseY(mY);
         setIsHovered(true);
       };
 
@@ -258,6 +537,7 @@
 
       return (
         <motion.div
+          ref={cardRef}
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
@@ -266,70 +546,50 @@
         >
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
-          <div className="relative bg-white rounded-[1.8rem] p-6 h-full flex flex-col z-10 overflow-hidden">
-            <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full ${bg} opacity-50 blur-2xl group-hover:blur-3xl transition-all duration-500`} />
-            
-            {/* Image Preview Banner */}
-            {finalImageUrl && (
-              <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-5 border border-zinc-100/80 shadow-inner z-20" style={{ transform: "translateZ(30px)" }}>
-                <img 
-                  src={finalImageUrl} 
-                  alt={title} 
-                  className={`w-full h-full object-cover transition-transform duration-700 scale-100 group-hover:scale-105 ${locked ? 'filter grayscale contrast-125 opacity-70' : ''}`}
-                  loading="lazy"
-                />
-                {locked && (
-                  <div className="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px] flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center text-white">
-                      <Lock size={20} />
-                    </div>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
-              </div>
-            )}
+          {/* Specular Shine Highlight Overlay */}
+          <div 
+            className="absolute inset-0 rounded-[1.8rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-30 mix-blend-overlay"
+            style={{
+              background: `radial-gradient(circle 120px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.45) 0%, transparent 80%)`
+            }}
+          />
 
-            <div className="flex justify-between items-start mb-6 relative z-20" style={{ transform: "translateZ(30px)" }}>
-              <Badge className="bg-zinc-100 text-zinc-700 border border-zinc-200/50 shadow-sm">
-                <Icon size={14} className="opacity-70"/> {subject}
-              </Badge>
-              {locked ? (
-                <Badge className="bg-purple-100 text-purple-700 border border-purple-200 shadow-sm font-bold flex items-center gap-1">
-                  <Lock size={10} /> Próximamente
-                </Badge>
-              ) : (
-                <Badge className="bg-yellow-50 text-yellow-600 border border-yellow-200 shadow-sm">
-                  <Star size={14} fill="currentColor" /> {points}
-                </Badge>
-              )}
-            </div>
-            
-            <div className="flex-grow relative z-20" style={{ transform: "translateZ(40px)" }}>
-              <h3 className="text-2xl font-bold text-zinc-900 mb-2 group-hover:text-blue-600 transition-colors">{title}</h3>
-              {description && (
-                <p className="text-zinc-500 text-sm mb-4 line-clamp-2 leading-relaxed">{description}</p>
-              )}
-              <div className="flex items-center gap-4 text-sm text-zinc-500 font-medium">
-                <span className="flex items-center gap-1.5"><User size={16}/> Lvl {level}</span>
-                <span className="flex items-center gap-1.5"><Play size={16}/> {duration}</span>
-              </div>
-            </div>
-            
-            <div className="mt-8 flex items-center justify-between relative z-20" style={{ transform: "translateZ(20px)" }}>
-              <div className="flex -space-x-3">
-                {[1,2,3].map(i => (
-                  <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+title}&backgroundColor=e2e8f0`} className="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="player" />
-                ))}
-              </div>
-              {locked ? (
-                <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-400 flex items-center justify-center group-hover:bg-zinc-200 transition-all duration-300 shadow-sm">
-                  <Lock size={18}/>
-                </div>
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-zinc-900 text-white flex items-center justify-center group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-300 shadow-md">
-                  <Play size={20} fill="currentColor" className="ml-1"/>
-                </div>
-              )}
+          <div className="relative bg-white rounded-[1.8rem] h-full flex flex-col z-10 overflow-hidden">
+            {/* Base Light Card Content */}
+            <CardContentLayout
+              id={id}
+              title={title}
+              subject={subject}
+              level={level}
+              duration={duration}
+              points={points}
+              bg={bg}
+              icon={Icon}
+              finalImageUrl={finalImageUrl}
+              description={description}
+              locked={locked}
+              isDarkTheme={false}
+              tag={tag}
+            />
+
+            {/* Spotlight Mask Overlay Layer (Galaxy Canvas + Dark Card Content) */}
+            <div className="card-spotlight-overlay">
+              <GalaxyCanvas isActive={isHovered} mouseX={mouseX} mouseY={mouseY} />
+              <CardContentLayout
+                id={id}
+                title={title}
+                subject={subject}
+                level={level}
+                duration={duration}
+                points={points}
+                bg={bg}
+                icon={Icon}
+                finalImageUrl={finalImageUrl}
+                description={description}
+                locked={locked}
+                isDarkTheme={true}
+                tag={tag}
+              />
             </div>
           </div>
         </motion.div>
@@ -356,109 +616,173 @@
         }, 1200);
       };
 
-      return (
-        <div className="min-h-screen pt-20">
-          <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 py-20 lg:py-32 max-w-7xl mx-auto flex flex-col items-center text-center">
-            
-            {/* Animated Background Elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-tr from-blue-400/20 to-purple-400/20 rounded-full blur-[100px] -z-10 animate-pulse-slow" />
-            <motion.div animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-20 left-10 lg:left-20 w-16 h-16 bg-blue-100 rounded-2xl rotate-12 blur-[2px] -z-10 flex items-center justify-center text-blue-500"><Gamepad2 size={32}/></motion.div>
-            <motion.div animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }} transition={{ duration: 8, repeat: Infinity }} className="absolute bottom-40 right-10 lg:right-32 w-24 h-24 bg-yellow-100 rounded-full blur-[2px] -z-10 flex items-center justify-center text-yellow-500"><Star size={40} fill="currentColor"/></motion.div>
-            <motion.div animate={{ y: [0, -15, 0], x: [0, 15, 0] }} transition={{ duration: 7, repeat: Infinity }} className="absolute top-40 right-20 w-12 h-12 bg-purple-100 rounded-full blur-[1px] -z-10 flex items-center justify-center text-purple-500"><Brain size={24}/></motion.div>
+      useEffect(() => {
+        const { gsap, ScrollTrigger } = window;
+        if (!gsap || !ScrollTrigger) return;
+        gsap.registerPlugin(ScrollTrigger);
 
-            <div className="flex flex-col items-center gap-6 sm:gap-8 z-10 w-full">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200/50 text-zinc-800 font-bold text-sm shadow-sm">
+        const ctx = gsap.context(() => {
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".hero-scroll-container",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 1,
+            }
+          });
+
+          // Panel 1: Out of view
+          tl.to(".panel-1", { opacity: 0, scale: 0.9, duration: 1 })
+            
+            // Panel 2: Showcase Images fly in
+            .to(".panel-2", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .from(".hero-img-left", { x: "-100vw", rotation: -45, ease: "power2.out", duration: 1.5 }, "<")
+            .from(".hero-img-right", { x: "100vw", rotation: 45, ease: "power2.out", duration: 1.5 }, "<")
+            .from(".hero-img-center", { y: "100vh", rotation: 0, ease: "power2.out", duration: 1.5 }, "<")
+            
+            // Panel 2: Out of view
+            .to(".panel-2", { opacity: 0, pointerEvents: "none", duration: 1, delay: 0.5 })
+            
+            // Panel 3: Stats appear
+            .to(".panel-3", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .from(".hero-stat-card", { y: 60, opacity: 0, stagger: 0.2, ease: "back.out(1.7)", duration: 1.2 }, "<")
+            
+            // Panel 3: Out of view
+            .to(".panel-3", { opacity: 0, pointerEvents: "none", duration: 1, delay: 0.5 })
+            
+            // Panel 4: Final CTA appears
+            .to(".panel-4", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .from(".panel-4 h2, .panel-4 p, .panel-4 .flex-container", { y: 40, opacity: 0, stagger: 0.15, ease: "power3.out", duration: 1.2 }, "<");
+        });
+
+        return () => ctx.revert();
+      }, []);
+
+      return (
+        <div className="min-h-screen pt-20 bg-zinc-950 text-white">
+          {/* Scroll Container wrapper (400vh height to trigger scroll timeline) */}
+          <div className="relative h-[400vh] w-full hero-scroll-container">
+            {/* Sticky Stage (pinned container) */}
+            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex flex-col justify-center items-center bg-zinc-950 text-white z-10">
+              {/* Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-950/30 via-zinc-950 to-purple-950/30 z-0 pointer-events-none" />
+              
+              {/* Panel 1: Title & Eyebrow */}
+              <div className="panel-1 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-300 font-bold text-sm shadow-sm mb-6 uppercase tracking-wider">
                   <Sparkles size={16} className="text-yellow-500"/> Nueva forma de aprender
                 </span>
-              </motion.div>
-              
-              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-zinc-900 tracking-tight leading-[1.1] max-w-5xl">
-                Descubre un <span className="gradient-text">universo</span> de conocimiento.
-              </motion.h1>
-              
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-lg sm:text-xl text-zinc-600 max-w-2xl font-medium leading-relaxed">
-                Plataforma premium de aprendizaje gamificado. Retos diarios, medallas y un catálogo infinito para entrenar tu mente de forma interactiva.
-              </motion.p>
-              
-              {status === 'success' ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }} 
-                  animate={{ opacity: 1, scale: 1 }} 
-                  className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-3xl max-w-md w-full shadow-sm text-center z-20"
-                >
-                  <CheckCircle2 className="mx-auto text-green-500 mb-3" size={32} />
-                  <h3 className="font-extrabold text-xl mb-1">¡Suscrito con éxito!</h3>
-                  <p className="text-sm font-medium text-green-700 mb-4">Te enviaremos actualizaciones cuando lancemos más contenido.</p>
-                  <div className="flex gap-3">
-                    <Button size="md" onClick={() => onNavigate('catalog')} className="flex-1 shadow-green-500/10">Probar Juegos Demo <Play size={16} className="ml-1"/></Button>
-                    <Button variant="secondary" size="md" onClick={() => onNavigate('dashboard')} className="flex-1">Dashboard</Button>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-full max-w-lg mt-4 z-20">
-                  <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white/70 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200/50 shadow-md">
-                    <input 
-                      type="email" 
-                      required 
-                      placeholder="Correo de papá, mamá o profesor..." 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="flex-1 bg-transparent px-5 py-3 text-zinc-800 placeholder-zinc-400 font-semibold focus:outline-none text-sm sm:text-base"
-                      disabled={loading}
-                    />
-                    <Button type="submit" disabled={loading} className="py-3 px-6 shadow-blue-500/10 whitespace-nowrap text-sm sm:text-base rounded-2xl">
-                      {loading ? 'Registrando...' : 'Unirse a la lista'}
-                    </Button>
-                  </form>
-                  <div className="flex justify-center gap-6 mt-4">
-                    <button onClick={() => onNavigate('catalog')} className="text-sm font-bold text-zinc-500 hover:text-blue-600 transition-colors flex items-center gap-1.5">
-                      Probar Demo Gratuita (Catálogo) <ArrowRight size={14}/>
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </div>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1] max-w-5xl mb-6">
+                  Descubre un <span className="gradient-text bg-gradient-to-r from-blue-400 to-purple-400">universo</span> de conocimiento.
+                </h1>
+                <p className="text-lg sm:text-xl text-zinc-400 max-w-2xl font-medium leading-relaxed">
+                  Plataforma premium de aprendizaje gamificado. Retos diarios, medallas y un catálogo infinito para entrenar tu mente de forma interactiva.
+                </p>
+              </div>
 
-            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }} className="w-full max-w-5xl mt-20 relative">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#f8fafc] via-transparent to-transparent z-20 h-full w-full pointer-events-none rounded-t-[2rem]" />
-              <div className="glass-panel p-2 rounded-[2rem] shadow-2xl relative z-10 border border-white/40">
-                <div className="bg-white rounded-[1.5rem] overflow-hidden border border-zinc-100 shadow-inner flex flex-col">
-                  {/* Fake Browser Chrome */}
-                  <div className="bg-zinc-50 border-b border-zinc-100 px-4 py-3 flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                  </div>
-                  <div className="p-6 md:p-10 bg-zinc-50 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 relative overflow-hidden group hover:border-blue-200 transition-colors">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      <div className="relative z-10">
-                        <div className="h-4 w-32 bg-zinc-200 rounded-full mb-6"></div>
-                        <div className="space-y-3">
-                          <div className="h-3 w-full bg-zinc-100 rounded-full"></div>
-                          <div className="h-3 w-5/6 bg-zinc-100 rounded-full"></div>
-                          <div className="h-3 w-4/6 bg-zinc-100 rounded-full"></div>
-                        </div>
-                        <div className="mt-8 grid grid-cols-2 gap-4">
-                          <div className="h-24 bg-blue-50 rounded-xl border border-blue-100"></div>
-                          <div className="h-24 bg-purple-50 rounded-xl border border-purple-100"></div>
-                        </div>
-                      </div>
+              {/* Panel 2: Showcase Cards */}
+              <div className="panel-2 absolute inset-0 flex justify-center items-center z-10 pointer-events-none opacity-0">
+                <div className="relative w-full max-w-6xl h-full flex justify-between items-center px-12">
+                  <div className="hero-img-left absolute left-10 w-72 h-[340px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl rotate-[-12deg] p-6 flex flex-col justify-between">
+                    <div className="h-40 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400">
+                      <Gamepad2 size={56} />
                     </div>
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 flex flex-col items-center justify-center group hover:border-yellow-200 transition-colors relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-b from-yellow-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      <div className="w-24 h-24 rounded-full border-4 border-yellow-100 flex items-center justify-center mb-4 relative z-10">
-                        <Trophy size={40} className="text-yellow-500 group-hover:scale-110 transition-transform" />
-                      </div>
-                      <div className="h-4 w-24 bg-zinc-200 rounded-full mb-2 relative z-10"></div>
-                      <div className="h-3 w-16 bg-zinc-100 rounded-full relative z-10"></div>
+                    <div className="text-left mt-4">
+                      <div className="font-bold text-xl text-white">Aventura Matemática</div>
+                      <div className="text-zinc-500 text-sm mt-1">Resuelve acertijos matemáticos y sube de nivel.</div>
+                    </div>
+                  </div>
+                  
+                  <div className="hero-img-center absolute bottom-12 left-1/2 -translate-x-1/2 w-80 h-[360px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl p-6 flex flex-col justify-between">
+                    <div className="h-44 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-400">
+                      <Brain size={64} />
+                    </div>
+                    <div className="text-left mt-4">
+                      <div className="font-bold text-xl text-white">Memoria Espacial</div>
+                      <div className="text-zinc-500 text-sm mt-1">Pon a prueba tu retención visual y memoriza.</div>
+                    </div>
+                  </div>
+
+                  <div className="hero-img-right absolute right-10 w-72 h-[340px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl rotate-[12deg] p-6 flex flex-col justify-between">
+                    <div className="h-40 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-400">
+                      <FlaskConical size={56} />
+                    </div>
+                    <div className="text-left mt-4">
+                      <div className="font-bold text-xl text-white">Laboratorio Químico</div>
+                      <div className="text-zinc-500 text-sm mt-1">Combina elementos en el lab virtual.</div>
                     </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </section>
+
+              {/* Panel 3: Stats */}
+              <div className="panel-3 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
+                <h2 className="text-4xl lg:text-5xl font-bold mb-16">
+                  Aprendizaje que <span className="gradient-text bg-gradient-to-r from-blue-400 to-cyan-400">engancha.</span>
+                </h2>
+                <div className="grid md:grid-cols-3 gap-8 max-w-5xl w-full">
+                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
+                    <div className="text-5xl font-black text-blue-400 mb-2">+10k</div>
+                    <div className="font-bold text-white text-lg mb-1">Estudiantes Activos</div>
+                    <div className="text-zinc-500 text-sm">Entrenando su mente a diario en todo el mundo.</div>
+                  </div>
+                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
+                    <div className="text-5xl font-black text-purple-400 mb-2">98%</div>
+                    <div className="font-bold text-white text-lg mb-1">Retención Escolar</div>
+                    <div className="text-zinc-500 text-sm">Altamente motivados con rachas y medallas.</div>
+                  </div>
+                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
+                    <div className="text-5xl font-black text-cyan-400 mb-2">+50</div>
+                    <div className="font-bold text-white text-lg mb-1">Juegos Premium</div>
+                    <div className="text-zinc-500 text-sm">Desarrollados por pedagogos y diseñadores.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Panel 4: Final CTA */}
+              <div className="panel-4 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
+                <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">¿Listo para la aventura?</h2>
+                <p className="text-lg md:text-xl text-zinc-400 mb-8 max-w-2xl">
+                  Únete hoy a la comunidad educativa líder. Demostrativo disponible o regístrate para obtener novedades.
+                </p>
+                <div className="flex-container w-full max-w-lg z-20 pointer-events-auto">
+                  {status === 'success' ? (
+                    <motion.div 
+                      className="bg-green-950/40 border border-green-800/50 text-green-200 p-6 rounded-3xl w-full shadow-lg text-center"
+                    >
+                      <CheckCircle2 className="mx-auto text-green-400 mb-3" size={32} />
+                      <h3 className="font-extrabold text-xl mb-1">¡Suscrito con éxito!</h3>
+                      <p className="text-sm font-medium text-green-300 mb-4">Te enviaremos actualizaciones cuando lancemos más contenido.</p>
+                      <div className="flex gap-3">
+                        <Button size="md" onClick={() => onNavigate('catalog')} className="flex-1 shadow-green-500/10">Probar Juegos Demo <Play size={16} className="ml-1"/></Button>
+                        <Button variant="secondary" size="md" onClick={() => onNavigate('dashboard')} className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700 flex-1">Dashboard</Button>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-zinc-900/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-800 shadow-md">
+                      <input 
+                        type="email" 
+                        required 
+                        placeholder="Correo de papá, mamá o profesor..." 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="flex-1 bg-transparent px-5 py-3 text-white placeholder-zinc-500 font-semibold focus:outline-none text-sm sm:text-base"
+                        disabled={loading}
+                      />
+                      <Button type="submit" disabled={loading} className="py-3 px-6 shadow-blue-500/10 whitespace-nowrap text-sm sm:text-base rounded-2xl">
+                        {loading ? 'Registrando...' : 'Unirse a la lista'}
+                      </Button>
+                    </form>
+                  )}
+                  <div className="flex justify-center gap-6 mt-4">
+                    <button onClick={() => onNavigate('catalog')} className="text-sm font-bold text-zinc-400 hover:text-blue-400 transition-colors flex items-center gap-1.5">
+                      Probar Demo Gratuita (Catálogo) <ArrowRight size={14}/>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Benefits Section */}
           <section className="py-24 bg-zinc-900 text-white px-6 lg:px-8 relative overflow-hidden">
@@ -623,9 +947,70 @@
       );
     };
 
+    const GameCardSkeleton = () => {
+      return (
+        <div className="relative w-full rounded-[2rem] p-1 bg-white border border-zinc-200 shadow-sm overflow-hidden min-h-[420px]">
+          <div className="p-6 h-full flex flex-col justify-between">
+            {/* Image Placeholder with Shimmer */}
+            <div className="relative w-full h-44 rounded-2xl bg-zinc-200 overflow-hidden mb-5">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+            </div>
+
+            {/* Badges/Tags Skeleton */}
+            <div className="flex justify-between items-start mb-4">
+              <div className="h-6 w-24 bg-zinc-200 rounded-full relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+              <div className="h-6 w-16 bg-zinc-200 rounded-full relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+            </div>
+
+            {/* Title & Desc Skeletons */}
+            <div className="flex-grow space-y-3">
+              <div className="h-8 w-3/4 bg-zinc-200 rounded-xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+              <div className="h-4 w-full bg-zinc-200 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+              <div className="h-4 w-5/6 bg-zinc-200 rounded-lg relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+            </div>
+
+            {/* Footer Skeletons */}
+            <div className="mt-6 flex items-center justify-between">
+              <div className="flex -space-x-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full bg-zinc-200 border-2 border-white relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+                  </div>
+                ))}
+              </div>
+              <div className="w-12 h-12 rounded-full bg-zinc-200 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite_linear]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
     const Catalog = ({ onNavigate, onLockClick, games = [] }) => {
       const [filter, setFilter] = useState('Todos');
+      const [isLoading, setIsLoading] = useState(false);
       const subjects = ['Todos', 'Matemáticas', 'Ciencias', 'Lectura', 'Programación', 'Ecología'];
+      
+      const handleFilterChange = (subj) => {
+        if (subj === filter) return;
+        setIsLoading(true);
+        setFilter(subj);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 800);
+      };
+
       const filtered = filter === 'Todos' 
         ? games 
         : games.filter(g => g.subject.includes(filter) || (filter==='Lectura' && g.subject==='Inglés') || (filter==='Ciencias' && g.subject==='Ecología'));
@@ -641,7 +1026,7 @@
             <div className="flex overflow-x-auto gap-3 pb-4 mb-12 scrollbar-hide">
               {subjects.map(subj => (
                 <button
-                  key={subj} onClick={() => setFilter(subj)}
+                  key={subj} onClick={() => handleFilterChange(subj)}
                   className={`whitespace-nowrap px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${filter === subj ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 scale-105' : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'}`}
                 >{subj}</button>
               ))}
@@ -649,11 +1034,20 @@
             
             <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               <AnimatePresence mode="popLayout">
-                {filtered.map((game) => (
-                  <motion.div key={game.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}>
-                    <PremiumGameCard {...game} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
-                  </motion.div>
-                ))}
+                {isLoading ? (
+                  // Render 3 loading skeletons during transition states
+                  [1, 2, 3].map((n) => (
+                    <motion.div key={`skeleton-${n}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                      <GameCardSkeleton />
+                    </motion.div>
+                  ))
+                ) : (
+                  filtered.map((game) => (
+                    <motion.div key={game.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}>
+                      <PremiumGameCard {...game} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
+                    </motion.div>
+                  ))
+                )}
               </AnimatePresence>
             </motion.div>
           </div>
