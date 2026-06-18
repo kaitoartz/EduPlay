@@ -1078,7 +1078,6 @@ Steps to integrate 0. Copy paste all the code above in the correct directories
 ### 4. 🔘 BOTONES — Efectos premium
 
 Para todos los CTAs y botones del sistema:
-
 **Efecto magnético:**
 
 ```js

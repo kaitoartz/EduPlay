@@ -1,10 +1,19 @@
 {
   "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
     "vite": "^8.0.16"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
+  },
+  "dependencies": {
+    "framer-motion": "^12.40.0",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.20.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "styled-components": "^6.4.2"
   }
 }

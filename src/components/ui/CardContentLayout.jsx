@@ -1,0 +1,105 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, Lock, Star, User, Play } from 'lucide-react';
+import Badge from './Badge';
+import FavouriteToggle from './FavouriteToggle';
+
+const CardContentLayout = ({ id, title, subject, level, duration, points, bg, icon: Icon, finalImageUrl, description, locked, isDarkTheme, tag }) => {
+  return (
+    <div className={`relative p-6 h-full flex flex-col z-10 overflow-hidden ${isDarkTheme ? 'bg-transparent text-white' : 'bg-white text-zinc-900'}`}>
+      {!isDarkTheme && <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full ${bg} opacity-50 blur-2xl group-hover:blur-3xl transition-all duration-500`} />}
+      
+      {/* Image Preview Banner */}
+      {finalImageUrl && (
+        <div className={`relative w-full h-44 rounded-2xl overflow-hidden mb-5 border shadow-inner z-20 ${isDarkTheme ? 'border-zinc-800' : 'border-zinc-100/80'}`} style={{ transform: "translateZ(30px)" }}>
+          {/* Animated Badge */}
+          {tag && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
+              className="absolute top-3 left-3 z-30"
+            >
+              <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider shadow-md ${
+                tag === 'Nuevo' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' :
+                tag === 'Trending' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' :
+                'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+              }`}>
+                <Sparkles size={10} className="animate-pulse" /> {tag}
+              </span>
+            </motion.div>
+          )}
+          <img 
+            src={finalImageUrl} 
+            alt={title} 
+            className={`w-full h-full object-cover transition-transform duration-700 scale-100 group-hover:scale-105 ${locked ? 'filter grayscale contrast-125 opacity-70' : ''} ${isDarkTheme ? 'opacity-85' : ''}`}
+            loading="lazy"
+          />
+          {locked && (
+            <div className="absolute inset-0 bg-zinc-900/60 backdrop-blur-[2px] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center text-white">
+                <Lock size={20} />
+              </div>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
+        </div>
+      )}
+
+      <div className="flex justify-between items-start mb-4 relative z-20" style={{ transform: "translateZ(30px)" }}>
+        <Badge className={isDarkTheme ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/50 shadow-sm' : 'bg-zinc-100 text-zinc-700 border border-zinc-200/50 shadow-sm'}>
+          {Icon && <Icon size={14} className="opacity-70"/>} {subject}
+        </Badge>
+        {locked ? (
+          <Badge className="bg-purple-100 text-purple-700 border border-purple-200 shadow-sm font-bold flex items-center gap-1">
+            <Lock size={10} /> Próximamente
+          </Badge>
+        ) : (
+          <Badge className={isDarkTheme ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 shadow-sm' : 'bg-yellow-50 text-yellow-600 border border-yellow-200 shadow-sm'}>
+            <Star size={14} fill="currentColor" /> {points}
+          </Badge>
+        )}
+      </div>
+      
+      <div className="flex-grow relative z-20" style={{ transform: "translateZ(40px)" }}>
+        <h3 className={`text-2xl font-bold mb-2 transition-colors ${isDarkTheme ? 'text-white group-hover:text-cyan-400' : 'text-zinc-900 group-hover:text-blue-600'}`}>{title}</h3>
+        
+        {/* Expandable Footer Container using Grid dynamic row sizing */}
+        <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out opacity-80 group-hover:opacity-100">
+          <div className="overflow-hidden">
+            {description && (
+              <p className={`text-sm mb-4 leading-relaxed ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>{description}</p>
+            )}
+          </div>
+        </div>
+
+        <div className={`flex items-center gap-4 text-sm font-medium ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>
+          <span className="flex items-center gap-1.5"><User size={16}/> Lvl {level}</span>
+          <span className="flex items-center gap-1.5"><Play size={16}/> {duration}</span>
+        </div>
+      </div>
+      
+      <div className="mt-6 flex items-center justify-between relative z-20" style={{ transform: "translateZ(20px)" }}>
+        <div className="flex items-center gap-3">
+          <div className="flex -space-x-3">
+            {[1,2,3].map(i => (
+              <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+title}&backgroundColor=e2e8f0`} className={`w-10 h-10 rounded-full border-2 shadow-sm ${isDarkTheme ? 'border-zinc-800' : 'border-white'}`} alt="player" />
+            ))}
+          </div>
+          {!locked && <FavouriteToggle id={id} />}
+        </div>
+        {locked ? (
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200'}`}>
+            <Lock size={18}/>
+          </div>
+        ) : (
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${isDarkTheme ? 'bg-blue-600 text-white group-hover:bg-cyan-500 group-hover:scale-110 shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-zinc-900 text-white group-hover:bg-blue-600 group-hover:scale-110'}`}>
+            <Play size={20} fill="currentColor" className="ml-1"/>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CardContentLayout;
