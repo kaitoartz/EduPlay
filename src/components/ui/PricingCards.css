@@ -1,0 +1,98 @@
+.pricing-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+.pricing-card-wrap {
+  width: 100%;
+  max-width: 320px;
+  min-height: 550px; /* Spacer to prevent layout collapse */
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card {
+  width: 100%;
+  height: 145px;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.45);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+  border-left: 2px rgba(255, 255, 255, 0.2) outset;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: skewX(8deg);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+/* Hover expansion */
+.pricing-card:hover {
+  height: 540px;
+  transform: skewX(0deg) scale(1.03);
+  background: rgba(15, 23, 42, 0.75);
+  box-shadow: 0 30px 60px rgba(59, 130, 246, 0.25);
+  border-bottom-color: rgba(59, 130, 246, 0.4);
+}
+
+.pricing-card-align {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.pricing-card-red, .pricing-card-yellow, .pricing-card-green {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pricing-card-red { background-color: #ff605c; }
+.pricing-card-yellow { background-color: #ffbd44; }
+.pricing-card-green { background-color: #00ca4e; }
+
+.pricing-card h1 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  color: #daf4ed;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Details animation opacity */
+.pricing-card-details {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease-in-out;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.pricing-card:hover .pricing-card-details {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0.1s;
+}

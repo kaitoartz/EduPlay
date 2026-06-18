@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Check, XCircle, CheckCircle2 } from 'lucide-react';
 import Button from '../components/ui/Button';
+import '../components/ui/PricingCards.css';
 
 const PricingPanel = ({ onNavigate }) => {
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'annual'
@@ -12,7 +13,7 @@ const PricingPanel = ({ onNavigate }) => {
   const plans = [
     {
       id: 'free',
-      name: 'Rango Cadete',
+      name: 'Free',
       description: 'Misión de reconocimiento inicial para pequeños reclutas galácticos.',
       priceMonthly: 0,
       priceAnnual: 0,
@@ -28,7 +29,7 @@ const PricingPanel = ({ onNavigate }) => {
     },
     {
       id: 'pro',
-      name: 'Rango Comandante',
+      name: 'Star',
       description: 'Acceso completo a todos los portales de conocimiento y retos de la galaxia.',
       priceMonthly: 4.99,
       priceAnnual: 3.99,
@@ -46,13 +47,13 @@ const PricingPanel = ({ onNavigate }) => {
     },
     {
       id: 'classroom',
-      name: 'Flota Estelar',
+      name: 'Astronaut',
       description: 'Licencia de operaciones completas para academias y escuelas de alto rango.',
       priceMonthly: 19.99,
       priceAnnual: 15.99,
       features: [
         'Reclutamiento ilimitado de cadetes',
-        'Asignación de misiones y tareas',
+        'Asignación de misiones and tareas',
         'Consola general de comandancia docente',
         'Canal de soporte prioritario instantáneo',
         'Enlace con sistemas de la Federación',
@@ -113,68 +114,68 @@ const PricingPanel = ({ onNavigate }) => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-8 w-full items-stretch relative z-10">
+        <div className="pricing-grid relative z-10">
           {plans.map(plan => {
             const price = billingCycle === 'monthly' ? plan.priceMonthly : plan.priceAnnual;
             const totalAnnually = price * 12;
 
             return (
-              <motion.div
-                key={plan.id}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className={`relative rounded-[2.5rem] border p-8 md:p-10 flex flex-col justify-between transition-shadow duration-500 hover:shadow-2xl ${plan.color}`}
-              >
-                {plan.badge && (
-                  <span className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow border ${
-                    plan.id === 'pro' 
-                      ? 'bg-blue-600 text-white border-blue-500 animate-bounce' 
-                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'
-                  }`}>
-                    {plan.badge}
-                  </span>
-                )}
-
-                <div className="text-left">
-                  <h3 className="text-2xl font-black mb-3">{plan.name}</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-8 leading-relaxed h-12 overflow-hidden">{plan.description}</p>
-                  
-                  {/* Price display */}
-                  <div className="flex items-baseline gap-2 mb-8">
-                    <span className="text-5xl font-black tracking-tight">
-                      ${price}
-                    </span>
-                    <span className="text-zinc-500 dark:text-zinc-400 font-bold text-sm">/ mes</span>
+              <div key={plan.id} className="pricing-card-wrap">
+                <div className="pricing-card">
+                  {/* Top align dots */}
+                  <div className="pricing-card-align">
+                    <span className="pricing-card-red" />
+                    <span className="pricing-card-yellow" />
+                    <span className="pricing-card-green" />
                   </div>
                   
-                  {billingCycle === 'annual' && price > 0 && (
-                    <div className="text-xs text-green-600 dark:text-green-400 font-bold mb-6 bg-green-50 dark:bg-green-950/30 px-3 py-1 rounded-lg inline-block">
-                      Facturado anualmente (${totalAnnually.toFixed(2)}/año)
-                    </div>
-                  )}
-
-                  <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800 mb-8" />
-
-                  {/* Feature list */}
-                  <ul className="space-y-4 mb-10 text-left">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm font-semibold">
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.id === 'classroom' ? 'bg-zinc-850 text-white dark:bg-zinc-800' : 'bg-blue-50 dark:bg-blue-955/30 text-blue-600 dark:text-blue-400'}`}>
-                          <Check size={12} strokeWidth={3}/>
+                  {/* Title is always visible */}
+                  <h1>{plan.name}</h1>
+                  
+                  {/* Rest of details only visible on expansion (hover) */}
+                  <div className="pricing-card-details">
+                    <div className="text-left mt-2">
+                      <p className="text-zinc-300 text-xs font-medium mb-4 leading-relaxed h-12 overflow-hidden">{plan.description}</p>
+                      
+                      {/* Price display */}
+                      <div className="flex items-baseline gap-2 mb-4">
+                        <span className="text-3xl font-black tracking-tight">
+                          ${price}
                         </span>
-                        <span className={plan.id === 'classroom' ? 'text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                        <span className="text-zinc-400 font-bold text-xs">/ mes</span>
+                      </div>
+                      
+                      {billingCycle === 'annual' && price > 0 && (
+                        <div className="text-[10px] text-green-400 font-bold mb-4 bg-green-950/30 px-2.5 py-0.5 rounded-lg inline-block">
+                          Facturado anualmente (${totalAnnually.toFixed(2)}/año)
+                        </div>
+                      )}
 
-                <Button
-                  variant={plan.id === 'classroom' ? 'glow' : plan.id === 'pro' ? 'primary' : 'secondary'}
-                  className="w-full py-4 text-base rounded-2xl font-bold shadow-lg"
-                  onClick={() => setCheckoutPlan(plan)}
-                >
-                  {plan.buttonText}
-                </Button>
-              </motion.div>
+                      <div className="w-full h-px bg-zinc-800 mb-4" />
+
+                      {/* Feature list */}
+                      <ul className="space-y-2.5 mb-6 text-left">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs font-semibold">
+                            <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-blue-955/50 text-blue-400">
+                              <Check size={10} strokeWidth={3}/>
+                            </span>
+                            <span className="text-zinc-300">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <Button
+                      variant={plan.id === 'classroom' ? 'glow' : plan.id === 'pro' ? 'primary' : 'secondary'}
+                      className="w-full py-2.5 text-sm rounded-xl font-bold shadow-lg"
+                      onClick={() => setCheckoutPlan(plan)}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             );
           })}
         </div>
