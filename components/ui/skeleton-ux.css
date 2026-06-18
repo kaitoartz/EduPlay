@@ -1,0 +1,170 @@
+/* From Uiverse.io by egehan_1415 */ 
+.upload {
+  width: 360px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: ui-sans-serif, system-ui;
+}
+
+.up-head {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  align-items: center;
+}
+
+.icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: radial-gradient(
+      circle at 30% 25%,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.05) 45%,
+      rgba(0, 0, 0, 0.22) 100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(110, 231, 255, 0.35),
+      rgba(176, 140, 255, 0.25)
+    );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.pill {
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.up-mid {
+  padding: 14px;
+}
+
+.sk {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+}
+.sk-title {
+  width: 62%;
+  height: 13px;
+  margin: 2px 0 8px;
+}
+.sk-sub {
+  width: 44%;
+  height: 11px;
+  margin: 0;
+  opacity: 0.9;
+}
+.sk-wide {
+  width: 100%;
+}
+.sk-short {
+  width: 62%;
+}
+
+.sk::before {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 22%,
+    rgba(255, 255, 255, 0.2) 30%,
+    transparent 44%
+  );
+  transform: translateX(-60%);
+  animation: shimmer 1.15s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  mix-blend-mode: screen;
+}
+
+.up-bar {
+  height: 10px;
+  margin: 2px 14px 14px;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.up-bar .bar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(110, 231, 255, 0),
+    rgba(110, 231, 255, 0.55),
+    rgba(176, 140, 255, 0.55),
+    rgba(110, 231, 255, 0)
+  );
+  transform: translateX(-70%);
+  animation: flow2 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+.up-bar .shine {
+  position: absolute;
+  inset: -30% -40%;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 22%,
+    rgba(255, 255, 255, 0.28) 28%,
+    transparent 40%
+  );
+  transform: translateX(-55%);
+  animation: glint2 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(60%);
+  }
+}
+@keyframes flow2 {
+  0% {
+    transform: translateX(-75%);
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(75%);
+    opacity: 0.55;
+  }
+}
+@keyframes glint2 {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(60%);
+    opacity: 0;
+  }
+}

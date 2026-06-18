@@ -56,10 +56,14 @@
     :root {
       --bg: #f8fafc;
     }
+    .dark {
+      --bg: #09090b;
+    }
     body {
       background-color: var(--bg);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -88,7 +92,9 @@
       z-index: 20;
       opacity: 0;
       transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      background: #09090b; /* Deep zinc-950 backdrop for galaxy */
+      background-image: url('galaxy.webp');
+      background-size: cover;
+      background-position: center;
       mask-image: radial-gradient(
         180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
         black 20%,
@@ -102,6 +108,350 @@
     }
     .group:hover .card-spotlight-overlay {
       opacity: 1;
+    }
+  </style>
+
+  <!-- ═══ UI COMPONENT LIBRARY (Namespaced ep-*) ═══ -->
+  <style>
+    /* ── ep-shine-btn: CTA button with light sweep (button.css) ── */
+    .ep-shine-btn {
+      position: relative; transition: all 0.3s ease-in-out;
+      box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
+      padding-block: 0.5rem; padding-inline: 1.25rem;
+      background-color: rgb(0 107 179); border-radius: 9999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; gap: 10px; font-weight: bold;
+      border: 3px solid #ffffff4d; outline: none; overflow: hidden;
+      font-size: 15px; cursor: pointer;
+    }
+    .ep-shine-btn .ep-shine-icon { width: 24px; height: 24px; transition: all 0.3s ease-in-out; }
+    .ep-shine-btn:hover { transform: scale(1.05); border-color: #fff9; }
+    .ep-shine-btn:hover .ep-shine-icon { transform: translate(4px); }
+    .ep-shine-btn:hover::before { animation: ep-shine 1.5s ease-out infinite; }
+    .ep-shine-btn::before {
+      content: ""; position: absolute; width: 100px; height: 100%;
+      background-image: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.8), rgba(255,255,255,0) 70%);
+      top: 0; left: -100px; opacity: 0.6;
+    }
+    @keyframes ep-shine { 0% { left: -100px; } 60% { left: 100%; } to { left: 100%; } }
+
+    /* ── ep-star-btn: Hover star explosion button (star-button.css) ── */
+    .ep-star-btn {
+      position: relative; padding: 12px 35px; background: #fec195;
+      font-size: 17px; font-weight: 500; color: #181818;
+      border: 3px solid #fec195; border-radius: 8px;
+      box-shadow: 0 0 0 #fec1958c; transition: all 0.3s ease-in-out; cursor: pointer;
+    }
+    .ep-star-btn .ep-s1,.ep-star-btn .ep-s2,.ep-star-btn .ep-s3,
+    .ep-star-btn .ep-s4,.ep-star-btn .ep-s5,.ep-star-btn .ep-s6 {
+      position: absolute; height: auto; filter: drop-shadow(0 0 0 #fffdef); z-index: -5;
+    }
+    .ep-star-btn .ep-s1 { top:20%;left:20%;width:25px;transition:all 1s cubic-bezier(.05,.83,.43,.96); }
+    .ep-star-btn .ep-s2 { top:45%;left:45%;width:15px;transition:all 1s cubic-bezier(0,.4,0,1.01); }
+    .ep-star-btn .ep-s3 { top:40%;left:40%;width:5px;transition:all 1s cubic-bezier(0,.4,0,1.01); }
+    .ep-star-btn .ep-s4 { top:20%;left:40%;width:8px;transition:all .8s cubic-bezier(0,.4,0,1.01); }
+    .ep-star-btn .ep-s5 { top:25%;left:45%;width:15px;transition:all .6s cubic-bezier(0,.4,0,1.01); }
+    .ep-star-btn .ep-s6 { top:5%;left:50%;width:5px;transition:all .8s ease; }
+    .ep-star-btn:hover { background:transparent;color:#fec195;box-shadow:0 0 25px #fec1958c; }
+    .ep-star-btn:hover .ep-s1{top:-80%;left:-30%;width:25px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-star-btn:hover .ep-s2{top:-25%;left:10%;width:15px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-star-btn:hover .ep-s3{top:55%;left:25%;width:5px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-star-btn:hover .ep-s4{top:30%;left:80%;width:8px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-star-btn:hover .ep-s5{top:25%;left:115%;width:15px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-star-btn:hover .ep-s6{top:5%;left:60%;width:5px;filter:drop-shadow(0 0 10px #fffdef);z-index:2;}
+    .ep-fil0 { fill: #fffdef; }
+
+    /* ── ep-fav: Favourite star toggle (favourite.css) ── */
+    .ep-fav input { position:absolute;opacity:0;cursor:pointer;height:0;width:0; }
+    .ep-fav { display:block;position:relative;cursor:pointer;user-select:none; }
+    .ep-fav svg { position:relative;top:0;left:0;height:28px;width:28px;transition:all .3s;fill:#666; }
+    .ep-fav svg:hover { transform:scale(1.1); }
+    .ep-fav input:checked ~ svg { fill:#ffeb49; }
+
+    /* ── ep-rating: Star rating with glow (rating.css) ── */
+    .ep-rating { display:flex;justify-content:center;gap:10px;flex-direction:row-reverse; }
+    .ep-rating > input { position:absolute;appearance:none; }
+    .ep-rating > label { cursor:pointer;font-size:30px;position:relative;display:inline-block;transition:transform .3s ease; }
+    .ep-rating > label > svg { fill:#666;transition:fill .3s ease; }
+    .ep-rating > label:hover { transform:scale(1.2); }
+    .ep-rating > label:hover > svg,
+    .ep-rating > label:hover ~ label > svg { fill:#ff9e0b;filter:drop-shadow(0 0 15px rgba(255,158,11,.9)); }
+    .ep-rating > input:checked + label > svg,
+    .ep-rating > input:checked + label ~ label > svg { fill:#ff9e0b;filter:drop-shadow(0 0 15px rgba(255,158,11,.9)); }
+    .ep-rating input:checked ~ label svg { fill:#ffa723; }
+
+    /* ── ep-skeleton: Upload skeleton shimmer (skeleton-ux.css) ── */
+    .ep-skeleton {
+      width:100%;border-radius:20px;border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.04);box-shadow:0 28px 80px rgba(0,0,0,.55);
+      overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      font-family:ui-sans-serif,system-ui;
+    }
+    .ep-skeleton .ep-sk-head {
+      display:grid;grid-template-columns:42px 1fr auto;gap:12px;padding:14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      align-items:center;
+    }
+    .ep-skeleton .ep-sk-icon {
+      width:42px;height:42px;border-radius:14px;
+      background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),rgba(255,255,255,.05) 45%,rgba(0,0,0,.22) 100%),
+      linear-gradient(135deg,rgba(110,231,255,.35),rgba(176,140,255,.25));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .ep-skeleton .ep-sk-pill {
+      font-size:12px;padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+      color:rgba(255,255,255,.72);
+    }
+    .ep-skeleton .ep-sk-mid { padding:14px; }
+    .ep-skeleton .ep-sk-bar {
+      height:12px;border-radius:999px;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.07);margin:10px 0;overflow:hidden;position:relative;
+    }
+    .ep-skeleton .ep-sk-bar::before {
+      content:"";position:absolute;inset:-40% -60%;
+      background:linear-gradient(110deg,transparent 0%,rgba(255,255,255,.1) 22%,rgba(255,255,255,.2) 30%,transparent 44%);
+      transform:translateX(-60%);animation:ep-sk-shimmer 1.15s cubic-bezier(.2,.8,.2,1) infinite;
+      mix-blend-mode:screen;
+    }
+    .ep-skeleton .ep-sk-title { width:62%;height:13px;margin:2px 0 8px; }
+    .ep-skeleton .ep-sk-sub { width:44%;height:11px;margin:0;opacity:.9; }
+    .ep-skeleton .ep-sk-wide { width:100%; }
+    .ep-skeleton .ep-sk-short { width:62%; }
+    .ep-skeleton .ep-sk-progress {
+      height:10px;margin:2px 14px 14px;border-radius:999px;position:relative;overflow:hidden;
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+    }
+    .ep-skeleton .ep-sk-progress .ep-sk-flow {
+      position:absolute;inset:0;
+      background:linear-gradient(90deg,rgba(110,231,255,0),rgba(110,231,255,.55),rgba(176,140,255,.55),rgba(110,231,255,0));
+      transform:translateX(-70%);animation:ep-sk-flow2 1.05s cubic-bezier(.2,.8,.2,1) infinite;
+    }
+    @keyframes ep-sk-shimmer { to { transform:translateX(60%); } }
+    @keyframes ep-sk-flow2 { 0%{transform:translateX(-75%);opacity:.55;} 50%{opacity:1;} 100%{transform:translateX(75%);opacity:.55;} }
+
+    /* ── ep-earth: Earth globe loader (wait.css) ── */
+    .ep-earth-loader {
+      --watercolor:#3344c1;--landcolor:#7cc133;
+      width:5em;height:5em;background-color:var(--watercolor);
+      position:relative;overflow:hidden;border-radius:50%;
+      box-shadow:inset 0 .5em rgba(255,255,255,.25),inset 0 -.5em rgba(0,0,0,.25);
+      border:solid .15em white;animation:ep-startround 1s 1;
+    }
+    .ep-earth-loader svg:nth-child(1){position:absolute;bottom:-2em;width:5em;height:auto;animation:ep-round1 5s infinite linear .75s;}
+    .ep-earth-loader svg:nth-child(2){position:absolute;top:-3em;width:5em;height:auto;animation:ep-round1 5s infinite linear;}
+    .ep-earth-loader svg:nth-child(3){position:absolute;top:-2.5em;width:5em;height:auto;animation:ep-round2 5s infinite linear;}
+    .ep-earth-loader svg:nth-child(4){position:absolute;bottom:-2.2em;width:5em;height:auto;animation:ep-round2 5s infinite linear .75s;}
+    @keyframes ep-startround { 0%{filter:brightness(500%);box-shadow:none;} 75%{filter:brightness(500%);box-shadow:none;} 100%{filter:brightness(100%);} }
+    @keyframes ep-round1 { 0%{left:-2em;opacity:1;transform:skewX(0) rotate(0);} 30%{left:-6em;opacity:1;transform:skewX(-25deg) rotate(25deg);} 31%{left:-6em;opacity:0;} 35%{left:7em;opacity:0;transform:skewX(25deg) rotate(-25deg);} 45%{left:7em;opacity:1;} 100%{left:-2em;opacity:1;transform:skewX(0) rotate(0);} }
+    @keyframes ep-round2 { 0%{left:5em;opacity:1;transform:skewX(0) rotate(0);} 75%{left:-7em;opacity:1;transform:skewX(-25deg) rotate(25deg);} 76%{left:-7em;opacity:0;} 77%{left:8em;opacity:0;} 80%{left:8em;opacity:1;} 100%{left:5em;opacity:1;transform:skewX(0) rotate(0);} }
+
+    /* ── ep-planet: Planet orbital loader (loading-2.css) ── */
+    .ep-planet-wrap { width:200px;height:200px;position:relative;display:flex;justify-content:center;align-items:center; }
+    .ep-planet-wrap .ep-planet {
+      width:65%;height:65%;background-color:#546c8c;border-radius:100%;
+      position:absolute;display:flex;align-items:center;transform-origin:center;
+      box-shadow:inset 2px -10px 0 rgba(0,0,0,.1);animation:ep-planet-anim 5s ease infinite alternate;
+    }
+    @keyframes ep-planet-anim { 0%{transform:rotate(10deg);} 100%{transform:rotate(-10deg);} }
+    .ep-planet-wrap .ep-planet .ep-ring {
+      position:absolute;width:200px;height:200px;border-radius:100%;
+      background-color:#bacbd9;display:flex;align-items:center;justify-content:center;
+      transform-origin:33% center;box-shadow:2px -10px 0 rgba(0,0,0,.1),inset -5px -10px 0 rgba(0,0,0,.1);
+      animation:ep-ring-anim 3s ease infinite;
+    }
+    @keyframes ep-ring-anim { 0%{transform:rotateX(110deg) rotateZ(0) translate(-50px,5px);} 100%{transform:rotateX(110deg) rotateZ(360deg) translate(-50px,5px);} }
+    .ep-planet-wrap .ep-planet .ep-ring::before {
+      content:"";position:absolute;width:10px;height:30px;border-radius:100%;
+      background-color:#7ea1bf;z-index:2;left:calc(0px - 5px);box-shadow:inset -3px 3px 0 rgba(0,0,0,.2);
+    }
+    .ep-planet-wrap .ep-planet .ep-ring::after {
+      content:"";position:absolute;width:160px;height:160px;border-radius:100%;
+      background-color:#7ea1bf;box-shadow:inset 2px -10px 0 rgba(0,0,0,.1);
+    }
+    .ep-planet-wrap .ep-planet .ep-cover-ring {
+      position:absolute;width:100%;height:50%;border-bottom-left-radius:80%;border-bottom-right-radius:80%;
+      border-top-left-radius:100px;border-top-right-radius:100px;
+      transform:translate(0,-17px);background-color:#546c8c;z-index:2;
+    }
+    .ep-planet-wrap .ep-planet .ep-spots { width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:absolute;z-index:2; }
+    .ep-planet-wrap .ep-planet .ep-spots span {
+      width:20px;height:20px;background-color:#3c4359;position:absolute;border-radius:100%;
+      box-shadow:inset -2px 3px 0 rgba(0,0,0,.3);
+    }
+    .ep-planet-wrap .ep-planet .ep-spots span:nth-child(1){top:15px;right:35px;}
+    .ep-planet-wrap .ep-planet .ep-spots span:nth-child(2){top:30px;left:35px;width:10px;height:10px;}
+    .ep-planet-wrap .ep-planet .ep-spots span:nth-child(3){top:55px;left:15px;width:18px;height:18px;}
+    .ep-planet-wrap .ep-planet .ep-spots span:nth-child(4){top:55px;left:60px;width:28px;height:28px;}
+    .ep-planet-wrap p { color:#bacbd9;font-size:12px;z-index:2;position:absolute;bottom:-15px;font-family:'Roboto Mono',monospace;text-align:center;width:80px; }
+
+    /* ── ep-ticket: 3D Boarding Pass/Aventurero ID (card-profile.css) ── */
+    .ep-ticket-wrap { --t-bg:#0d0d15;--t-bg-light:#151525;--t-accent:#00d2ff;--t-accent-glow:rgba(0,210,255,.4);--t-text-main:#e2e8f0;--t-text-muted:#64748b;font-size:10px;perspective:1000px;display:inline-block; }
+    .ep-ticket {
+      position:relative;width:22em;color:var(--t-text-main);font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+      transform-style:preserve-3d;transition:transform .6s cubic-bezier(.23,1,.32,1),box-shadow .6s ease;
+      box-shadow:0 0 30px rgba(0,210,255,.15),0 0 0 2px rgba(0,210,255,.2);background:transparent;
+      border-radius:1.5em;
+    }
+    .ep-ticket-wrap:hover .ep-ticket { transform:rotateX(8deg) rotateY(-12deg) scale(1.03); box-shadow:0 0 45px rgba(0,210,255,.3),0 0 0 2px rgba(0,210,255,.4); }
+    .ep-ticket::after {
+      content:"";position:absolute;inset:0;border-radius:1.5em;pointer-events:none;
+      background:linear-gradient(115deg,transparent 0%,transparent 40%,rgba(0,210,255,.1) 45%,rgba(0,210,255,.25) 50%,rgba(0,210,255,.1) 55%,transparent 60%,transparent 100%);
+      z-index:10;background-size:250% 250%;background-position:100% 100%;
+      transition:background-position .6s cubic-bezier(.23,1,.32,1);mix-blend-mode:screen;
+    }
+    .ep-ticket-wrap:hover .ep-ticket::after { background-position:0% 0%; }
+    .ep-ticket .ep-t-main {
+      padding:2em;position:relative;overflow:hidden;
+      background:radial-gradient(circle at bottom left,transparent 1.2em,var(--t-bg) 1.25em),
+      radial-gradient(circle at bottom right,transparent 1.2em,var(--t-bg) 1.25em);
+      background-size:51% 100%;background-position:bottom left,bottom right;background-repeat:no-repeat;
+      border-top-left-radius:1.5em;border-top-right-radius:1.5em;
+      border-bottom:1px dashed rgba(0,210,255,.2);
+    }
+    .ep-ticket .ep-t-main::after {
+      content:"";position:absolute;inset:0;
+      background-image:linear-gradient(rgba(0,210,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.07) 1px,transparent 1px);
+      background-size:1.5em 1.5em;opacity:.7;z-index:0;pointer-events:none;
+      transform:perspective(500px) rotateX(15deg) scale(1.3);animation:ep-grid-scroll 25s linear infinite;
+    }
+    @keyframes ep-grid-scroll { 0%{background-position:0 0;} 100%{background-position:0 3em;} }
+    .ep-ticket .ep-t-content { position:relative;z-index:1; }
+    .ep-ticket .ep-t-header { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2em; }
+    .ep-ticket .ep-t-logo { display:flex;align-items:center;gap:.5em;font-weight:900;font-size:1.1em;letter-spacing:.05em;color:#fff;text-shadow:0 0 8px rgba(0,210,255,.5); }
+    .ep-ticket .ep-t-logo svg { width:1.4em;height:1.4em;fill:var(--t-accent);filter:drop-shadow(0 0 5px var(--t-accent)); }
+    .ep-ticket .ep-t-type { font-size:.6em;text-transform:uppercase;letter-spacing:.25em;color:var(--t-accent);border:1px solid var(--t-accent);padding:.4em .8em;border-radius:4px;font-weight:800;background:rgba(0,210,255,.1);text-shadow:0 0 5px var(--t-accent-glow);box-shadow:inset 0 0 8px rgba(0,210,255,.1); }
+    .ep-ticket .ep-t-title { font-size:2.4em;font-weight:900;line-height:1.1;margin-bottom:.2em;text-transform:uppercase;color:#fff;letter-spacing:.05em;text-shadow:0 0 10px rgba(255,255,255,.3); }
+    .ep-ticket .ep-t-subtitle { color:var(--t-text-muted);font-size:.85em;margin-bottom:2em;font-family:monospace;letter-spacing:.05em; }
+    .ep-ticket .ep-t-details { display:grid;grid-template-columns:1fr 1fr;gap:1.5em;margin-bottom:1em; }
+    .ep-ticket .ep-t-label { font-size:.6em;text-transform:uppercase;letter-spacing:.15em;color:var(--t-text-muted);font-family:monospace; }
+    .ep-ticket .ep-t-value { font-size:1.15em;font-weight:800;color:#fff;text-shadow:0 0 6px rgba(0,210,255,.3); }
+    .ep-ticket .ep-t-perf { display:flex;justify-content:space-between;height:1em;align-items:center;position:relative;z-index:2;background:var(--t-bg); }
+    .ep-ticket .ep-t-perf-line { flex-grow:1;height:0;border-top:2px dashed rgba(0,210,255,.2);margin:0 1.5em; }
+    .ep-ticket .ep-t-stub {
+      padding:2em;
+      background:radial-gradient(circle at top left,transparent 1.2em,var(--t-bg-light) 1.25em),
+      radial-gradient(circle at top right,transparent 1.2em,var(--t-bg-light) 1.25em);
+      background-size:51% 100%;background-position:top left,top right;background-repeat:no-repeat;
+      border-bottom-left-radius:1.5em;border-bottom-right-radius:1.5em;
+      display:flex;justify-content:space-between;align-items:center;
+      border-top:1px dashed rgba(0,210,255,.2);
+    }
+    .ep-ticket .ep-t-barcode {
+      width:10em;height:3.5em;
+      background:repeating-linear-gradient(90deg,#00d2ff 0,#00d2ff 2px,transparent 2px,transparent 4px,#00d2ff 4px,#00d2ff 5px,transparent 5px,transparent 8px,#00d2ff 8px,#00d2ff 12px,transparent 12px,transparent 15px,#00d2ff 15px,#00d2ff 16px,transparent 16px,transparent 18px);
+      opacity:.85;
+      filter:drop-shadow(0 0 3px rgba(0,210,255,.3));
+    }
+    .ep-ticket .ep-t-barcode-id { font-family:monospace;font-size:.7em;color:var(--t-accent);letter-spacing:.25em;margin-top:.4em; }
+    .ep-ticket .ep-t-admit-text { font-size:.6em;text-transform:uppercase;letter-spacing:.2em;color:var(--t-text-muted);font-family:monospace; }
+    .ep-ticket .ep-t-admit-num { font-size:3.2em;font-weight:900;line-height:1;color:var(--t-accent);text-shadow:0 0 15px var(--t-accent-glow); }
+
+    /* ── ep-tx: Memory Chip / Power Cell (transaction.css) ── */
+    .ep-tx {
+      background-color:#0d0d15;display:flex;width:280px;height:80px;
+      position:relative;border-radius:12px;transition:.3s ease-in-out;
+      border:1px solid #10b981;box-shadow:0 0 15px rgba(16,185,129,.15);
+      overflow:hidden;
+    }
+    .ep-tx:hover { transform:scale(1.03);width:140px; box-shadow:0 0 25px rgba(16,185,129,.35); }
+    .ep-tx:hover .ep-tx-left { width:100%; }
+    .ep-tx .ep-tx-left {
+      background:linear-gradient(135deg,#10b981,#059669);width:80px;height:80px;border-radius:8px;
+      position:relative;display:flex;justify-content:center;align-items:center;
+      cursor:pointer;transition:.3s;flex-shrink:0;overflow:hidden;
+    }
+    .ep-tx .ep-tx-right {
+      width:calc(100% - 80px);display:flex;align-items:center;overflow:hidden;
+      cursor:pointer;justify-content:space-between;white-space:nowrap;transition:.3s;
+      background:rgba(16,185,129,.03);
+    }
+    .ep-tx .ep-tx-card {
+      width:45px;height:30px;background:linear-gradient(135deg,#a7f3d0,#34d399);border-radius:4px;
+      position:absolute;display:flex;z-index:10;flex-direction:column;align-items:center;
+      box-shadow:0 0 10px rgba(16,185,129,.5);
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .ep-tx .ep-tx-card-line { width:40px;height:6px;background-color:#059669;border-radius:1px;margin-top:4px; }
+    .ep-tx:hover .ep-tx-card { animation:ep-tx-slide 1.2s cubic-bezier(.645,.045,.355,1) both; }
+    @keyframes ep-tx-slide { 0%{transform:translateY(0);} 50%{transform:translateY(-50px) rotate(90deg);} 60%{transform:translateY(-50px) rotate(90deg);} 100%{transform:translateY(-5px) rotate(90deg);} }
+    .ep-tx .ep-tx-new { font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;margin-left:12px;color:#a7f3d0;font-weight:700;letter-spacing:.05em; }
+    .ep-tx .ep-tx-dollar { position:absolute;font-size:12px;font-family:monospace;font-weight:900;width:100%;left:0;top:0;color:#064e3b;text-align:center;height:100%;display:flex;align-items:center;justify-content:center; }
+    .ep-tx:hover .ep-tx-dollar { animation:ep-tx-fadein .3s 1s backwards; color:#ffffff; text-shadow:0 0 5px rgba(255,255,255,.8); }
+    @keyframes ep-tx-fadein { 0%{opacity:0;transform:translateY(-5px);} 100%{opacity:1;transform:translateY(0);} }
+
+    /* ── ep-theme: Control Console Dial (theme-button.css) ── */
+    .ep-theme-toggle { --primary:#60a5fa;--light:#e2e8f0;--dark:#0f172a;--gray:#334155;position:relative;z-index:10;width:fit-content;height:36px;border-radius:9999px; }
+    .ep-theme-toggle .ep-toggle-input { display:none; }
+    .ep-theme-toggle .ep-toggle-label {
+      --gap:4px;--width:36px;cursor:pointer;position:relative;display:inline-block;
+      padding:.35rem;width:calc((var(--width) + var(--gap)) * 2);height:100%;
+      background-color:#1e293b;border:2px solid #475569;
+      border-radius:9999px;box-sizing:content-box;transition:all .3s ease-in-out;
+      box-shadow:inset 0 2px 5px rgba(0,0,0,.5);
+    }
+    .ep-theme-toggle .ep-toggle-label::before {
+      content:"SYSTEM CORE";position:absolute;z-index:-10;top:-16px;left:50%;transform:translateX(-50%);
+      font-size:7px;font-family:monospace;font-weight:900;letter-spacing:.1em;color:#64748b;
+      white-space:nowrap;transition:all .3s ease-in-out;
+    }
+    .ep-theme-toggle .ep-toggle-label::after {
+      content:"";position:absolute;z-index:-10;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:100%;height:100%;background-image:radial-gradient(circle at 50% -100%,rgba(96,165,250,.3) 0%,rgba(15,23,42,1) 85%);
+      border-radius:9999px;
+    }
+    .ep-theme-toggle .ep-cont-icon {
+      position:relative;display:flex;justify-content:center;align-items:center;
+      width:var(--width);height:36px;
+      background:linear-gradient(to bottom,#475569,#334155);
+      border:1px solid #64748b;border-radius:9999px;
+      box-shadow:0 3px 5px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.2);transition:transform .3s ease-in-out;
+      overflow:clip;
+    }
+    .ep-theme-toggle .ep-cont-icon .ep-icon-inner { width:1rem;fill:var(--light);filter:drop-shadow(0 0 2px rgba(255,255,255,.5)); }
+    .ep-theme-toggle.ep-checked .ep-toggle-label { border-color:#60a5fa; }
+    .ep-theme-toggle.ep-checked .ep-toggle-label::before { color:#60a5fa; text-shadow:0 0 5px rgba(96,165,250,.5); }
+    .ep-theme-toggle.ep-checked .ep-cont-icon {
+      overflow:visible;
+      background:linear-gradient(to bottom,#2563eb,#1d4ed8);
+      border-color:#60a5fa;
+      transform:translateX(calc((var(--gap) * 2) + 100%)) rotate(-225deg);
+      box-shadow:0 0 10px rgba(96,165,250,.6), inset 0 1px 0 rgba(255,255,255,.3);
+    }
+
+    /* ── ep-alert: Spaceship Comm Channel (info-importants.html) ── */
+    .ep-alert {
+      border:1px solid;padding:1rem;border-radius:12px;
+      display:flex;flex-direction:column;gap:.5rem;
+      transition:all .3s ease-in-out;font-size:.875rem;font-weight:600;
+      position:relative;background-image:linear-gradient(rgba(255,255,255,.015) 50%, rgba(0,0,0,.015) 50%), linear-gradient(90deg, rgba(255,255,255,.015) 50%, rgba(0,0,0,.015) 50%);
+      background-size:4px 4px;box-shadow:inset 0 0 15px rgba(0,0,0,.15);
+    }
+    .ep-alert-header { display:flex;align-items:center;gap:.5rem;border-bottom:1px dashed currentColor;padding-bottom:.4rem;width:100%; }
+    .ep-alert-tag { font-family:monospace;letter-spacing:.15em;font-size:.75rem;font-weight:900;text-transform:uppercase; }
+    .ep-alert-body { font-size:.85rem;line-height:1.4;margin:0;font-weight:500; }
+    .ep-alert:hover { transform:translateY(-2px); box-shadow:inset 0 0 10px rgba(0,0,0,.2), 0 5px 15px rgba(0,0,0,.05); }
+    .ep-alert svg { width:16px;height:16px;flex-shrink:0; }
+    .ep-alert--success { background-color:rgba(16,185,129,.05);border-color:rgba(16,185,129,.3);color:#065f46; }
+    .ep-alert--info { background-color:rgba(59,130,246,.05);border-color:rgba(59,130,246,.3);color:#1e40af; }
+    .ep-alert--warning { background-color:rgba(245,158,11,.05);border-color:rgba(245,158,11,.3);color:#78350f; }
+    .ep-alert--error { background-color:rgba(239,68,68,.05);border-color:rgba(239,68,68,.3);color:#991b1b; }
+    .dark .ep-alert--success { background-color:rgba(16,185,129,.1);border-color:#10b981;color:#34d399;text-shadow:0 0 5px rgba(52,211,153,.3); }
+    .dark .ep-alert--info { background-color:rgba(59,130,246,.1);border-color:#3b82f6;color:#60a5fa;text-shadow:0 0 5px rgba(96,165,250,.3); }
+    .dark .ep-alert--warning { background-color:rgba(245,158,11,.1);border-color:#f59e0b;color:#fbbf24;text-shadow:0 0 5px rgba(251,191,36,.3); }
+    .dark .ep-alert--error { background-color:rgba(239,68,68,.1);border-color:#ef4444;color:#fca5a5;text-shadow:0 0 5px rgba(252,165,165,.3); }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      .ep-shine-btn::before, .ep-shine-btn:hover::before { animation: none !important; }
+      .ep-star-btn .ep-s1,.ep-star-btn .ep-s2,.ep-star-btn .ep-s3,
+      .ep-star-btn .ep-s4,.ep-star-btn .ep-s5,.ep-star-btn .ep-s6 { transition: none !important; }
+      .ep-earth-loader svg { animation: none !important; }
+      .ep-planet-wrap .ep-planet, .ep-planet-wrap .ep-planet .ep-ring { animation: none !important; }
+      .ep-skeleton .ep-sk-bar::before, .ep-skeleton .ep-sk-progress .ep-sk-flow { animation: none !important; }
+      .ep-ticket .ep-t-main::after { animation: none !important; }
+      .ep-tx:hover .ep-tx-card, .ep-tx:hover .ep-tx-dollar { animation: none !important; }
     }
   </style>
 
@@ -132,7 +482,234 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
     const { motion, AnimatePresence, useMotionValue, useTransform, useSpring } = window.Motion;
-    const { ChevronRight, Star, Play, Award, Zap, BookOpen, FlaskConical, Trophy, User, ArrowRight, CheckCircle2, XCircle, Gamepad2, Brain, Compass, Users, Sparkles, Code, Globe, Shield, Lock, Plus, Trash2, Check } = window.LucideReact;
+    const { ChevronRight, Star, Play, Award, Zap, BookOpen, FlaskConical, Trophy, User, ArrowRight, CheckCircle2, XCircle, Gamepad2, Brain, Compass, Users, Sparkles, Code, Globe, Shield, Lock, Plus, Trash2, Check, Sun, Moon, Heart } = window.LucideReact;
+
+    // ═══ UI COMPONENT WRAPPERS ═══
+
+    // Shine CTA Button — used on Hero CTAs and key actions
+    const ShineButton = ({ children, onClick, className = '' }) => (
+      <button className={`ep-shine-btn ${className}`} onClick={onClick}>
+        {children}
+        <svg className="ep-shine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    );
+
+    // Star Explosion Button — used as "Play" action on game cards
+    const StarExplosionBtn = ({ children, onClick, className = '' }) => {
+      const starSvg = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784.11 815.53"><path className="ep-fil0" d="M392.05 0c-20.9 210.08-184.06 378.41-392.05 407.78 207.96 29.37 371.12 197.68 392.05 407.74 20.93-210.06 184.09-378.37 392.05-407.74-207.98-29.38-371.13-197.69-392.05-407.78z"/></svg>;
+      return (
+        <button className={`ep-star-btn ${className}`} onClick={onClick}>
+          {children}
+          <div className="ep-s1">{starSvg}</div>
+          <div className="ep-s2">{starSvg}</div>
+          <div className="ep-s3">{starSvg}</div>
+          <div className="ep-s4">{starSvg}</div>
+          <div className="ep-s5">{starSvg}</div>
+          <div className="ep-s6">{starSvg}</div>
+        </button>
+      );
+    };
+
+    // Favourite Toggle — adds star-favourite to game cards
+    const FavouriteToggle = ({ id, className = '' }) => {
+      const [checked, setChecked] = useState(() => {
+        try { return JSON.parse(localStorage.getItem(`ep_fav_${id}`)) || false; } catch { return false; }
+      });
+      const toggle = (e) => {
+        e.stopPropagation();
+        const next = !checked;
+        setChecked(next);
+        localStorage.setItem(`ep_fav_${id}`, JSON.stringify(next));
+      };
+      return (
+        <label className={`ep-fav ${className}`} onClick={toggle}>
+          <input type="checkbox" checked={checked} readOnly />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </label>
+      );
+    };
+
+    // Star Rating — post-quiz rating component
+    const StarRatingInput = ({ onRate, className = '' }) => {
+      const [value, setValue] = useState(0);
+      const handleRate = (v) => { setValue(v); if (onRate) onRate(v); };
+      return (
+        <div className={`ep-rating ${className}`}>
+          {[5,4,3,2,1].map(v => (
+            <React.Fragment key={v}>
+              <input type="radio" id={`ep-star-${v}`} name="ep-rating" checked={value === v} onChange={() => handleRate(v)} />
+              <label htmlFor={`ep-star-${v}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </label>
+            </React.Fragment>
+          ))}
+        </div>
+      );
+    };
+
+    // Skeleton Loader — glassmorphic upload card skeleton
+    const SkeletonLoader = ({ className = '' }) => (
+      <div className={`ep-skeleton ${className}`}>
+        <div className="ep-sk-head">
+          <div className="ep-sk-icon"></div>
+          <div style={{display:'flex',flexDirection:'column',gap:'6px'}}>
+            <div className="ep-sk-bar ep-sk-title"></div>
+            <div className="ep-sk-bar ep-sk-sub"></div>
+          </div>
+          <div className="ep-sk-pill">Cargando...</div>
+        </div>
+        <div className="ep-sk-mid">
+          <div className="ep-sk-bar ep-sk-wide"></div>
+          <div className="ep-sk-bar ep-sk-short"></div>
+          <div className="ep-sk-bar ep-sk-wide"></div>
+        </div>
+        <div className="ep-sk-progress">
+          <div className="ep-sk-flow"></div>
+        </div>
+      </div>
+    );
+
+    // Earth Globe Loader — used during quiz loading
+    const EarthLoader = ({ className = '' }) => {
+      const land = <svg fill="#7cc133" viewBox="0 0 100 50"><ellipse cx="50" cy="25" rx="40" ry="22"/></svg>;
+      return (
+        <div className={`ep-earth-loader ${className}`}>
+          {land}{land}{land}{land}
+        </div>
+      );
+    };
+
+    // Planet Orbital Loader — page transitions
+    const PlanetLoader = ({ text = 'Cargando', className = '' }) => (
+      <div className={`ep-planet-wrap ${className}`}>
+        <div className="ep-planet">
+          <div className="ep-ring"></div>
+          <div className="ep-cover-ring"></div>
+          <div className="ep-spots">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <p>{text}</p>
+      </div>
+    );
+
+    // Ticket Profile Card — used in Dashboard profile section
+    const TicketProfileCard = ({ user, className = '' }) => (
+      <div className={`ep-ticket-wrap ${className}`}>
+        <div className="ep-ticket">
+          <div className="ep-t-main">
+            <div className="ep-t-content">
+              <div className="ep-t-header">
+                <div className="ep-t-logo">
+                  <Gamepad2 size={15} />
+                  <span>EduPlay</span>
+                </div>
+                <span className="ep-t-type">Aventurero</span>
+              </div>
+              <div className="ep-t-title">{user.name}</div>
+              <div className="ep-t-subtitle">Nivel {user.level} · {user.xp} XP</div>
+              <div className="ep-t-details">
+                <div><div className="ep-t-label">Racha</div><div className="ep-t-value">{user.streak} días</div></div>
+                <div><div className="ep-t-label">Retos</div><div className="ep-t-value">{user.completedChallenges || 0}</div></div>
+                <div><div className="ep-t-label">Insignias</div><div className="ep-t-value">{user.badges?.length || 0}</div></div>
+                <div><div className="ep-t-label">Siguiente</div><div className="ep-t-value">Lvl {user.level + 1}</div></div>
+              </div>
+            </div>
+          </div>
+          <div className="ep-t-perf">
+            <div style={{width:'1em',height:'1em',borderRadius:'50%',background:'var(--t-bg)',border:'2px solid rgba(255,255,255,.1)'}}></div>
+            <div className="ep-t-perf-line"></div>
+            <div style={{width:'1em',height:'1em',borderRadius:'50%',background:'var(--t-bg)',border:'2px solid rgba(255,255,255,.1)'}}></div>
+          </div>
+          <div className="ep-t-stub">
+            <div>
+              <div className="ep-t-barcode"></div>
+              <div className="ep-t-barcode-id">EP-{String(user.level).padStart(3,'0')}-{user.xp}</div>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <div className="ep-t-admit-text">Nivel</div>
+              <div className="ep-t-admit-num">{user.level}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // Transaction Reward Card — XP gain animation
+    const TransactionCard = ({ amount = '+50 XP', className = '' }) => (
+      <div className={`ep-tx ${className}`} title="Núcleo de Energía XP">
+        <div className="ep-tx-left">
+          <div className="ep-tx-card">
+            <div className="ep-tx-card-line"></div>
+          </div>
+          <span className="ep-tx-dollar">{amount}</span>
+        </div>
+        <div className="ep-tx-right">
+          <span className="ep-tx-new">CRÉDITO XP</span>
+          <ArrowRight size={16} style={{marginRight:'12px',color:'#10b981'}} />
+        </div>
+      </div>
+    );
+
+    // Alert Banners — notifications system
+    const AlertBanner = ({ type = 'info', children, className = '' }) => {
+      const titles = {
+        success: 'MISIÓN CUMPLIDA',
+        info: 'SISTEMA DE LA NAVE',
+        warning: 'REPORTE DE SENSORES',
+        error: 'ALERTA DE SISTEMA'
+      };
+      const icons = {
+        success: <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/></svg>,
+        info: <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/></svg>,
+        warning: <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/></svg>,
+        error: <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/></svg>,
+      };
+      return (
+        <div className={`ep-alert ep-alert--${type} ${className}`}>
+          <div className="ep-alert-header">
+            {icons[type]}
+            <span className="ep-alert-tag">{titles[type]}</span>
+          </div>
+          <p className="ep-alert-body">{children}</p>
+        </div>
+      );
+    };
+
+    // Premium Theme Toggle — replaces navbar toggle
+    const PremiumThemeToggle = ({ isDark, onToggle }) => (
+      <div className={`ep-theme-toggle ${isDark ? 'ep-checked' : ''}`} onClick={onToggle} title={isDark ? 'Modo día' : 'Modo noche'}>
+        <input type="checkbox" className="ep-toggle-input" checked={isDark} readOnly />
+        <label className="ep-toggle-label">
+          <div className="ep-cont-icon">
+            {isDark ? (
+              <Sun size={14} className="ep-icon-inner" style={{fill:'var(--light)'}} />
+            ) : (
+              <Moon size={14} className="ep-icon-inner" style={{fill:'var(--light)'}} />
+            )}
+          </div>
+        </label>
+      </div>
+    );
+
+    // GitHub Star Button — footer element
+    const GitHubStarButton = ({ className = '' }) => (
+      <a
+        href="#"
+        className={`inline-flex overflow-hidden items-center text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow hover:bg-zinc-800 dark:hover:bg-zinc-100 h-9 px-4 py-2 max-w-52 whitespace-pre group relative w-fit justify-center gap-2 rounded-xl transition-all duration-300 ease-out hover:ring-2 hover:ring-zinc-900 dark:hover:ring-zinc-300 hover:ring-offset-2 ${className}`}
+      >
+        <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-40"></span>
+        <div className="flex items-center">
+          <svg className="w-4 h-4 fill-current" viewBox="0 0 438.549 438.549"><path d="M409.132 114.573c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.063-29.408-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8C9.803 148.168 0 184.854 0 224.63c0 47.78 13.94 90.745 41.827 128.906 27.884 38.164 63.906 64.572 108.063 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417a2549.81 2549.81 0 01-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289 1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136 6.28 0 11.704-.476 16.274-1.423 4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.068-79.226 27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049z"/></svg>
+          <span className="ml-1">Star on GitHub</span>
+        </div>
+        <div className="ml-2 flex items-center gap-1 text-sm">
+          <Star size={14} className="text-zinc-400 group-hover:text-yellow-400 transition-colors duration-300" fill="currentColor" />
+          <span className="font-medium tabular-nums">6</span>
+        </div>
+      </a>
+    );
+
 
     // --- MOCK DATA ---
     const MOCK_USER = {
@@ -224,166 +801,107 @@
     };
 
     // --- REUSABLE COMPONENTS ---
-    const GalaxyCanvas = ({ isActive, mouseX = 0, mouseY = 0 }) => {
-      const canvasRef = React.useRef(null);
+    const Magnetic = ({ children }) => {
+      const ref = React.useRef(null);
+      const x = useMotionValue(0);
+      const y = useMotionValue(0);
+      const springX = useSpring(x, { stiffness: 120, damping: 15, mass: 0.6 });
+      const springY = useSpring(y, { stiffness: 120, damping: 15, mass: 0.6 });
 
-      React.useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+      const handleMouseMove = (e) => {
+        const { clientX, clientY } = e;
+        const rect = ref.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distanceX = clientX - centerX;
+        const distanceY = clientY - centerY;
+        x.set(distanceX * 0.35);
+        y.set(distanceY * 0.35);
+      };
 
-        const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let stars = [];
-        let width = canvas.width = canvas.offsetWidth || 300;
-        let height = canvas.height = canvas.offsetHeight || 400;
-
-        // Nebula states
-        let nebulaAngle = 0;
-
-        // Initialize stars
-        const starCount = 45;
-        const colors = [
-          'rgba(255, 255, 255, ',
-          'rgba(173, 216, 230, ', // Light blue
-          'rgba(253, 224, 71, ',  // Yellow-500
-          'rgba(244, 63, 94, '    // Rose-500
-        ];
-
-        for (let i = 0; i < starCount; i++) {
-          stars.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            size: Math.random() * 1.5 + 0.5,
-            speedX: (Math.random() - 0.5) * 0.15,
-            speedY: (Math.random() - 0.5) * 0.15,
-            twinkleSpeed: Math.random() * 0.03 + 0.01,
-            phase: Math.random() * Math.PI * 2,
-            colorPrefix: colors[Math.floor(Math.random() * colors.length)]
-          });
-        }
-
-        const handleResize = () => {
-          if (!canvas) return;
-          width = canvas.width = canvas.offsetWidth;
-          height = canvas.height = canvas.offsetHeight;
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        const render = () => {
-          ctx.clearRect(0, 0, width, height);
-
-          // 1. Draw Space Background (Zinc-950 gradient)
-          const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-          bgGrad.addColorStop(0, '#09090b');
-          bgGrad.addColorStop(1, '#020205');
-          ctx.fillStyle = bgGrad;
-          ctx.fillRect(0, 0, width, height);
-
-          // 2. Draw 2 Animated Nebulas (Radial Gradients with dynamic coordinates)
-          nebulaAngle += 0.003;
-          const neb1X = width / 2 + Math.cos(nebulaAngle) * (width * 0.15);
-          const neb1Y = height / 2 + Math.sin(nebulaAngle) * (height * 0.15);
-          const neb1 = ctx.createRadialGradient(neb1X, neb1Y, 10, neb1X, neb1Y, Math.max(width, height) * 0.6);
-          neb1.addColorStop(0, 'rgba(37, 99, 235, 0.25)'); // Blue-600 tint
-          neb1.addColorStop(0.5, 'rgba(139, 92, 246, 0.12)'); // Violet-500 tint
-          neb1.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = neb1;
-          ctx.fillRect(0, 0, width, height);
-
-          const neb2X = width / 2 - Math.sin(nebulaAngle * 0.8) * (width * 0.2);
-          const neb2Y = height / 2 - Math.cos(nebulaAngle * 0.8) * (height * 0.2);
-          const neb2 = ctx.createRadialGradient(neb2X, neb2Y, 5, neb2X, neb2Y, Math.max(width, height) * 0.5);
-          neb2.addColorStop(0, 'rgba(6, 182, 212, 0.2)'); // Cyan-500 tint
-          neb2.addColorStop(0.5, 'rgba(236, 72, 153, 0.08)'); // Pink-500 tint
-          neb2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = neb2;
-          ctx.fillRect(0, 0, width, height);
-
-          // 3. Parallax offset calculated from cursor position
-          // Shift drawing of stars slightly opposite to mouse movement from center
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const parallaxX = -(mouseX - centerX) * 0.08;
-          const parallaxY = -(mouseY - centerY) * 0.08;
-
-          // 4. Draw Stars
-          stars.forEach(star => {
-            // Twinkle logic
-            star.phase += star.twinkleSpeed;
-            const opacity = (Math.sin(star.phase) + 1) / 2 * 0.7 + 0.3;
-
-            // Update star position (ambient slow drift)
-            star.x += star.speedX;
-            star.y += star.speedY;
-
-            // Wrap around screen edges
-            if (star.x < 0) star.x = width;
-            if (star.x > width) star.x = 0;
-            if (star.y < 0) star.y = height;
-            if (star.y > height) star.y = 0;
-
-            // Apply Parallax shift
-            let drawX = star.x + parallaxX;
-            let drawY = star.y + parallaxY;
-
-            // Wrap parallaxed positions too to avoid empty spots
-            if (drawX < 0) drawX += width;
-            if (drawX > width) drawX -= width;
-            if (drawY < 0) drawY += height;
-            if (drawY > height) drawY -= height;
-
-            ctx.beginPath();
-            ctx.arc(drawX, drawY, star.size, 0, Math.PI * 2);
-            ctx.fillStyle = star.colorPrefix + opacity + ')';
-            ctx.fill();
-          });
-
-          animationFrameId = requestAnimationFrame(render);
-        };
-
-        if (isActive) {
-          render();
-        } else {
-          // Static starfield when inactive to prevent blank frame during transit
-          ctx.clearRect(0, 0, width, height);
-          ctx.fillStyle = '#09090b';
-          ctx.fillRect(0, 0, width, height);
-        }
-
-        return () => {
-          cancelAnimationFrame(animationFrameId);
-          window.removeEventListener('resize', handleResize);
-        };
-      }, [isActive, mouseX, mouseY]);
+      const handleMouseLeave = () => {
+        x.set(0);
+        y.set(0);
+      };
 
       return (
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 w-full h-full pointer-events-none rounded-[1.8rem]"
-          style={{ display: 'block' }}
-        />
+        <motion.div
+          ref={ref}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{ x: springX, y: springY }}
+        >
+          {children}
+        </motion.div>
       );
     };
+
     const Button = ({ children, variant = 'primary', size = 'md', className = '', onClick, ...props }) => {
-      const base = "inline-flex items-center justify-center rounded-2xl font-bold transition-all duration-300 relative overflow-hidden group";
+      const [ripples, setRipples] = useState([]);
+      
+      const createRipple = (event) => {
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        const newRipple = {
+          id: Date.now() + Math.random(),
+          x,
+          y,
+          size
+        };
+        
+        setRipples(prev => [...prev, newRipple]);
+      };
+
+      const handleButtonClick = (e) => {
+        createRipple(e);
+        if (onClick) onClick(e);
+      };
+
+      const base = "inline-flex items-center justify-center rounded-2xl font-bold transition-all duration-300 relative overflow-hidden group active:scale-[0.97] select-none";
       const variants = {
-        primary: "bg-blue-600 text-white shadow-[0_8px_30px_rgb(37,99,235,0.3)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.5)] hover:-translate-y-1",
-        secondary: "bg-white text-zinc-800 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 shadow-sm hover:-translate-y-1",
-        ghost: "bg-transparent text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
-        glow: "bg-zinc-900 text-white shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] border border-zinc-700 hover:-translate-y-1"
+        primary: "bg-blue-600 text-white shadow-[0_8px_30px_rgb(37,99,235,0.3)] hover:shadow-[0_8px_30px_rgb(37,99,235,0.5)] dark:shadow-[0_8px_30px_rgba(37,99,235,0.15)] hover:-translate-y-0.5",
+        secondary: "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-650 hover:bg-zinc-50 dark:hover:bg-zinc-750 shadow-sm hover:-translate-y-0.5",
+        ghost: "bg-transparent text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100",
+        glow: "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(255,255,255,0.25)] border border-zinc-700 dark:border-zinc-300 hover:-translate-y-0.5"
       };
       const sizes = { sm: "px-4 py-2 text-sm", md: "px-6 py-3 text-base", lg: "px-8 py-4 text-lg" };
       
       return (
         <motion.button 
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.97 }}
           className={`${base} ${variants[variant]} ${sizes[size]} ${className}`} 
-          onClick={onClick}
+          onClick={handleButtonClick}
           {...props}
         >
           {variant === 'primary' && <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />}
-          <span className="relative flex items-center justify-center gap-2">{children}</span>
+          
+          {ripples.map(ripple => (
+            <motion.span
+              key={ripple.id}
+              initial={{ scale: 0, opacity: 0.45 }}
+              animate={{ scale: 4, opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              onAnimationComplete={() => {
+                setRipples(prev => prev.filter(r => r.id !== ripple.id));
+              }}
+              style={{
+                position: "absolute",
+                left: ripple.x,
+                top: ripple.y,
+                width: ripple.size,
+                height: ripple.size,
+                borderRadius: "50%",
+                backgroundColor: variant === 'primary' ? "rgba(255, 255, 255, 0.4)" : "rgba(37, 99, 235, 0.2)",
+                pointerEvents: "none",
+                zIndex: 0
+              }}
+            />
+          ))}
+          <span className="relative flex items-center justify-center gap-2 z-10">{children}</span>
         </motion.button>
       );
     };
@@ -470,10 +988,13 @@
           </div>
           
           <div className="mt-6 flex items-center justify-between relative z-20" style={{ transform: "translateZ(20px)" }}>
-            <div className="flex -space-x-3">
-              {[1,2,3].map(i => (
-                <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+title}&backgroundColor=e2e8f0`} className={`w-10 h-10 rounded-full border-2 shadow-sm ${isDarkTheme ? 'border-zinc-800' : 'border-white'}`} alt="player" />
-              ))}
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-3">
+                {[1,2,3].map(i => (
+                  <img key={i} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+title}&backgroundColor=e2e8f0`} className={`w-10 h-10 rounded-full border-2 shadow-sm ${isDarkTheme ? 'border-zinc-800' : 'border-white'}`} alt="player" />
+                ))}
+              </div>
+              {!locked && <FavouriteToggle id={id} />}
             </div>
             {locked ? (
               <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200'}`}>
@@ -489,13 +1010,199 @@
       );
     };
 
-    const PremiumGameCard = ({ id, title, subject, level, duration, points, color, bg, icon: Icon, image, description, locked, tag, onClick }) => {
+    const InkReveal = ({
+      mouseX,
+      mouseY,
+      active,
+      maskColor = [252, 250, 248],
+      brushSize = 128,
+      lifetime = 600,
+      rStart = 10,
+      rVary = 0.45,
+      stampStep = 10,
+      maxStamps = 200,
+      segments = 36,
+      wobble = [0.14, 0.08, 0.05],
+      gradientInnerRadius = 0.2,
+      gradientStops = [0.95, 0.88, 0],
+      className = "",
+      style = {},
+    }) => {
+      const canvasRef = React.useRef(null);
+      const stampsRef = React.useRef([]);
+      const runningRef = React.useRef(false);
+      const lastPosRef = React.useRef(null);
+      const dimsRef = React.useRef({ w: 0, h: 0 });
+
+      const mc = maskColor;
+
+      const resize = React.useCallback(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const parent = canvas.parentElement;
+        if (!parent) return;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const rect = parent.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+        dimsRef.current = { w, h };
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${h}px`;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = `rgb(${mc[0]},${mc[1]},${mc[2]})`;
+        ctx.fillRect(0, 0, w, h);
+      }, [mc]);
+
+      const carveInk = React.useCallback(
+        (ctx, x, y, r, seed, alpha) => {
+          const g = ctx.createRadialGradient(
+            x, y, r * gradientInnerRadius,
+            x, y, r
+          );
+          g.addColorStop(0, `rgba(0,0,0,${gradientStops[0] * alpha})`);
+          g.addColorStop(0.5, `rgba(0,0,0,${gradientStops[1] * alpha})`);
+          g.addColorStop(1, `rgba(0,0,0,${gradientStops[2] * alpha})`);
+          ctx.fillStyle = g;
+
+          ctx.beginPath();
+          for (let i = 0; i <= segments; i++) {
+            const a = (i / segments) * Math.PI * 2;
+            const wob =
+              0.78 +
+              wobble[0] * Math.sin(a * 3 + seed) +
+              wobble[1] * Math.sin(a * 5 + seed * 2.1) +
+              wobble[2] * Math.sin(a * 7 + seed * 0.7);
+            const px = x + Math.cos(a) * r * wob;
+            const py = y + Math.sin(a) * r * wob;
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.fill();
+        },
+        [segments, wobble, gradientInnerRadius, gradientStops]
+      );
+
+      const addStamp = React.useCallback(
+        (x, y) => {
+          const stamps = stampsRef.current;
+          if (stamps.length >= maxStamps) stamps.shift();
+          stamps.push({
+            x,
+            y,
+            born: performance.now(),
+            seed: Math.random() * Math.PI * 2,
+            rmax: brushSize * (1 - rVary + Math.random() * rVary),
+          });
+        },
+        [brushSize, rVary, maxStamps]
+      );
+
+      const stampAlong = React.useCallback(
+        (x, y) => {
+          const last = lastPosRef.current;
+          if (!last) {
+            addStamp(x, y);
+          } else {
+            const dx = x - last.x;
+            const dy = y - last.y;
+            const dist = Math.hypot(dx, dy);
+            const steps = Math.max(1, Math.ceil(dist / stampStep));
+            for (let i = 1; i <= steps; i++) {
+              addStamp(last.x + (dx * i) / steps, last.y + (dy * i) / steps);
+            }
+          }
+          lastPosRef.current = { x, y };
+        },
+        [addStamp, stampStep]
+      );
+
+      const loop = React.useCallback(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        const { w, h } = dimsRef.current;
+        const now = performance.now();
+        const stamps = stampsRef.current;
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = `rgb(${mc[0]},${mc[1]},${mc[2]})`;
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = "destination-out";
+
+        for (let i = stamps.length - 1; i >= 0; i--) {
+          const t = (now - stamps[i].born) / lifetime;
+          if (t >= 1) {
+            stamps.splice(i, 1);
+            continue;
+          }
+          const ease = 1 - Math.pow(1 - t, 3);
+          const r = rStart + (stamps[i].rmax - rStart) * ease;
+          const alpha = 1 - t * t;
+          carveInk(ctx, stamps[i].x, stamps[i].y, r, stamps[i].seed, alpha);
+        }
+
+        if (stamps.length) {
+          requestAnimationFrame(loop);
+        } else {
+          runningRef.current = false;
+        }
+      }, [carveInk, mc, lifetime, rStart]);
+
+      const startLoop = React.useCallback(() => {
+        if (!runningRef.current) {
+          runningRef.current = true;
+          requestAnimationFrame(loop);
+        }
+      }, [loop]);
+
+      useEffect(() => {
+        resize();
+        window.addEventListener("resize", resize);
+        return () => window.removeEventListener("resize", resize);
+      }, [resize]);
+
+      useEffect(() => {
+        if (active && mouseX !== null && mouseY !== null && mouseX !== undefined && mouseY !== undefined) {
+          stampAlong(mouseX, mouseY);
+          startLoop();
+        } else {
+          lastPosRef.current = null;
+        }
+      }, [mouseX, mouseY, active, stampAlong, startLoop]);
+
+      return (
+        <canvas
+          ref={canvasRef}
+          className={className}
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: "none",
+            ...style,
+          }}
+        />
+      );
+    };
+
+    const PremiumGameCard = ({ id, title, subject, level, duration, points, color, bg, icon: Icon, image, description, locked, tag, onClick, isDark }) => {
       const cardRef = React.useRef(null);
       const x = useMotionValue(0);
       const y = useMotionValue(0);
       const [isHovered, setIsHovered] = useState(false);
-      const [mouseX, setMouseX] = useState(0);
-      const [mouseY, setMouseY] = useState(0);
+      const [localMouse, setLocalMouse] = useState({ x: null, y: null });
+      
+      const mX = useMotionValue(150);
+      const mY = useMotionValue(200);
+      const mXSpring = useSpring(mX, { stiffness: 80, damping: 15 });
+      const mYSpring = useSpring(mY, { stiffness: 80, damping: 15 });
 
       const mouseXSpring = useSpring(x);
       const mouseYSpring = useSpring(y);
@@ -508,22 +1215,18 @@
         const rect = e.currentTarget.getBoundingClientRect();
         const width = rect.width;
         const height = rect.height;
-        const mX = e.clientX - rect.left;
-        const mY = e.clientY - rect.top;
+        const rawX = e.clientX - rect.left;
+        const rawY = e.clientY - rect.top;
         
-        // Direct CSS variable updates for spotlight and shine positioning
-        if (cardRef.current) {
-          cardRef.current.style.setProperty('--mouse-x', `${mX}px`);
-          cardRef.current.style.setProperty('--mouse-y', `${mY}px`);
-        }
+        mX.set(rawX);
+        mY.set(rawY);
+        setLocalMouse({ x: rawX, y: rawY });
 
-        const xPct = mX / width - 0.5;
-        const yPct = mY / height - 0.5;
+        const xPct = rawX / width - 0.5;
+        const yPct = rawY / height - 0.5;
         x.set(xPct);
         y.set(yPct);
 
-        setMouseX(mX);
-        setMouseY(mY);
         setIsHovered(true);
       };
 
@@ -531,6 +1234,7 @@
         x.set(0);
         y.set(0);
         setIsHovered(false);
+        setLocalMouse({ x: null, y: null });
       };
 
       const finalImageUrl = getImageUrl(image, id, title, isHovered);
@@ -538,11 +1242,17 @@
       return (
         <motion.div
           ref={cardRef}
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+          style={{ 
+            rotateX, 
+            rotateY, 
+            transformStyle: "preserve-3d",
+            "--mouse-x": useTransform(mXSpring, (v) => `${v}px`),
+            "--mouse-y": useTransform(mYSpring, (v) => `${v}px`),
+          }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           onClick={onClick}
-          className={`relative w-full rounded-[2rem] p-1 cursor-pointer group bg-gradient-to-b from-white to-zinc-50 border border-zinc-200 shadow-sm hover:shadow-2xl transition-shadow duration-500 ${locked ? 'opacity-85' : ''}`}
+          className={`relative w-full rounded-[2rem] p-1 cursor-pointer group bg-gradient-to-b from-white to-zinc-50 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-2xl transition-shadow duration-500 ${locked ? 'opacity-85' : ''}`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
@@ -554,8 +1264,8 @@
             }}
           />
 
-          <div className="relative bg-white rounded-[1.8rem] h-full flex flex-col z-10 overflow-hidden">
-            {/* Base Light Card Content */}
+          <div className="relative bg-white dark:bg-zinc-900 rounded-[1.8rem] h-full flex flex-col z-10 overflow-hidden">
+            {/* Base Card Content */}
             <CardContentLayout
               id={id}
               title={title}
@@ -568,13 +1278,12 @@
               finalImageUrl={finalImageUrl}
               description={description}
               locked={locked}
-              isDarkTheme={false}
+              isDarkTheme={isDark}
               tag={tag}
             />
 
-            {/* Spotlight Mask Overlay Layer (Galaxy Canvas + Dark Card Content) */}
-            <div className="card-spotlight-overlay">
-              <GalaxyCanvas isActive={isHovered} mouseX={mouseX} mouseY={mouseY} />
+            {/* Spotlight Mask Overlay Layer (Dark Card Content) */}
+            <div className="card-spotlight-overlay" style={{ maskImage: "none", WebkitMaskImage: "none" }}>
               <CardContentLayout
                 id={id}
                 title={title}
@@ -590,14 +1299,40 @@
                 isDarkTheme={true}
                 tag={tag}
               />
+              <InkReveal
+                mouseX={localMouse.x}
+                mouseY={localMouse.y}
+                active={isHovered}
+                maskColor={isDark ? [9, 9, 11] : [255, 255, 255]}
+                brushSize={100}
+                className="absolute inset-0 z-10 pointer-events-none"
+              />
             </div>
           </div>
         </motion.div>
       );
     };
 
-    // --- VIEWS ---
-    const Landing = ({ onNavigate, onLockClick, games = [] }) => {
+    const SplitText = ({ text, className = "" }) => {
+      const words = text.split(" ");
+      return (
+        <span className={className}>
+          {words.map((word, wIdx) => (
+            <span key={wIdx} className="inline-block whitespace-nowrap mr-[0.25em]">
+              {word.split("").map((char, cIdx) => (
+                <span key={cIdx} className="inline-block overflow-hidden relative leading-none">
+                  <span className="split-char inline-block translate-y-full opacity-0">
+                    {char}
+                  </span>
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
+      );
+    };
+
+    const Landing = ({ onNavigate, onLockClick, games = [], theme }) => {
       const [email, setEmail] = useState('');
       const [status, setStatus] = useState(() => {
         const saved = localStorage.getItem('eduplay_subscribed_email');
@@ -631,11 +1366,12 @@
             }
           });
 
-          // Panel 1: Out of view
-          tl.to(".panel-1", { opacity: 0, scale: 0.9, duration: 1 })
+          // Stagger reveal character entries in Hero Scroll trigger
+          tl.to(".panel-1 h1 .split-char", { y: "0%", opacity: 1, stagger: 0.03, ease: "power2.out", duration: 1.5 })
+            .to(".panel-1", { opacity: 0, scale: 0.9, duration: 1.2 })
             
             // Panel 2: Showcase Images fly in
-            .to(".panel-2", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .to(".panel-2", { opacity: 1, pointerEvents: "auto", duration: 1.2 }, "<")
             .from(".hero-img-left", { x: "-100vw", rotation: -45, ease: "power2.out", duration: 1.5 }, "<")
             .from(".hero-img-right", { x: "100vw", rotation: 45, ease: "power2.out", duration: 1.5 }, "<")
             .from(".hero-img-center", { y: "100vh", rotation: 0, ease: "power2.out", duration: 1.5 }, "<")
@@ -644,38 +1380,40 @@
             .to(".panel-2", { opacity: 0, pointerEvents: "none", duration: 1, delay: 0.5 })
             
             // Panel 3: Stats appear
-            .to(".panel-3", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .to(".panel-3", { opacity: 1, pointerEvents: "auto", duration: 1.2 }, "<")
             .from(".hero-stat-card", { y: 60, opacity: 0, stagger: 0.2, ease: "back.out(1.7)", duration: 1.2 }, "<")
             
             // Panel 3: Out of view
             .to(".panel-3", { opacity: 0, pointerEvents: "none", duration: 1, delay: 0.5 })
             
             // Panel 4: Final CTA appears
-            .to(".panel-4", { opacity: 1, pointerEvents: "auto", duration: 1 }, "<")
+            .to(".panel-4", { opacity: 1, pointerEvents: "auto", duration: 1.2 }, "<")
             .from(".panel-4 h2, .panel-4 p, .panel-4 .flex-container", { y: 40, opacity: 0, stagger: 0.15, ease: "power3.out", duration: 1.2 }, "<");
         });
 
         return () => ctx.revert();
       }, []);
 
+      const isAppDark = theme === 'dark';
+
       return (
-        <div className="min-h-screen pt-20 bg-zinc-950 text-white">
+        <div className="min-h-screen pt-20 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300">
           {/* Scroll Container wrapper (400vh height to trigger scroll timeline) */}
           <div className="relative h-[400vh] w-full hero-scroll-container">
             {/* Sticky Stage (pinned container) */}
-            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex flex-col justify-center items-center bg-zinc-950 text-white z-10">
+            <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex flex-col justify-center items-center bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white z-10 transition-colors duration-300">
               {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-950/30 via-zinc-950 to-purple-950/30 z-0 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-50/10 via-white to-purple-50/10 dark:from-blue-950/20 dark:via-zinc-950 dark:to-purple-950/20 z-0 pointer-events-none" />
               
               {/* Panel 1: Title & Eyebrow */}
               <div className="panel-1 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10">
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-300 font-bold text-sm shadow-sm mb-6 uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 font-bold text-sm shadow-sm mb-6 uppercase tracking-wider transition-colors">
                   <Sparkles size={16} className="text-yellow-500"/> Nueva forma de aprender
                 </span>
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1] max-w-5xl mb-6">
-                  Descubre un <span className="gradient-text bg-gradient-to-r from-blue-400 to-purple-400">universo</span> de conocimiento.
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1] max-w-5xl mb-6 text-zinc-900 dark:text-white">
+                  <SplitText text="Descubre un" /> <span className="gradient-text bg-gradient-to-r from-blue-600 to-purple-500 dark:from-blue-400 dark:to-purple-400 inline-block"><SplitText text="universo" /></span> <SplitText text="de conocimiento." />
                 </h1>
-                <p className="text-lg sm:text-xl text-zinc-400 max-w-2xl font-medium leading-relaxed">
+                <p className="text-lg sm:text-xl text-zinc-655 dark:text-zinc-400 max-w-2xl font-medium leading-relaxed transition-colors">
                   Plataforma premium de aprendizaje gamificado. Retos diarios, medallas y un catálogo infinito para entrenar tu mente de forma interactiva.
                 </p>
               </div>
@@ -683,33 +1421,33 @@
               {/* Panel 2: Showcase Cards */}
               <div className="panel-2 absolute inset-0 flex justify-center items-center z-10 pointer-events-none opacity-0">
                 <div className="relative w-full max-w-6xl h-full flex justify-between items-center px-12">
-                  <div className="hero-img-left absolute left-10 w-72 h-[340px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl rotate-[-12deg] p-6 flex flex-col justify-between">
-                    <div className="h-40 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400">
+                  <div className="hero-img-left absolute left-10 w-72 h-[340px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded-3xl overflow-hidden shadow-2xl rotate-[-12deg] p-6 flex flex-col justify-between transition-colors duration-300">
+                    <div className="h-40 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 dark:text-blue-400">
                       <Gamepad2 size={56} />
                     </div>
                     <div className="text-left mt-4">
-                      <div className="font-bold text-xl text-white">Aventura Matemática</div>
-                      <div className="text-zinc-500 text-sm mt-1">Resuelve acertijos matemáticos y sube de nivel.</div>
+                      <div className="font-bold text-xl text-zinc-900 dark:text-white">Aventura Matemática</div>
+                      <div className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Resuelve acertijos matemáticos y sube de nivel.</div>
                     </div>
                   </div>
                   
-                  <div className="hero-img-center absolute bottom-12 left-1/2 -translate-x-1/2 w-80 h-[360px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl p-6 flex flex-col justify-between">
-                    <div className="h-44 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-400">
+                  <div className="hero-img-center absolute bottom-12 left-1/2 -translate-x-1/2 w-80 h-[360px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded-3xl overflow-hidden shadow-2xl p-6 flex flex-col justify-between transition-colors duration-300">
+                    <div className="h-44 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500 dark:text-purple-400">
                       <Brain size={64} />
                     </div>
                     <div className="text-left mt-4">
-                      <div className="font-bold text-xl text-white">Memoria Espacial</div>
-                      <div className="text-zinc-500 text-sm mt-1">Pon a prueba tu retención visual y memoriza.</div>
+                      <div className="font-bold text-xl text-zinc-900 dark:text-white">Memoria Espacial</div>
+                      <div className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Pon a prueba tu retención visual y memoriza.</div>
                     </div>
                   </div>
 
-                  <div className="hero-img-right absolute right-10 w-72 h-[340px] bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl rotate-[12deg] p-6 flex flex-col justify-between">
-                    <div className="h-40 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-400">
+                  <div className="hero-img-right absolute right-10 w-72 h-[340px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-850 rounded-3xl overflow-hidden shadow-2xl rotate-[12deg] p-6 flex flex-col justify-between transition-colors duration-300">
+                    <div className="h-40 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 dark:text-green-400">
                       <FlaskConical size={56} />
                     </div>
                     <div className="text-left mt-4">
-                      <div className="font-bold text-xl text-white">Laboratorio Químico</div>
-                      <div className="text-zinc-500 text-sm mt-1">Combina elementos en el lab virtual.</div>
+                      <div className="font-bold text-xl text-zinc-900 dark:text-white">Laboratorio Químico</div>
+                      <div className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">Combina elementos en el lab virtual.</div>
                     </div>
                   </div>
                 </div>
@@ -717,56 +1455,56 @@
 
               {/* Panel 3: Stats */}
               <div className="panel-3 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
-                <h2 className="text-4xl lg:text-5xl font-bold mb-16">
-                  Aprendizaje que <span className="gradient-text bg-gradient-to-r from-blue-400 to-cyan-400">engancha.</span>
+                <h2 className="text-4xl lg:text-5xl font-bold mb-16 text-zinc-900 dark:text-white">
+                  Aprendizaje que <span className="gradient-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">engancha.</span>
                 </h2>
                 <div className="grid md:grid-cols-3 gap-8 max-w-5xl w-full">
-                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
-                    <div className="text-5xl font-black text-blue-400 mb-2">+10k</div>
-                    <div className="font-bold text-white text-lg mb-1">Estudiantes Activos</div>
-                    <div className="text-zinc-500 text-sm">Entrenando su mente a diario en todo el mundo.</div>
+                  <div className="hero-stat-card bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm transition-colors duration-300">
+                    <div className="text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">+10k</div>
+                    <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Estudiantes Activos</div>
+                    <div className="text-zinc-500 dark:text-zinc-400 text-sm">Entrenando su mente a diario en todo el mundo.</div>
                   </div>
-                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
-                    <div className="text-5xl font-black text-purple-400 mb-2">98%</div>
-                    <div className="font-bold text-white text-lg mb-1">Retención Escolar</div>
-                    <div className="text-zinc-500 text-sm">Altamente motivados con rachas y medallas.</div>
+                  <div className="hero-stat-card bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm transition-colors duration-300">
+                    <div className="text-5xl font-black text-purple-650 dark:text-purple-400 mb-2">98%</div>
+                    <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Retención Escolar</div>
+                    <div className="text-zinc-500 dark:text-zinc-400 text-sm">Altamente motivados con rachas y medallas.</div>
                   </div>
-                  <div className="hero-stat-card bg-zinc-900/50 border border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm">
-                    <div className="text-5xl font-black text-cyan-400 mb-2">+50</div>
-                    <div className="font-bold text-white text-lg mb-1">Juegos Premium</div>
-                    <div className="text-zinc-500 text-sm">Desarrollados por pedagogos y diseñadores.</div>
+                  <div className="hero-stat-card bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm transition-colors duration-300">
+                    <div className="text-5xl font-black text-cyan-600 dark:text-cyan-400 mb-2">+50</div>
+                    <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Juegos Premium</div>
+                    <div className="text-zinc-500 dark:text-zinc-400 text-sm">Desarrollados por pedagogos y diseñadores.</div>
                   </div>
                 </div>
               </div>
 
               {/* Panel 4: Final CTA */}
               <div className="panel-4 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
-                <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">¿Listo para la aventura?</h2>
-                <p className="text-lg md:text-xl text-zinc-400 mb-8 max-w-2xl">
+                <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-zinc-900 dark:text-white">¿Listo para la aventura?</h2>
+                <p className="text-lg md:text-xl text-zinc-650 dark:text-zinc-400 mb-8 max-w-2xl">
                   Únete hoy a la comunidad educativa líder. Demostrativo disponible o regístrate para obtener novedades.
                 </p>
                 <div className="flex-container w-full max-w-lg z-20 pointer-events-auto">
                   {status === 'success' ? (
                     <motion.div 
-                      className="bg-green-950/40 border border-green-800/50 text-green-200 p-6 rounded-3xl w-full shadow-lg text-center"
+                      className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800/50 text-green-800 dark:text-green-200 p-6 rounded-3xl w-full shadow-lg text-center"
                     >
-                      <CheckCircle2 className="mx-auto text-green-400 mb-3" size={32} />
+                      <CheckCircle2 className="mx-auto text-green-500 dark:text-green-400 mb-3" size={32} />
                       <h3 className="font-extrabold text-xl mb-1">¡Suscrito con éxito!</h3>
-                      <p className="text-sm font-medium text-green-300 mb-4">Te enviaremos actualizaciones cuando lancemos más contenido.</p>
+                      <p className="text-sm font-medium text-green-600 dark:text-green-300 mb-4">Te enviaremos actualizaciones cuando lancemos más contenido.</p>
                       <div className="flex gap-3">
                         <Button size="md" onClick={() => onNavigate('catalog')} className="flex-1 shadow-green-500/10">Probar Juegos Demo <Play size={16} className="ml-1"/></Button>
-                        <Button variant="secondary" size="md" onClick={() => onNavigate('dashboard')} className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700 flex-1">Dashboard</Button>
+                        <Button variant="secondary" size="md" onClick={() => onNavigate('dashboard')} className="bg-zinc-800 dark:bg-zinc-700 text-white border-zinc-700 hover:bg-zinc-700 dark:hover:bg-zinc-600 flex-1">Dashboard</Button>
                       </div>
                     </motion.div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-zinc-900/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-800 shadow-md">
+                    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200 dark:border-zinc-800 shadow-md transition-colors duration-300">
                       <input 
                         type="email" 
                         required 
                         placeholder="Correo de papá, mamá o profesor..." 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="flex-1 bg-transparent px-5 py-3 text-white placeholder-zinc-500 font-semibold focus:outline-none text-sm sm:text-base"
+                        className="flex-1 bg-transparent px-5 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 font-semibold focus:outline-none text-sm sm:text-base"
                         disabled={loading}
                       />
                       <Button type="submit" disabled={loading} className="py-3 px-6 shadow-blue-500/10 whitespace-nowrap text-sm sm:text-base rounded-2xl">
@@ -775,9 +1513,9 @@
                     </form>
                   )}
                   <div className="flex justify-center gap-6 mt-4">
-                    <button onClick={() => onNavigate('catalog')} className="text-sm font-bold text-zinc-400 hover:text-blue-400 transition-colors flex items-center gap-1.5">
-                      Probar Demo Gratuita (Catálogo) <ArrowRight size={14}/>
-                    </button>
+                    <ShineButton onClick={() => onNavigate('catalog')} className="text-sm">
+                      Probar Demo Gratuita
+                    </ShineButton>
                   </div>
                 </div>
               </div>
@@ -785,26 +1523,26 @@
           </div>
 
           {/* Benefits Section */}
-          <section className="py-24 bg-zinc-900 text-white px-6 lg:px-8 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent"></div>
+          <section className="py-24 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-700 to-transparent"></div>
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-20">
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6">Aprendizaje que <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">engancha.</span></h2>
-                <p className="text-zinc-400 max-w-2xl mx-auto text-xl">Diseñado con principios de ciencias cognitivas para mantener la motivación al máximo nivel.</p>
+                <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-zinc-900 dark:text-white">Aprendizaje que <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">engancha.</span></h2>
+                <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto text-xl font-medium">Diseñado con principios de ciencias cognitivas para mantener la motivación al máximo nivel.</p>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
                 {[
-                  { title: "Gamificación Real", desc: "No solo puntos. Una economía de XP real, niveles, rachas y recompensas que importan.", icon: Gamepad2, color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20" },
-                  { title: "Seguimiento Detallado", desc: "Panel para padres y profesores con métricas de precisión, tiempo y áreas de mejora.", icon: Shield, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
-                  { title: "Contenido Premium", desc: "Juegos desarrollados por educadores, abarcando desde matemáticas hasta lógica computacional.", icon: BookOpen, color: "text-green-400", bg: "bg-green-500/10 border-green-500/20" }
+                  { title: "Gamificación Real", desc: "No solo puntos. Una economía de XP real, niveles, rachas y recompensas que importan.", icon: Gamepad2, color: "text-purple-500 dark:text-purple-400", bg: "bg-purple-500/10 border-purple-500/20" },
+                  { title: "Seguimiento Detallado", desc: "Panel para padres y profesores con métricas de precisión, tiempo y áreas de mejora.", icon: Shield, color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-500/10 border-blue-500/20" },
+                  { title: "Contenido Premium", desc: "Juegos desarrollados por educadores, abarcando desde matemáticas hasta lógica computacional.", icon: BookOpen, color: "text-green-500 dark:text-green-400", bg: "bg-green-500/10 border-green-500/20" }
                 ].map((b, i) => (
-                  <motion.div key={i} whileHover={{ y: -5 }} className={`bg-zinc-800/40 border border-zinc-700/50 p-10 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group`}>
+                  <motion.div key={i} whileHover={{ y: -5 }} className="bg-white dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-700/50 p-10 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300">
                     <div className={`absolute top-0 right-0 w-32 h-32 ${b.bg} rounded-full blur-3xl -mr-10 -mt-10 transition-opacity opacity-50 group-hover:opacity-100`}></div>
                     <div className={`w-14 h-14 rounded-2xl ${b.bg} flex items-center justify-center mb-8`}>
                       <b.icon size={28} className={b.color}/>
                     </div>
-                    <h3 className="text-2xl font-bold mb-4">{b.title}</h3>
-                    <p className="text-zinc-400 text-lg leading-relaxed">{b.desc}</p>
+                    <h3 className="text-2xl font-bold mb-4 text-zinc-900 dark:text-white">{b.title}</h3>
+                    <p className="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed">{b.desc}</p>
                   </motion.div>
                 ))}
               </div>
@@ -812,24 +1550,24 @@
           </section>
 
           {/* Categories Section */}
-          <section className="px-6 lg:px-8 py-20 bg-white">
+          <section className="px-6 lg:px-8 py-20 bg-white dark:bg-zinc-950 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-zinc-900 mb-4">Explora por Categorías</h2>
-                <p className="text-xl text-zinc-600">Aprende lo que más te apasiona.</p>
+                <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-4">Explora por Categorías</h2>
+                <p className="text-xl text-zinc-600 dark:text-zinc-400 font-medium">Aprende lo que más te apasiona.</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                  { name: "Matemáticas", icon: Zap, color: "text-blue-500", bg: "bg-blue-50 hover:bg-blue-100" },
-                  { name: "Ciencias", icon: FlaskConical, color: "text-green-500", bg: "bg-green-50 hover:bg-green-100" },
-                  { name: "Lectura", icon: BookOpen, color: "text-red-500", bg: "bg-red-50 hover:bg-red-100" },
-                  { name: "Lógica", icon: Brain, color: "text-purple-500", bg: "bg-purple-50 hover:bg-purple-100" }
+                  { name: "Matemáticas", icon: Zap, color: "text-blue-500", bg: "bg-blue-50 hover:bg-blue-100/80 dark:bg-blue-950/10 dark:hover:bg-blue-950/20" },
+                  { name: "Ciencias", icon: FlaskConical, color: "text-green-500", bg: "bg-green-50 hover:bg-green-100/80 dark:bg-green-950/10 dark:hover:bg-green-950/20" },
+                  { name: "Lectura", icon: BookOpen, color: "text-red-500", bg: "bg-red-50 hover:bg-red-100/80 dark:bg-red-950/10 dark:hover:bg-red-950/20" },
+                  { name: "Lógica", icon: Brain, color: "text-purple-500", bg: "bg-purple-50 hover:bg-purple-100/80 dark:bg-purple-950/10 dark:hover:bg-purple-950/20" }
                 ].map((cat, i) => (
                   <div key={i} onClick={() => onNavigate('catalog')} className={`cursor-pointer rounded-[2rem] p-8 text-center transition-colors duration-300 ${cat.bg}`}>
-                    <div className={`w-16 h-16 mx-auto rounded-2xl bg-white flex items-center justify-center mb-4 shadow-sm ${cat.color}`}>
+                    <div className={`w-16 h-16 mx-auto rounded-2xl bg-white dark:bg-zinc-900 flex items-center justify-center mb-4 shadow-sm ${cat.color}`}>
                       <cat.icon size={32} />
                     </div>
-                    <h3 className="font-bold text-zinc-900">{cat.name}</h3>
+                    <h3 className="font-bold text-zinc-900 dark:text-zinc-100">{cat.name}</h3>
                   </div>
                 ))}
               </div>
@@ -837,19 +1575,19 @@
           </section>
 
           {/* Featured Games */}
-          <section className="px-6 lg:px-8 py-32 bg-zinc-50 relative">
+          <section className="px-6 lg:px-8 py-32 bg-zinc-50 dark:bg-zinc-900/40 text-zinc-900 dark:text-white relative transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-6 text-center md:text-left">
                 <div>
-                  <h2 className="text-4xl font-bold text-zinc-900 mb-4">Juegos Destacados</h2>
-                  <p className="text-xl text-zinc-600">Empieza tu aventura con los favoritos.</p>
+                  <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">Juegos Destacados</h2>
+                  <p className="text-xl text-zinc-600 dark:text-zinc-400 font-medium">Empieza tu aventura con los favoritos.</p>
                 </div>
                 <Button variant="secondary" onClick={() => onNavigate('catalog')} className="gap-2">Ver todo el catálogo <ArrowRight size={18}/></Button>
               </div>
                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {games.slice(0, 3).map((game, i) => (
                   <motion.div key={game.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <PremiumGameCard {...game} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
+                    <PremiumGameCard {...game} isDark={isAppDark} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
                   </motion.div>
                 ))}
               </div>
@@ -857,11 +1595,11 @@
           </section>
 
           {/* Testimonials */}
-          <section className="py-24 bg-white px-6 lg:px-8">
+          <section className="py-24 bg-white dark:bg-zinc-950 px-6 lg:px-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-zinc-900 mb-4">Lo que dicen de nosotros</h2>
-                <p className="text-xl text-zinc-600">Familias y educadores que ya disfrutan EduPlay.</p>
+                <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">Lo que dicen de nosotros</h2>
+                <p className="text-xl text-zinc-600 dark:text-zinc-400 font-medium">Familias y educadores que ya disfrutan EduPlay.</p>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
                 {[
@@ -869,16 +1607,16 @@
                   { text: "Excelente herramienta para asignar retos adicionales en clase. Muy intuitiva.", author: "Carlos R.", role: "Profesor" },
                   { text: "Me encanta ganar insignias cada vez que completo los retos de ciencia.", author: "Sofi (10 años)", role: "Estudiante" }
                 ].map((test, i) => (
-                  <div key={i} className="bg-zinc-50 p-8 rounded-[2rem] border border-zinc-100">
+                  <div key={i} className="bg-zinc-50 dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 transition-colors duration-300">
                     <div className="flex text-yellow-400 mb-4">
                       {[1,2,3,4,5].map(star => <Star key={star} size={20} fill="currentColor" />)}
                     </div>
-                    <p className="text-zinc-700 italic mb-6">"{test.text}"</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 italic mb-6">"{test.text}"</p>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">{test.author[0]}</div>
+                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center font-bold text-blue-600 dark:text-blue-400">{test.author[0]}</div>
                       <div>
-                        <div className="font-bold text-zinc-900">{test.author}</div>
-                        <div className="text-sm text-zinc-500">{test.role}</div>
+                        <div className="font-bold text-zinc-900 dark:text-white">{test.author}</div>
+                        <div className="text-sm text-zinc-500 dark:text-zinc-400">{test.role}</div>
                       </div>
                     </div>
                   </div>
@@ -896,49 +1634,49 @@
             <div className="max-w-3xl mx-auto relative z-10 text-white">
               <Shield size={64} className="mx-auto mb-8 text-blue-200" />
               <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">¿Eres padre o profesor?</h2>
-              <p className="text-xl text-blue-100 mb-10 leading-relaxed">
+              <p className="text-xl text-blue-100 mb-10 leading-relaxed font-medium">
                 Descubre nuestro panel de control. Haz seguimiento del progreso, detecta áreas de mejora y asigna retos personalizados en tiempo real.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-zinc-50" onClick={() => onNavigate('parents')}>
-                  Ir al Panel de Control <ArrowRight size={20} className="ml-2" />
-                </Button>
+                <ShineButton onClick={() => onNavigate('parents')} className="bg-white text-blue-600 hover:bg-zinc-50">
+                  Ir al Panel de Control
+                </ShineButton>
               </div>
             </div>
           </section>
 
           {/* Footer */}
-          <footer className="bg-white border-t border-zinc-200 pt-20 pb-10 px-6 lg:px-8">
+          <footer className="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 pt-20 pb-10 px-6 lg:px-8 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                 <div className="col-span-1 md:col-span-2">
-                  <div className="flex items-center gap-2 mb-6 text-zinc-900">
+                  <div className="flex items-center gap-2 mb-6 text-zinc-900 dark:text-white">
                     <Gamepad2 size={28} className="text-blue-600"/> <span className="font-extrabold text-2xl tracking-tight">EduPlay</span>
                   </div>
-                  <p className="text-zinc-500 text-lg max-w-sm mb-6">El portal donde la educación y la diversión convergen para crear la mejor experiencia de aprendizaje.</p>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-sm mb-6">El portal donde la educación y la diversión convergen para crear la mejor experiencia de aprendizaje.</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-zinc-900 mb-6 uppercase tracking-wider text-sm">Plataforma</h4>
-                  <ul className="space-y-4 text-zinc-500 font-medium flex flex-col items-start">
-                    <li><button onClick={() => onNavigate('catalog')} className="hover:text-blue-600 transition-colors">Juegos</button></li>
-                    <li><button onClick={() => onNavigate('parents')} className="hover:text-blue-600 transition-colors">Padres</button></li>
-                    <li><button onClick={() => onNavigate('pricing')} className="hover:text-blue-600 transition-colors">Precios</button></li>
+                  <h4 className="font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Plataforma</h4>
+                  <ul className="space-y-4 text-zinc-500 dark:text-zinc-400 font-medium flex flex-col items-start">
+                    <li><button onClick={() => onNavigate('catalog')} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Juegos</button></li>
+                    <li><button onClick={() => onNavigate('parents')} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Padres</button></li>
+                    <li><button onClick={() => onNavigate('pricing')} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Precios</button></li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-zinc-900 mb-6 uppercase tracking-wider text-sm">Legal</h4>
-                  <ul className="space-y-4 text-zinc-500 font-medium">
-                    <li><a href="#" className="hover:text-blue-600 transition-colors">Privacidad</a></li>
-                    <li><a href="#" className="hover:text-blue-600 transition-colors">Términos</a></li>
-                    <li><a href="#" className="hover:text-blue-600 transition-colors">Contacto</a></li>
+                  <h4 className="font-bold text-zinc-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Legal</h4>
+                  <ul className="space-y-4 text-zinc-500 dark:text-zinc-400 font-medium">
+                    <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Privacidad</a></li>
+                    <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Términos</a></li>
+                    <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contacto</a></li>
                   </ul>
                 </div>
               </div>
-              <div className="border-t border-zinc-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-400 font-medium">
+              <div className="border-t border-zinc-100 dark:border-zinc-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-400 dark:text-zinc-500 font-medium">
                 <p>© 2026 EduPlay Inc. Todos los derechos reservados.</p>
-                <div className="flex gap-4">
-                  {/* Social placeholders */}
-                  <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center hover:bg-blue-100 hover:text-blue-600 transition-colors cursor-pointer"><Globe size={18}/></div>
+                <div className="flex items-center gap-4">
+                  <GitHubStarButton />
+                  <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"><Globe size={18}/></div>
                 </div>
               </div>
             </div>
@@ -997,7 +1735,7 @@
       );
     };
 
-    const Catalog = ({ onNavigate, onLockClick, games = [] }) => {
+    const Catalog = ({ onNavigate, onLockClick, games = [], theme }) => {
       const [filter, setFilter] = useState('Todos');
       const [isLoading, setIsLoading] = useState(false);
       const subjects = ['Todos', 'Matemáticas', 'Ciencias', 'Lectura', 'Programación', 'Ecología'];
@@ -1015,19 +1753,21 @@
         ? games 
         : games.filter(g => g.subject.includes(filter) || (filter==='Lectura' && g.subject==='Inglés') || (filter==='Ciencias' && g.subject==='Ecología'));
 
+      const isAppDark = theme === 'dark';
+
       return (
-        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50">
+        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50 dark:bg-zinc-950 transition-colors duration-300">
           <div className="max-w-7xl mx-auto">
             <div className="mb-12">
-              <h1 className="text-5xl font-black text-zinc-900 mb-4 tracking-tight">Catálogo de Juegos</h1>
-              <p className="text-xl text-zinc-600 font-medium">Encuentra tu próximo reto por materia, edad o dificultad.</p>
+              <h1 className="text-5xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">Catálogo de Juegos</h1>
+              <p className="text-xl text-zinc-650 dark:text-zinc-400 font-medium">Encuentra tu próximo reto por materia, edad o dificultad.</p>
             </div>
             
             <div className="flex overflow-x-auto gap-3 pb-4 mb-12 scrollbar-hide">
               {subjects.map(subj => (
                 <button
                   key={subj} onClick={() => handleFilterChange(subj)}
-                  className={`whitespace-nowrap px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${filter === subj ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/20 scale-105' : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300'}`}
+                  className={`whitespace-nowrap px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${filter === subj ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg shadow-zinc-900/20 dark:shadow-none scale-105' : 'bg-white dark:bg-zinc-900 text-zinc-650 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300'}`}
                 >{subj}</button>
               ))}
             </div>
@@ -1035,16 +1775,17 @@
             <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               <AnimatePresence mode="popLayout">
                 {isLoading ? (
-                  // Render 3 loading skeletons during transition states
+                  // Render premium skeleton loaders during transition states
                   [1, 2, 3].map((n) => (
                     <motion.div key={`skeleton-${n}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                       <GameCardSkeleton />
+                      <div className="mt-3"><SkeletonLoader /></div>
                     </motion.div>
                   ))
                 ) : (
                   filtered.map((game) => (
                     <motion.div key={game.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }}>
-                      <PremiumGameCard {...game} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
+                      <PremiumGameCard {...game} isDark={isAppDark} onClick={() => game.locked ? onLockClick(game) : onNavigate('game', { gameId: game.id })} />
                     </motion.div>
                   ))
                 )}
@@ -1058,59 +1799,69 @@
     const Dashboard = ({ onNavigate, user }) => {
       const progressPct = (user.xp / user.nextLevelXp) * 100;
       return (
-        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50">
+        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50 dark:bg-zinc-950 transition-colors duration-300">
           <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white p-10 rounded-[2rem] border border-zinc-100 shadow-sm relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden transition-colors duration-300">
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl -z-0"></div>
               
               <div className="flex items-center gap-8 relative z-10">
                 <div className="relative group">
-                  <img src={user.avatar} alt="Avatar" className="w-28 h-28 rounded-full bg-orange-100 border-4 border-white shadow-xl group-hover:scale-105 transition-transform" />
-                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold px-4 py-1.5 rounded-full border-2 border-white shadow-lg">Lvl {user.level}</div>
+                  <img src={user.avatar} alt="Avatar" className="w-28 h-28 rounded-full bg-orange-100 border-4 border-white dark:border-zinc-800 shadow-xl group-hover:scale-105 transition-transform" />
+                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold px-4 py-1.5 rounded-full border-2 border-white dark:border-zinc-850 shadow-lg">Lvl {user.level}</div>
                 </div>
                 <div>
-                  <h1 className="text-4xl font-black text-zinc-900 mb-2">¡Hola, {user.name}!</h1>
-                  <p className="text-zinc-500 font-medium text-lg">Estás a <strong className="text-zinc-900">{user.nextLevelXp - user.xp} XP</strong> del nivel {user.level + 1}</p>
+                  <h1 className="text-4xl font-black text-zinc-900 dark:text-white mb-2">¡Hola, {user.name}!</h1>
+                  <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg">Estás a <strong className="text-zinc-900 dark:text-zinc-100">{user.nextLevelXp - user.xp} XP</strong> del nivel {user.level + 1}</p>
                 </div>
               </div>
               
               <div className="flex gap-4 relative z-10">
-                <div className="bg-white px-8 py-6 rounded-[1.5rem] border border-zinc-100 shadow-sm flex flex-col items-center min-w-[140px] hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mb-3">
+                <div className="bg-white dark:bg-zinc-800 px-8 py-6 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-700 shadow-sm flex flex-col items-center min-w-[140px] hover:shadow-md transition-all duration-300">
+                  <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-950/30 flex items-center justify-center mb-3">
                     <Zap className="text-yellow-500" size={24}/>
                   </div>
-                  <span className="text-3xl font-black text-zinc-900 mb-1">{user.streak}</span>
-                  <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Días seguidos</span>
+                  <span className="text-3xl font-black text-zinc-900 dark:text-white mb-1">{user.streak}</span>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">Días seguidos</span>
                 </div>
-                <div className="bg-white px-8 py-6 rounded-[1.5rem] border border-zinc-100 shadow-sm flex flex-col items-center min-w-[140px] hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                <div className="bg-white dark:bg-zinc-800 px-8 py-6 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-700 shadow-sm flex flex-col items-center min-w-[140px] hover:shadow-md transition-all duration-300">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center mb-3">
                     <Star className="text-blue-500" size={24}/>
                   </div>
-                  <span className="text-3xl font-black text-zinc-900 mb-1">{user.xp}</span>
-                  <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">XP Total</span>
+                  <span className="text-3xl font-black text-zinc-900 dark:text-white mb-1">{user.xp}</span>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">XP Total</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Ticket Profile Card + Alerts */}
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              <TicketProfileCard user={user} />
+              <div className="flex-1 space-y-3">
+                <AlertBanner type="success">¡Racha activa! Llevas {user.streak} días seguidos aprendiendo.</AlertBanner>
+                <AlertBanner type="info">Tu próxima meta: {user.nextLevelXp - user.xp} XP para alcanzar el nivel {user.level + 1}.</AlertBanner>
+                {user.completedChallenges > 0 && <AlertBanner type="warning">¡Tienes retos diarios pendientes! Completa 3/3 para bonus XP.</AlertBanner>}
               </div>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
-                <div className="bg-white p-10 rounded-[2rem] border border-zinc-100 shadow-sm">
-                  <h3 className="text-2xl font-bold text-zinc-900 mb-8">Progreso de Nivel</h3>
-                  <div className="relative h-8 bg-zinc-100 rounded-full overflow-hidden mb-4 shadow-inner">
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-8">Progreso de Nivel</h3>
+                  <div className="relative h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mb-4 shadow-inner">
                     <motion.div initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 1.5, ease: "easeOut" }} className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full relative overflow-hidden">
                       <div className="absolute inset-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[shimmer_1s_linear_infinite]" />
                     </motion.div>
                   </div>
-                  <div className="flex justify-between text-base font-bold text-zinc-500">
-                    <span>Lvl {user.level} <span className="text-zinc-400 font-medium">({user.xp} XP)</span></span>
-                    <span>Lvl {user.level + 1} <span className="text-zinc-400 font-medium">({user.nextLevelXp} XP)</span></span>
+                  <div className="flex justify-between text-base font-bold text-zinc-500 dark:text-zinc-400">
+                    <span>Lvl {user.level} <span className="text-zinc-400 dark:text-zinc-500 font-medium">({user.xp} XP)</span></span>
+                    <span>Lvl {user.level + 1} <span className="text-zinc-400 dark:text-zinc-500 font-medium">({user.nextLevelXp} XP)</span></span>
                   </div>
                 </div>
                 
-                <div className="bg-white p-10 rounded-[2rem] border border-zinc-100 shadow-sm">
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-colors duration-300">
                   <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-bold text-zinc-900">Retos Diarios</h3>
-                    <Badge className="bg-blue-50 text-blue-600 text-sm px-4 py-1.5">2/3 Completados</Badge>
+                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Retos Diarios</h3>
+                    <Badge className="bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 text-sm px-4 py-1.5">2/3 Completados</Badge>
                   </div>
                   <div className="space-y-4">
                     {[
@@ -1118,12 +1869,12 @@
                       { title: "Mantén tu racha de días", xp: 20, done: true },
                       { title: "Obtén 100% en Ciencias", xp: 100, done: false }
                     ].map((task, i) => (
-                      <div key={i} className={`flex items-center justify-between p-6 rounded-2xl border transition-colors ${task.done ? 'bg-zinc-50/50 border-zinc-200' : 'bg-white border-zinc-200 shadow-sm hover:border-blue-300'}`}>
+                      <div key={i} className={`flex items-center justify-between p-6 rounded-2xl border transition-colors ${task.done ? 'bg-zinc-50/50 dark:bg-zinc-850/30 border-zinc-200 dark:border-zinc-800' : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-sm hover:border-blue-300 dark:hover:border-blue-700'}`}>
                         <div className="flex items-center gap-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${task.done ? 'bg-green-100 text-green-600' : 'bg-zinc-100 text-zinc-400'}`}>
-                            {task.done ? <CheckCircle2 size={20} /> : <div className="w-3 h-3 rounded-full bg-zinc-300"/>}
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${task.done ? 'bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-550'}`}>
+                            {task.done ? <CheckCircle2 size={20} /> : <div className="w-3 h-3 rounded-full bg-zinc-350 dark:bg-zinc-700"/>}
                           </div>
-                          <span className={`font-bold text-lg ${task.done ? 'text-zinc-400 line-through' : 'text-zinc-900'}`}>{task.title}</span>
+                          <span className={`font-bold text-lg ${task.done ? 'text-zinc-400 dark:text-zinc-500 line-through' : 'text-zinc-900 dark:text-white'}`}>{task.title}</span>
                         </div>
                         <span className="font-black text-yellow-500 flex items-center gap-1.5"><Star size={18} fill="currentColor"/> {task.xp}</span>
                       </div>
@@ -1133,47 +1884,47 @@
               </div>
               
               <div className="space-y-8">
-                <div className="bg-white p-10 rounded-[2rem] border border-zinc-100 shadow-sm">
-                  <h3 className="text-2xl font-bold text-zinc-900 mb-8">Tus Insignias</h3>
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-8">Tus Insignias</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {user.badges && user.badges.map(b => {
-                      // Lookup static icon from dynamic name/id to render SVG cleanly
                       const BadgeIcon = b.name.includes("Matem") ? Zap : b.name.includes("Lector") ? BookOpen : b.name.includes("Cient") ? FlaskConical : b.name.includes("Aprendiz") ? Award : Trophy;
                       return (
-                        <div key={b.id} className={`flex flex-col items-center text-center p-6 rounded-2xl ${b.bg} border border-white/50 shadow-sm hover:-translate-y-1 transition-transform cursor-pointer`}>
-                          <div className={`w-14 h-14 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm ${b.color}`}>
+                        <div key={b.id} className={`flex flex-col items-center text-center p-6 rounded-2xl ${b.bg} dark:bg-zinc-800/40 border border-white/50 dark:border-zinc-700 shadow-sm hover:-translate-y-1 transition-transform cursor-pointer`}>
+                          <div className={`w-14 h-14 rounded-full bg-white dark:bg-zinc-900 flex items-center justify-center mb-4 shadow-sm ${b.color}`}>
                             <BadgeIcon size={28} />
                           </div>
-                          <span className="text-sm font-bold text-zinc-900 leading-tight">{b.name}</span>
+                          <span className="text-sm font-bold text-zinc-900 dark:text-zinc-200 leading-tight">{b.name}</span>
                         </div>
                       );
                     })}
-                    <div className="flex flex-col items-center justify-center text-center p-6 rounded-2xl border-2 border-dashed border-zinc-200 text-zinc-400">
-                      <div className="w-14 h-14 rounded-full bg-zinc-50 flex items-center justify-center mb-4"><Trophy size={24} /></div>
+                    <div className="flex flex-col items-center justify-center text-center p-6 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500">
+                      <div className="w-14 h-14 rounded-full bg-zinc-50 dark:bg-zinc-850 flex items-center justify-center mb-4"><Trophy size={24} /></div>
                       <span className="text-sm font-bold">Bloqueado</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Torneos Semanales Bloqueados (Coming Soon Hook) */}
-                <div className="bg-white p-10 rounded-[2rem] border border-zinc-100 shadow-sm relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-zinc-50/20 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center text-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="px-4 py-1.5 bg-yellow-100 text-yellow-800 font-black text-xs rounded-full uppercase tracking-wider mb-2">Próximamente</div>
-                    <p className="text-xs text-zinc-500 font-bold">¡Desafía a otros niños en vivo!</p>
+                <div className="bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group transition-colors duration-300">
+                  <div className="absolute inset-0 bg-zinc-50/20 dark:bg-zinc-950/40 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center text-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="px-4 py-1.5 bg-yellow-100 dark:bg-yellow-950/30 text-yellow-850 dark:text-yellow-400 font-black text-xs rounded-full uppercase tracking-wider mb-2">Próximamente</div>
+                    <p className="text-xs text-zinc-550 dark:text-zinc-400 font-bold">¡Desafía a otros niños en vivo!</p>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-zinc-900 flex items-center gap-2">
+                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                       <Trophy className="text-yellow-500" size={24}/> Torneos en Vivo
                     </h3>
-                    <span className="text-xs bg-zinc-100 text-zinc-400 font-bold px-3 py-1 rounded-full uppercase">Bloqueado</span>
+                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 font-bold px-3 py-1 rounded-full uppercase">Bloqueado</span>
                   </div>
-                  <p className="text-zinc-500 text-sm leading-relaxed mb-4">Competencias de matemáticas y ciencias los fines de semana. Gana premios exclusivos.</p>
-                  <div className="w-full h-1 bg-zinc-100 rounded-full"></div>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-4">Competencias de matemáticas y ciencias los fines de semana. Gana premios exclusivos.</p>
+                  <div className="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-full"></div>
                 </div>
 
-                <Button variant="primary" className="w-full py-6 text-xl shadow-xl shadow-blue-500/30 rounded-[1.5rem]" onClick={() => onNavigate('catalog')}>
-                  ¡Seguir Jugando!
-                </Button>
+                <div className="w-full flex justify-center">
+                  <StarExplosionBtn onClick={() => onNavigate('catalog')} className="w-full text-xl">
+                    ¡Seguir Jugando!
+                  </StarExplosionBtn>
+                </div>
               </div>
             </div>
           </div>
@@ -1218,20 +1969,31 @@
 
       if (status === 'finished') {
         return (
-          <div className="min-h-screen flex items-center justify-center px-6 pt-20 pb-10 bg-zinc-50">
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", damping: 20 }} className="max-w-lg w-full mx-auto p-12 bg-white rounded-[3rem] border border-zinc-100 shadow-2xl text-center relative overflow-hidden">
+          <div className="min-h-screen flex items-center justify-center px-6 pt-20 pb-10 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", damping: 20 }} className="max-w-lg w-full mx-auto p-12 bg-white dark:bg-zinc-900 rounded-[3rem] border border-zinc-100 dark:border-zinc-800 shadow-2xl dark:shadow-none text-center relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent h-1/2 pointer-events-none" />
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1, rotate: [0, 10, -10, 0] }} transition={{ delay: 0.2, type: "spring" }} className="w-32 h-32 bg-gradient-to-tr from-yellow-400 to-orange-400 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-yellow-500/30 text-white">
                 <Trophy size={64} />
               </motion.div>
-              <h2 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight">¡Misión Cumplida!</h2>
-              <p className="text-xl text-zinc-500 font-medium mb-10">Has completado el reto matemático con éxito.</p>
+              <h2 className="text-4xl font-black text-zinc-900 dark:text-white mb-3 tracking-tight">¡Misión Cumplida!</h2>
+              <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium mb-10">Has completado el reto matemático con éxito.</p>
               
-              <div className="bg-zinc-50 rounded-[2rem] p-8 mb-10 border border-zinc-100 shadow-sm">
-                <div className="text-zinc-500 font-bold uppercase tracking-wider text-sm mb-2">Recompensa Obtenida</div>
+              <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-[2rem] p-8 mb-6 border border-zinc-100 dark:border-zinc-700/50 shadow-sm">
+                <div className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-2">Recompensa Obtenida</div>
                 <div className="text-5xl font-black text-yellow-500 flex items-center justify-center gap-3">
                   <Star fill="currentColor" size={40}/> +{score} XP
                 </div>
+              </div>
+
+              {/* Transaction Reward Animation */}
+              <div className="flex justify-center mb-6">
+                <TransactionCard amount={`+${score} XP`} />
+              </div>
+
+              {/* Post-quiz Star Rating */}
+              <div className="mb-8">
+                <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">¿Qué te pareció el reto?</p>
+                <StarRatingInput />
               </div>
               
               <div className="flex flex-col gap-4">
@@ -1244,40 +2006,40 @@
       }
 
       return (
-        <div className="min-h-screen flex flex-col items-center pt-32 pb-20 px-6 bg-zinc-50">
+        <div className="min-h-screen flex flex-col items-center pt-32 pb-20 px-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300">
           <div className="w-full max-w-3xl">
             <div className="flex items-center justify-between mb-10">
-              <Button variant="ghost" size="sm" onClick={() => onNavigate('catalog')} className="-ml-4 text-zinc-500 hover:text-zinc-900">&larr; Volver al catálogo</Button>
-              <div className="font-bold text-zinc-500 bg-white px-5 py-2 rounded-full border border-zinc-200 shadow-sm text-sm">
+              <Button variant="ghost" size="sm" onClick={() => onNavigate('catalog')} className="-ml-4 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">&larr; Volver al catálogo</Button>
+              <div className="font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 shadow-sm text-sm">
                 Pregunta {currentQ + 1} de {MOCK_QUIZ.questions.length}
               </div>
-              <div className="font-black text-yellow-500 bg-white border border-zinc-200 px-5 py-2 rounded-full shadow-sm flex items-center gap-2 text-lg">
+              <div className="font-black text-yellow-500 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-5 py-2 rounded-full shadow-sm flex items-center gap-2 text-lg">
                 <Star size={20} fill="currentColor"/> {score}
               </div>
             </div>
             
-            <div className="h-4 bg-zinc-200 rounded-full mb-16 overflow-hidden shadow-inner p-1">
+            <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded-full mb-16 overflow-hidden shadow-inner p-1">
               <motion.div className="h-full bg-blue-500 rounded-full" initial={{ width: `${(currentQ / MOCK_QUIZ.questions.length) * 100}%` }} animate={{ width: `${((currentQ + (status!=='idle'?1:0)) / MOCK_QUIZ.questions.length) * 100}%` }} transition={{ duration: 0.5, ease: "easeOut" }} />
             </div>
             
             <AnimatePresence mode="wait">
-              <motion.div key={currentQ} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="bg-white p-10 md:p-14 rounded-[3rem] shadow-xl shadow-zinc-200/50 border border-zinc-100">
-                <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-12 text-center leading-tight">{q.question}</h2>
+              <motion.div key={currentQ} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="bg-white dark:bg-zinc-900 p-10 md:p-14 rounded-[3rem] shadow-xl dark:shadow-none shadow-zinc-200/50 border border-zinc-100 dark:border-zinc-800">
+                <h2 className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-12 text-center leading-tight">{q.question}</h2>
                 <div className="grid sm:grid-cols-2 gap-6">
                   {q.options.map((opt, i) => {
                     const isSelected = selected === i;
                     const isCorrect = i === q.correct;
-                    let btnClass = "bg-white border-2 border-zinc-200 text-zinc-700 hover:border-blue-400 hover:bg-blue-50";
+                    let btnClass = "bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20";
                     if (status !== 'idle') {
-                      if (isCorrect) btnClass = "bg-green-50 border-2 border-green-500 text-green-700 shadow-md";
-                      else if (isSelected) btnClass = "bg-red-50 border-2 border-red-500 text-red-700 shadow-md";
-                      else btnClass = "bg-zinc-50 border-2 border-zinc-200 text-zinc-400 opacity-50";
+                      if (isCorrect) btnClass = "bg-green-50 dark:bg-green-950/20 border-2 border-green-500 text-green-700 dark:text-green-400 shadow-md";
+                      else if (isSelected) btnClass = "bg-red-50 dark:bg-red-950/20 border-2 border-red-500 text-red-700 dark:text-red-400 shadow-md";
+                      else btnClass = "bg-zinc-50 dark:bg-zinc-850 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-650 opacity-50";
                     }
                     return (
                       <button key={i} onClick={() => handleSelect(i)} disabled={status !== 'idle'} className={`relative p-8 rounded-[2rem] font-bold text-2xl transition-all duration-300 transform active:scale-95 ${btnClass}`}>
                         {opt}
-                        {status !== 'idle' && isCorrect && <motion.div initial={{scale:0}} animate={{scale:1}} className="absolute -top-4 -right-4 bg-white rounded-full text-green-500 shadow-lg"><CheckCircle2 size={36} fill="currentColor" className="text-white bg-green-500 rounded-full"/></motion.div>}
-                        {status !== 'idle' && isSelected && !isCorrect && <motion.div initial={{scale:0}} animate={{scale:1}} className="absolute -top-4 -right-4 bg-white rounded-full text-red-500 shadow-lg"><XCircle size={36} fill="currentColor" className="text-white bg-red-500 rounded-full"/></motion.div>}
+                        {status !== 'idle' && isCorrect && <motion.div initial={{scale:0}} animate={{scale:1}} className="absolute -top-4 -right-4 bg-white dark:bg-zinc-900 rounded-full text-green-550 shadow-lg"><CheckCircle2 size={36} fill="currentColor" className="text-white bg-green-500 rounded-full"/></motion.div>}
+                        {status !== 'idle' && isSelected && !isCorrect && <motion.div initial={{scale:0}} animate={{scale:1}} className="absolute -top-4 -right-4 bg-white dark:bg-zinc-900 rounded-full text-red-500 shadow-lg"><XCircle size={36} fill="currentColor" className="text-white bg-red-500 rounded-full"/></motion.div>}
                       </button>
                     )
                   })}
@@ -1374,20 +2136,18 @@
       }, 0);
       const totalHours = Math.floor(totalTimeStr / 60);
       const totalMins = totalTimeStr % 60;
-
-      const totalXp = kids.reduce((acc, k) => acc + k.xp, 0);
-
+      const totalXp = kids.reduce((acc, k) => acc + (k.xp || 0), 0);
       return (
-        <div className="min-h-screen pt-32 px-6 lg:px-8 bg-zinc-50 pb-20">
+        <div className="min-h-screen pt-32 px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white pb-20 transition-colors duration-300">
           <div className="max-w-5xl mx-auto space-y-12">
             
             {/* Cabecera */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-4xl font-black text-zinc-900 tracking-tight flex items-center gap-4">
+                <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight flex items-center gap-4">
                   <Users className="text-blue-500" size={40}/> Panel para Padres
                 </h1>
-                <p className="text-zinc-500 font-medium text-lg mt-2">
+                <p className="text-zinc-550 dark:text-zinc-400 font-medium text-lg mt-2">
                   Registra y gestiona el progreso de aprendizaje de tus hijos.
                 </p>
               </div>
@@ -1398,57 +2158,57 @@
 
             {/* Tarjetas de Resumen Global */}
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-zinc-100 flex flex-col items-center justify-center text-center">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider text-sm mb-3">Tiempo Total</span>
-                <span className="text-5xl font-black text-zinc-900">
+              <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+                <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Tiempo Total</span>
+                <span className="text-5xl font-black text-zinc-900 dark:text-white">
                   {totalHours}<span className="text-2xl text-zinc-400">h</span> {totalMins}<span className="text-2xl text-zinc-400">m</span>
                 </span>
-                <span className="text-green-500 font-bold mt-3 flex items-center gap-1 bg-green-50 px-3 py-1 rounded-full text-xs">
+                <span className="text-green-500 dark:text-green-400 font-bold mt-3 flex items-center gap-1 bg-green-50 dark:bg-green-950/30 px-3 py-1 rounded-full text-xs">
                   <Sparkles size={14} className="text-yellow-500"/> Progreso activo
                 </span>
               </div>
               
-              <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-zinc-100 flex flex-col items-center justify-center text-center">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider text-sm mb-3">Estudiantes</span>
-                <span className="text-5xl font-black text-zinc-900">
+              <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+                <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Estudiantes</span>
+                <span className="text-5xl font-black text-zinc-900 dark:text-white">
                   {kids.length}
                 </span>
-                <span className="text-zinc-400 font-bold mt-3 text-xs">Aventureros activos</span>
+                <span className="text-zinc-400 dark:text-zinc-500 font-bold mt-3 text-xs">Aventureros activos</span>
               </div>
 
-              <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-zinc-100 flex flex-col items-center justify-center text-center">
-                <span className="text-zinc-500 font-bold uppercase tracking-wider text-sm mb-3">XP Acumulado</span>
+              <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+                <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">XP Acumulado</span>
                 <span className="text-5xl font-black text-yellow-500 flex items-center gap-2">
                   <Star fill="currentColor" size={32}/> {totalXp}
                 </span>
-                <span className="text-zinc-400 font-bold mt-3 text-xs">Puntos de motivación</span>
+                <span className="text-zinc-400 dark:text-zinc-500 font-bold mt-3 text-xs">Puntos de motivación</span>
               </div>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Lista de Aventureros */}
               <div className="lg:col-span-2 space-y-6">
-                <h3 className="text-2xl font-bold text-zinc-900">Aventureros Registrados</h3>
+                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Aventureros Registrados</h3>
                 
                 {kids.length === 0 ? (
-                  <div className="bg-white rounded-[2rem] border-2 border-dashed border-zinc-200 p-12 text-center flex flex-col items-center justify-center">
-                    <Users size={48} className="text-zinc-300 mb-4"/>
-                    <h4 className="text-xl font-bold text-zinc-800 mb-2">No hay hijos registrados</h4>
-                    <p className="text-zinc-500 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
+                  <div className="bg-white dark:bg-zinc-900/50 rounded-[2rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800 p-12 text-center flex flex-col items-center justify-center">
+                    <Users size={48} className="text-zinc-300 dark:text-zinc-700 mb-4"/>
+                    <h4 className="text-xl font-bold text-zinc-800 dark:text-zinc-200 mb-2">No hay hijos registrados</h4>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
                   </div>
                 ) : (
-                  <div className="bg-white rounded-[2rem] shadow-sm border border-zinc-100 overflow-hidden divide-y divide-zinc-100">
+                  <div className="bg-white dark:bg-zinc-900 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800">
                     {kids.map((kid) => (
-                      <div key={kid.id} className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-zinc-50/40 transition-colors">
+                      <div key={kid.id} className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-zinc-50/40 dark:hover:bg-zinc-800/40 transition-colors">
                         <div className="flex items-center gap-6">
                           <img 
                             src={kid.avatar} 
                             alt={`Avatar de ${kid.name}`} 
-                            className="w-16 h-16 rounded-2xl bg-zinc-50 border border-zinc-100 shadow-sm flex-shrink-0"
+                            className="w-16 h-16 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 shadow-sm flex-shrink-0"
                           />
                           <div>
-                            <h4 className="font-black text-2xl text-zinc-900">{kid.name}</h4>
-                            <span className="inline-block px-3 py-1 bg-zinc-100 border border-zinc-200 text-zinc-600 text-xs font-bold rounded-full mt-1">
+                            <h4 className="font-black text-2xl text-zinc-900 dark:text-white">{kid.name}</h4>
+                            <span className="inline-block px-3 py-1 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-bold rounded-full mt-1">
                               {kid.grade}
                             </span>
                           </div>
@@ -1456,21 +2216,21 @@
 
                         <div className="flex items-center gap-8 justify-between sm:justify-end">
                           <div className="text-center sm:text-right">
-                            <div className="font-black text-xl text-zinc-900 flex items-center gap-1">
+                            <div className="font-black text-xl text-zinc-900 dark:text-white flex items-center gap-1">
                               <Star fill="currentColor" size={16} className="text-yellow-500"/> {kid.xp}
                             </div>
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">XP</span>
+                            <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider">XP</span>
                           </div>
                           
                           <div className="text-center sm:text-right">
-                            <div className="font-black text-xl text-zinc-900">{kid.time}</div>
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Tiempo</span>
+                            <div className="font-black text-xl text-zinc-900 dark:text-white">{kid.time}</div>
+                            <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider">Tiempo</span>
                           </div>
 
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleDeleteKid(kid.id)}
-                              className="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors border border-red-100"
+                              className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-500 dark:text-red-400 flex items-center justify-center transition-colors border border-red-100 dark:border-red-900/30"
                               aria-label={`Eliminar perfil de ${kid.name}`}
                             >
                               <Trash2 size={18} />
@@ -1485,14 +2245,14 @@
 
               {/* Formulario de Registro */}
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-zinc-900">Registrar Aventurero</h3>
+                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Registrar Aventurero</h3>
                 
-                <div className="bg-white p-8 rounded-[2rem] border border-zinc-100 shadow-sm relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
+                <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
                   
                   <form onSubmit={handleAddKid} className="space-y-6">
                     <div>
-                      <label htmlFor="kid-name-input" className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                      <label htmlFor="kid-name-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
                         Nombre del Aventurero
                       </label>
                       <input
@@ -1504,20 +2264,20 @@
                         placeholder="Ej. Sofía, Lucas..."
                         value={newKidName}
                         onChange={(e) => setNewKidName(e.target.value)}
-                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors"
+                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors"
                         disabled={loading}
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="kid-grade-input" className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                      <label htmlFor="kid-grade-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
                         Grado Escolar
                       </label>
                       <select
                         id="kid-grade-input"
                         value={newKidGrade}
                         onChange={(e) => setNewKidGrade(e.target.value)}
-                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors bg-white cursor-pointer"
+                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white cursor-pointer"
                         disabled={loading}
                       >
                         <option value="Pre-Kinder">Pre-Kinder</option>
@@ -1532,7 +2292,7 @@
                     </div>
 
                     <div>
-                      <span className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                      <span className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">
                         Elige un Personaje
                       </span>
                       <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
@@ -1543,8 +2303,8 @@
                             onClick={() => setSelectedAvatar(preset.name)}
                             className={`p-1 rounded-2xl border-2 flex-shrink-0 transition-all ${
                               selectedAvatar === preset.name 
-                                ? 'border-blue-600 scale-105 bg-blue-50 shadow-sm' 
-                                : 'border-zinc-100 hover:border-zinc-200 bg-white'
+                                ? 'border-blue-600 scale-105 bg-blue-50 dark:bg-blue-950/30 shadow-sm' 
+                                : 'border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800'
                             }`}
                             disabled={loading}
                             aria-label={`Seleccionar avatar ${preset.name}`}
@@ -1569,25 +2329,25 @@
             </div>
 
             {/* Sección Premium Bloqueada */}
-            <div className="bg-white rounded-[2.5rem] border border-zinc-200/60 p-8 md:p-10 relative overflow-hidden shadow-sm">
-              <div className="absolute inset-0 bg-zinc-50/40 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-6">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4 shadow-sm">
+            <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-200/60 dark:border-zinc-800 p-8 md:p-10 relative overflow-hidden shadow-sm">
+              <div className="absolute inset-0 bg-zinc-50/40 dark:bg-zinc-950/80 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-6">
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm">
                   <Award size={28} />
                 </div>
-                <h4 className="text-2xl font-black text-zinc-900 mb-2">Reportes de Rendimiento Avanzados</h4>
-                <p className="text-zinc-500 text-sm max-w-sm font-medium mb-6">Gráficos de progreso semanal, análisis de fortalezas y sugerencias personalizadas por IA.</p>
+                <h4 className="text-2xl font-black text-zinc-900 dark:text-white mb-2">Reportes de Rendimiento Avanzados</h4>
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-sm font-medium mb-6">Gráficos de progreso semanal, análisis de fortalezas y sugerencias personalizadas por IA.</p>
                 <Button variant="primary" onClick={() => onNavigate('pricing')} className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider shadow shadow-blue-500/20">
                   Adquirir EduPlay Pro
                 </Button>
               </div>
               
               <div className="opacity-20 select-none pointer-events-none space-y-6">
-                <div className="h-6 w-48 bg-zinc-200 rounded"></div>
+                <div className="h-6 w-48 bg-zinc-200 dark:bg-zinc-850 rounded"></div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="h-28 bg-zinc-100 rounded-xl"></div>
-                  <div className="h-28 bg-zinc-100 rounded-xl"></div>
+                  <div className="h-28 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
+                  <div className="h-28 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
                 </div>
-                <div className="h-40 bg-zinc-100 rounded-xl"></div>
+                <div className="h-40 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
               </div>
             </div>
 
@@ -1634,13 +2394,13 @@
       };
 
       return (
-        <div className="min-h-screen pt-32 px-6 lg:px-8 bg-zinc-50 pb-20">
+        <div className="min-h-screen pt-32 px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white pb-20 transition-colors duration-300">
           <div className="max-w-4xl mx-auto">
             {isEditing ? (
-              <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-zinc-100 flex flex-col md:flex-row gap-10 mb-12 relative overflow-hidden w-full">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-blue-500/10 to-purple-500/10 rounded-full blur-[80px] -z-0 pointer-events-none"></div>
+              <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row gap-10 mb-12 relative overflow-hidden w-full">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 rounded-full blur-[80px] -z-0 pointer-events-none"></div>
                 <div className="flex flex-col items-center gap-4 flex-shrink-0 z-10">
-                  <div className="w-40 h-40 bg-zinc-50 rounded-[2.5rem] border-[6px] border-white shadow-xl overflow-hidden flex-shrink-0 flex items-center justify-center relative">
+                  <div className="w-40 h-40 bg-zinc-50 dark:bg-zinc-850 rounded-[2.5rem] border-[6px] border-white dark:border-zinc-800 shadow-xl overflow-hidden flex-shrink-0 flex items-center justify-center relative">
                     <img src={previewAvatar} alt="Preview Avatar" className="w-full h-full object-cover" />
                   </div>
                   <Button variant="secondary" size="sm" onClick={handleRandomize} className="rounded-xl flex items-center gap-1 shadow-sm">
@@ -1650,35 +2410,35 @@
                 
                 <div className="flex-grow space-y-6 z-10 w-full">
                   <div>
-                    <label className="block text-sm font-bold text-zinc-700 mb-2">Tu Nombre de Aventurero</label>
+                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-350 mb-2">Tu Nombre de Aventurero</label>
                     <input 
                       type="text" 
                       value={name} 
                       onChange={(e) => setName(e.target.value)}
                       placeholder="SuperPanda99" 
-                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
+                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-zinc-700 mb-2">Semilla de Avatar (Escribe palabras para cambiarlo)</label>
+                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-350 mb-2">Semilla de Avatar (Escribe palabras para cambiarlo)</label>
                     <input 
                       type="text" 
                       value={avatarSeed} 
                       onChange={(e) => setAvatarSeed(e.target.value)}
                       placeholder="seed" 
-                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
+                      className="w-full px-5 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-zinc-700 mb-2">Color de Fondo</label>
+                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-350 mb-2">Color de Fondo</label>
                     <div className="flex gap-3 mt-1">
                       {PRESET_BG.map(bg => (
                         <button 
                           key={bg.value} 
                           onClick={() => setAvatarBg(bg.value)}
-                          className={`w-10 h-10 rounded-full border-2 transition-all ${bg.color} ${avatarBg === bg.value ? 'border-zinc-800 scale-110 shadow-md' : 'border-white hover:scale-105'}`}
+                          className={`w-10 h-10 rounded-full border-2 transition-all ${bg.color} ${avatarBg === bg.value ? 'border-zinc-800 scale-110 shadow-md' : 'border-white dark:border-zinc-800 hover:scale-105'}`}
                           title={bg.label}
                         />
                       ))}
@@ -1692,22 +2452,22 @@
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-zinc-100 flex flex-col md:flex-row items-center gap-10 mb-12 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-blue-500/10 to-purple-500/10 rounded-full blur-[80px] -z-0 pointer-events-none"></div>
-                <div className="relative z-10 w-40 h-40 bg-orange-100 rounded-[2.5rem] border-[6px] border-white shadow-xl overflow-hidden flex-shrink-0 rotate-3">
+              <div className="bg-white dark:bg-zinc-900 p-10 rounded-[3rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row items-center gap-10 mb-12 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 rounded-full blur-[80px] -z-0 pointer-events-none"></div>
+                <div className="relative z-10 w-40 h-40 bg-orange-100 dark:bg-zinc-800 rounded-[2.5rem] border-[6px] border-white dark:border-zinc-800 shadow-xl overflow-hidden flex-shrink-0 rotate-3">
                   <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div className="relative z-10 flex-grow text-center md:text-left">
-                  <h2 className="text-5xl font-black text-zinc-900 mb-4 tracking-tight">{user.name}</h2>
+                  <h2 className="text-5xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">{user.name}</h2>
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 font-bold text-sm border border-yellow-200"><Trophy size={18}/> Nivel {user.level}</span>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-bold text-sm border border-blue-200"><Star size={18}/> {user.xp} XP</span>
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700 font-bold text-sm border border-orange-200"><Zap size={18}/> Racha {user.streak} días</span>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-100 dark:bg-yellow-950/30 text-yellow-750 dark:text-yellow-400 font-bold text-sm border border-yellow-200 dark:border-yellow-900/30"><Trophy size={18}/> Nivel {user.level}</span>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 font-bold text-sm border border-blue-200 dark:border-blue-900/30"><Star size={18}/> {user.xp} XP</span>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 font-bold text-sm border border-orange-200 dark:border-orange-900/30"><Zap size={18}/> Racha {user.streak} días</span>
                   </div>
-                  <div className="w-full bg-zinc-100 rounded-full h-3 mb-3 shadow-inner">
+                  <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-3 mb-3 shadow-inner">
                     <div className="bg-gradient-to-r from-blue-500 to-cyan-400 h-3 rounded-full" style={{width: `${(user.xp / user.nextLevelXp) * 100}%`}}></div>
                   </div>
-                  <p className="text-sm font-bold text-zinc-400 text-right uppercase tracking-wider">{user.nextLevelXp - user.xp} XP para subir de nivel</p>
+                  <p className="text-sm font-bold text-zinc-400 dark:text-zinc-500 text-right uppercase tracking-wider">{user.nextLevelXp - user.xp} XP para subir de nivel</p>
                 </div>
                 <div className="relative z-10">
                   <Button className="rounded-2xl" onClick={() => setIsEditing(true)}>Editar Perfil</Button>
@@ -1715,18 +2475,18 @@
               </div>
             )}
             
-            <h3 className="text-2xl font-bold text-zinc-900 mb-6 flex items-center gap-3"><Award className="text-purple-500" size={28}/> Insignias Desbloqueadas</h3>
+            <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-3"><Award className="text-purple-500" size={28}/> Insignias Desbloqueadas</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {user.badges && user.badges.map(b => {
                 const BadgeIcon = b.name.includes("Matem") ? Zap : b.name.includes("Lector") ? BookOpen : b.name.includes("Cient") ? FlaskConical : b.name.includes("Aprendiz") ? Award : Trophy;
                 return (
-                  <motion.div key={b.id} whileHover={{y:-8, scale: 1.02}} className={`${b.bg} p-8 rounded-[2rem] flex flex-col items-center justify-center text-center cursor-pointer border border-white/50 shadow-sm hover:shadow-lg transition-all`}>
+                  <motion.div key={b.id} whileHover={{y:-8, scale: 1.02}} className={`${b.bg} dark:bg-zinc-800/40 p-8 rounded-[2rem] flex flex-col items-center justify-center text-center cursor-pointer border border-white/50 dark:border-zinc-800 shadow-sm hover:shadow-lg transition-all`}>
                     <BadgeIcon size={40} className={`${b.color} mb-4`} />
                     <span className={`font-bold text-base ${b.color}`}>{b.name}</span>
                   </motion.div>
                 );
               })}
-              <div className="bg-zinc-100 p-8 rounded-[2rem] flex flex-col items-center justify-center text-center border-2 border-zinc-200 border-dashed opacity-60">
+              <div className="bg-zinc-100 dark:bg-zinc-900 p-8 rounded-[2rem] flex flex-col items-center justify-center text-center border-2 border-zinc-200 dark:border-zinc-800 border-dashed opacity-60">
                 <Compass size={40} className="text-zinc-400 mb-4" />
                 <span className="font-bold text-base text-zinc-500">Bloqueado</span>
               </div>
@@ -1740,61 +2500,60 @@
       const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'annual'
       const [checkoutPlan, setCheckoutPlan] = useState(null);
       const [email, setEmail] = useState('');
-      const [checkoutStep, setCheckoutStep] = useState('form'); // 'form' | 'success'
       const [loading, setLoading] = useState(false);
-
+      const [checkoutStep, setCheckoutStep] = useState('form');
       const plans = [
         {
           id: 'free',
-          name: 'Demo Gratis',
-          description: 'Para pequeños exploradores que quieren conocer EduPlay.',
+          name: 'Rango Cadete',
+          description: 'Misión de reconocimiento inicial para pequeños reclutas galácticos.',
           priceMonthly: 0,
           priceAnnual: 0,
           features: [
-            'Acceso a 3 juegos demo',
-            'Soporte básico',
-            '1 perfil de aventurero',
-            'Métricas simples de progreso'
+            '3 Simulaciones demo autorizadas',
+            'Soporte básico de la base',
+            '1 Baliza de Aventurero activa',
+            'Escaneo de progreso estándar'
           ],
-          buttonText: 'Empezar Gratis',
-          color: 'border-zinc-200 hover:border-zinc-300 bg-white text-zinc-900',
+          buttonText: 'Iniciar Reconocimiento',
+          color: 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white',
           badge: null
         },
         {
           id: 'pro',
-          name: 'Pro Aventurero',
-          description: 'El pase completo para dominar todas las materias y divertirse al máximo.',
+          name: 'Rango Comandante',
+          description: 'Acceso completo a todos los portales de conocimiento y retos de la galaxia.',
           priceMonthly: 4.99,
           priceAnnual: 3.99,
           features: [
-            'Acceso ilimitado a más de 30 juegos',
-            'Dashboard para padres/profesores',
-            'Registro de hasta 5 hijos/estudiantes',
-            'Análisis de rendimiento detallado e IA',
-            'Descarga de reportes en PDF',
-            'Nuevos retos y torneos semanales'
+            'Acceso ilimitado a más de 30 portales',
+            'Consola de control para padres/tutores',
+            'Hasta 5 tripulantes registrados',
+            'Análisis IA de habilidades estelares',
+            'Bitácora de progreso en PDF',
+            'Desafíos e incursiones semanales'
           ],
-          buttonText: 'Unirse a Pro',
-          color: 'border-blue-500 bg-gradient-to-b from-white to-blue-50/50 hover:shadow-blue-500/10 text-zinc-900 ring-2 ring-blue-600/15',
-          badge: 'El más popular'
+          buttonText: 'Ascender a Comandante',
+          color: 'border-blue-500 bg-gradient-to-b from-white to-blue-50/50 dark:from-zinc-900 dark:to-blue-950/20 hover:shadow-blue-500/10 text-zinc-900 dark:text-white ring-2 ring-blue-600/15 dark:ring-blue-500/30',
+          badge: 'NIVEL RECOMENDADO'
         },
         {
           id: 'classroom',
-          name: 'Plan Aula',
-          description: 'Perfecto para profesores, tutores y escuelas enteras.',
+          name: 'Flota Estelar',
+          description: 'Licencia de operaciones completas para academias y escuelas de alto rango.',
           priceMonthly: 19.99,
           priceAnnual: 15.99,
           features: [
-            'Estudiantes/Hijos ilimitados',
-            'Asignación de tareas personalizadas',
-            'Panel de control docente avanzado',
-            'Soporte prioritario 24/7',
-            'Integración con plataformas escolares',
-            'Sesiones de capacitación gratuitas'
+            'Reclutamiento ilimitado de cadetes',
+            'Asignación de misiones y tareas',
+            'Consola general de comandancia docente',
+            'Canal de soporte prioritario instantáneo',
+            'Enlace con sistemas de la Federación',
+            'Entrenamiento para instructores'
           ],
-          buttonText: 'Adquirir Aula',
-          color: 'border-zinc-900 hover:border-zinc-800 bg-zinc-950 text-white',
-          badge: 'Educadores'
+          buttonText: 'Desplegar Flota',
+          color: 'border-zinc-900 dark:border-zinc-800 hover:border-zinc-800 dark:hover:border-zinc-700 bg-zinc-950 text-white',
+          badge: 'ACADEMIAS'
         }
       ];
 
@@ -1810,37 +2569,37 @@
       };
 
       return (
-        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 relative overflow-hidden">
+        <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-gradient-to-b from-zinc-50 via-white to-zinc-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300 relative overflow-hidden">
           {/* Decorative background blobs */}
-          <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/15 to-purple-300/15 rounded-full blur-[120px] -z-10" />
-          <div className="absolute bottom-20 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-cyan-300/10 to-indigo-300/15 rounded-full blur-[140px] -z-10" />
+          <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/15 to-purple-300/15 dark:from-blue-900/10 dark:to-purple-900/10 rounded-full blur-[120px] -z-10" />
+          <div className="absolute bottom-20 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-cyan-300/10 to-indigo-300/15 dark:from-cyan-900/10 dark:to-indigo-900/10 rounded-full blur-[140px] -z-10" />
 
           <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-bold text-sm shadow-sm mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 font-bold text-sm shadow-sm mb-6">
               <Sparkles size={16} className="text-yellow-500 animate-pulse"/> Planes simples, sin sorpresas
             </span>
 
-            <h1 className="text-5xl md:text-6xl font-black text-zinc-900 tracking-tight mb-6">
+            <h1 className="text-5xl md:text-6xl font-black text-zinc-900 dark:text-white tracking-tight mb-6">
               Invierte en su <span className="gradient-text">futuro digital</span>
             </h1>
-            <p className="text-xl text-zinc-500 font-medium max-w-2xl mb-12">
+            <p className="text-xl text-zinc-550 dark:text-zinc-400 font-medium max-w-2xl mb-12">
               Elige el plan ideal para expandir la mente de tus hijos y profesores. Cancela en cualquier momento con un solo clic.
             </p>
 
             {/* Toggle Anual/Mensual */}
-            <div className="flex items-center gap-4 bg-white p-2 rounded-2xl border border-zinc-200/65 shadow-sm mb-16 relative z-10">
+            <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2 rounded-2xl border border-zinc-200/65 dark:border-zinc-800 shadow-sm mb-16 relative z-10">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 text-white shadow' : 'text-zinc-500 hover:text-zinc-800'}`}
+                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow' : 'text-zinc-550 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
               >
                 Mensual
               </button>
               <button
                 onClick={() => setBillingCycle('annual')}
-                className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 text-white shadow' : 'text-zinc-500 hover:text-zinc-800'}`}
+                className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow' : 'text-zinc-550 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
               >
                 Anual
-                <span className="absolute -top-3 -right-6 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow border border-white">
+                <span className="absolute -top-3 -right-6 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow border border-white dark:border-zinc-900">
                   -20%
                 </span>
               </button>
@@ -1862,7 +2621,7 @@
                       <span className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow border ${
                         plan.id === 'pro' 
                           ? 'bg-blue-600 text-white border-blue-500 animate-bounce' 
-                          : 'bg-zinc-100 text-zinc-800 border-zinc-200'
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'
                       }`}>
                         {plan.badge}
                       </span>
@@ -1870,32 +2629,32 @@
 
                     <div className="text-left">
                       <h3 className="text-2xl font-black mb-3">{plan.name}</h3>
-                      <p className="text-zinc-500 text-sm font-medium mb-8 leading-relaxed h-12 overflow-hidden">{plan.description}</p>
+                      <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium mb-8 leading-relaxed h-12 overflow-hidden">{plan.description}</p>
                       
                       {/* Price display */}
                       <div className="flex items-baseline gap-2 mb-8">
                         <span className="text-5xl font-black tracking-tight">
                           ${price}
                         </span>
-                        <span className="text-zinc-500 font-bold text-sm">/ mes</span>
+                        <span className="text-zinc-500 dark:text-zinc-400 font-bold text-sm">/ mes</span>
                       </div>
                       
                       {billingCycle === 'annual' && price > 0 && (
-                        <div className="text-xs text-green-600 font-bold mb-6 bg-green-50 px-3 py-1 rounded-lg inline-block">
+                        <div className="text-xs text-green-600 dark:text-green-400 font-bold mb-6 bg-green-50 dark:bg-green-950/30 px-3 py-1 rounded-lg inline-block">
                           Facturado anualmente (${totalAnnually.toFixed(2)}/año)
                         </div>
                       )}
 
-                      <div className="w-full h-px bg-zinc-100 mb-8" />
+                      <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800 mb-8" />
 
                       {/* Feature list */}
                       <ul className="space-y-4 mb-10 text-left">
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-3 text-sm font-semibold">
-                            <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.id === 'classroom' ? 'bg-zinc-800 text-white' : 'bg-blue-50 text-blue-600'}`}>
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.id === 'classroom' ? 'bg-zinc-850 text-white dark:bg-zinc-800' : 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'}`}>
                               <Check size={12} strokeWidth={3}/>
                             </span>
-                            <span className={plan.id === 'classroom' ? 'text-zinc-100' : 'text-zinc-700'}>{feature}</span>
+                            <span className={plan.id === 'classroom' ? 'text-zinc-100' : 'text-zinc-700 dark:text-zinc-300'}>{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -1928,11 +2687,11 @@
                   initial={{ scale: 0.95, y: 20 }}
                   animate={{ scale: 1, y: 0 }}
                   exit={{ scale: 0.95, y: 20 }}
-                  className="bg-white rounded-[2.5rem] border border-zinc-100 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
+                  className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
                 >
                   <button
                     onClick={() => { setCheckoutPlan(null); setCheckoutStep('form'); }}
-                    className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 flex items-center justify-center transition-colors"
+                    className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-550 dark:text-zinc-400 flex items-center justify-center transition-colors"
                     aria-label="Cerrar modal"
                   >
                     <XCircle size={20} />
@@ -1941,18 +2700,18 @@
                   {checkoutStep === 'form' ? (
                     <div>
                       <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                           <Sparkles size={24} />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-black text-zinc-900">Activar {checkoutPlan.name}</h3>
-                          <p className="text-sm text-zinc-500 font-medium">Prueba simulada de suscripción</p>
+                          <h3 className="text-2xl font-black text-zinc-900 dark:text-white">Activar {checkoutPlan.name}</h3>
+                          <p className="text-sm text-zinc-550 dark:text-zinc-400 font-medium">Prueba simulada de suscripción</p>
                         </div>
                       </div>
 
                       <form onSubmit={handleCheckoutSubmit} className="space-y-6">
                         <div>
-                          <label htmlFor="checkout-email" className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                          <label htmlFor="checkout-email" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
                             Correo Electrónico
                           </label>
                           <input
@@ -1963,22 +2722,22 @@
                             placeholder="ejemplo@correo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-5 py-4 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
+                            className="w-full px-5 py-4 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
                             disabled={loading}
                           />
                         </div>
 
-                        <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-2">
+                        <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-850 border border-zinc-100 dark:border-zinc-800 space-y-2">
                           <div className="flex justify-between text-sm font-semibold">
-                            <span className="text-zinc-500">Plan:</span>
-                            <span className="text-zinc-950 font-bold">{checkoutPlan.name}</span>
+                            <span className="text-zinc-500 dark:text-zinc-400">Plan:</span>
+                            <span className="text-zinc-950 dark:text-white font-bold">{checkoutPlan.name}</span>
                           </div>
                           <div className="flex justify-between text-sm font-semibold">
-                            <span className="text-zinc-500">Precio:</span>
-                            <span className="text-zinc-950 font-bold">${billingCycle === 'monthly' ? checkoutPlan.priceMonthly : checkoutPlan.priceAnnual} / mes</span>
+                            <span className="text-zinc-500 dark:text-zinc-400">Precio:</span>
+                            <span className="text-zinc-950 dark:text-white font-bold">${billingCycle === 'monthly' ? checkoutPlan.priceMonthly : checkoutPlan.priceAnnual} / mes</span>
                           </div>
-                          <div className="w-full h-px bg-zinc-200/70 my-2" />
-                          <p className="text-[11px] text-zinc-400 leading-relaxed">
+                          <div className="w-full h-px bg-zinc-200/70 dark:bg-zinc-700 my-2" />
+                          <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
                             Esta es una pasarela de pago simulada. No se realizarán cargos reales a tu tarjeta de crédito o cuenta.
                           </p>
                         </div>
@@ -2006,12 +2765,12 @@
                     </div>
                   ) : (
                     <div className="text-center py-6">
-                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+                      <div className="w-16 h-16 bg-green-150 dark:bg-green-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 dark:text-green-400">
                         <CheckCircle2 size={36} />
                       </div>
-                      <h3 className="text-3xl font-black text-zinc-900 mb-2">¡Suscripción Activada!</h3>
-                      <p className="text-zinc-500 font-medium text-sm mb-8">
-                        Felicidades, has activado tu membresía simulada para <strong className="text-zinc-800">{checkoutPlan.name}</strong>. Disfruta de la mejor experiencia educativa.
+                      <h3 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">¡Suscripción Activada!</h3>
+                      <p className="text-zinc-550 dark:text-zinc-400 font-medium text-sm mb-8">
+                        Felicidades, has activado tu membresía simulada para <strong className="text-zinc-800 dark:text-zinc-205">{checkoutPlan.name}</strong>. Disfruta de la mejor experiencia educativa.
                       </p>
                       <Button
                         variant="primary"
@@ -2030,7 +2789,7 @@
       );
     };
 
-    const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings }) => {
+    const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onToggleTheme }) => {
       const [scrolled, setScrolled] = useState(false);
       
       useEffect(() => {
@@ -2049,15 +2808,15 @@
       return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-3' : 'py-5'}`}>
           <div className="px-4 sm:px-6 lg:px-8">
-            <div className={`max-w-7xl mx-auto flex justify-between items-center transition-all duration-500 rounded-full px-6 ${scrolled ? 'bg-white/80 backdrop-blur-xl border border-zinc-200/50 shadow-lg py-3' : 'bg-transparent py-2'}`}>
+            <div className={`max-w-7xl mx-auto flex justify-between items-center transition-all duration-500 rounded-full px-6 ${scrolled ? 'bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200/50 dark:border-zinc-800 shadow-lg py-3' : 'bg-transparent py-2'}`}>
               <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onNavigate('landing')}>
                 <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-[14px] flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-105 group-hover:rotate-3 transition-transform"><Gamepad2 size={24} /></div>
-                <span className="font-black text-2xl tracking-tight text-zinc-900 hidden sm:block">EduPlay</span>
+                <span className="font-black text-2xl tracking-tight text-zinc-900 dark:text-white hidden sm:block">EduPlay</span>
               </div>
               
               <div className="hidden md:flex items-center gap-2">
                 {navs.map(nav => (
-                  <button key={nav.id} onClick={() => onNavigate(nav.id)} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${currentView === nav.id ? 'bg-zinc-900 text-white shadow-md' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/80'}`}>
+                  <button key={nav.id} onClick={() => onNavigate(nav.id)} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${currentView === nav.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md' : 'text-zinc-550 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800'}`}>
                     {nav.label}
                   </button>
                 ))}
@@ -2067,26 +2826,29 @@
                 {/* Indicador de Conexión de API */}
                 <button 
                   onClick={onOpenSettings}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200/60 bg-zinc-50/50 hover:bg-zinc-100/80 transition-all text-xs font-bold shadow-sm"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200/60 dark:border-zinc-800 bg-zinc-550/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:hover:bg-zinc-800 text-zinc-650 dark:text-zinc-300 transition-all text-xs font-bold shadow-sm"
                   title="Configuración de API"
                 >
-                  <span className={`w-2.5 h-2.5 rounded-full ${apiStatus === 'connected' ? 'bg-green-500 animate-pulse' : apiStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-400'}`} />
-                  <span className="text-zinc-600 hidden sm:inline">
+                  <span className={`w-2.5 h-2.5 rounded-full ${apiStatus === 'connected' ? 'bg-green-500 animate-pulse' : apiStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-450'}`} />
+                  <span className="text-zinc-600 dark:text-zinc-300 hidden sm:inline">
                     {apiStatus === 'connected' ? 'API Conectada' : apiStatus === 'connecting' ? 'Conectando...' : 'API Desconectada'}
                   </span>
                 </button>
 
+                {/* Premium Theme Toggle */}
+                <PremiumThemeToggle isDark={theme === 'dark'} onToggle={onToggleTheme} />
+
                 <div className="hidden lg:flex items-center gap-2">
-                  <button className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
-                  <button className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
+                  <button className="text-sm font-bold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-800 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
+                  <button className="text-sm font-bold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-800 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
                 </div>
                 <Button size="md" className="rounded-full shadow-lg shadow-blue-500/20 px-8" onClick={() => onNavigate('catalog')}>Jugar Ahora</Button>
-              </div>
             </div>
           </div>
-        </nav>
-      );
-    }
+        </div>
+      </nav>
+    );
+  }
 
     const ModalWaitlistForm = ({ gameTitle, onFinish }) => {
       const [email, setEmail] = useState('');
@@ -2143,6 +2905,21 @@
       const [params, setParams] = useState({});
       const [lockedGame, setLockedGame] = useState(null);
       
+      // Estado de Tema Día / Noche (Tema Día/Light es por defecto)
+      const [theme, setTheme] = useState(() => {
+        const saved = localStorage.getItem('eduplay_theme');
+        return saved || 'light';
+      });
+
+      useEffect(() => {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        localStorage.setItem('eduplay_theme', theme);
+      }, [theme]);
+
       // Estado del Usuario (Caché del navegador)
       const [user, setUser] = useState(() => {
         const saved = localStorage.getItem('eduplay_user');
@@ -2316,8 +3093,8 @@
       };
 
       const views = {
-        landing: <Landing onNavigate={navigate} onLockClick={setLockedGame} games={games} />,
-        catalog: <Catalog onNavigate={navigate} onLockClick={setLockedGame} games={games} />,
+        landing: <Landing onNavigate={navigate} onLockClick={setLockedGame} games={games} theme={theme} />,
+        catalog: <Catalog onNavigate={navigate} onLockClick={setLockedGame} games={games} theme={theme} />,
         dashboard: <Dashboard onNavigate={navigate} user={user} />,
         game: <QuizGame onNavigate={navigate} onAddXp={addXp} gameId={params.gameId} />,
         parents: <ParentsPanel onNavigate={navigate} />,
@@ -2326,11 +3103,13 @@
       };
 
       return (
-        <div className="w-full min-h-screen relative font-sans text-zinc-900 selection:bg-blue-200">
+        <div className="w-full min-h-screen relative font-sans text-zinc-900 dark:text-white selection:bg-blue-200 dark:selection:bg-blue-800">
           <Navbar 
             currentView={view} 
             onNavigate={navigate} 
             apiStatus={apiStatus} 
+            theme={theme}
+            onToggleTheme={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
             onOpenSettings={() => {
               setInputUrl(apiUrl);
               setIsSettingsOpen(true);
