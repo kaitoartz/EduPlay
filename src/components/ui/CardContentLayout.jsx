@@ -4,6 +4,14 @@ import { Sparkles, Lock, Star, User, Play } from 'lucide-react';
 import Badge from './Badge';
 import FavouriteToggle from './FavouriteToggle';
 
+const StarSVG = () => (
+  <svg viewBox="0 0 784.11 815.53" style={{ shapeRendering: 'geometricPrecision', textRendering: 'geometricPrecision', imageRendering: 'optimizeQuality', fillRule: 'evenodd', clipRule: 'evenodd' }} version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g id="Layer_x0020_1">
+      <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" className="fil0" />
+    </g>
+  </svg>
+);
+
 const CardContentLayout = ({ id, title, subject, level, duration, points, bg, icon: Icon, finalImageUrl, description, locked, isDarkTheme, tag }) => {
   return (
     <div className={`relative p-6 h-full flex flex-col z-10 overflow-hidden ${isDarkTheme ? 'bg-transparent text-white' : 'bg-white text-zinc-900'}`}>
@@ -89,13 +97,23 @@ const CardContentLayout = ({ id, title, subject, level, duration, points, bg, ic
           {!locked && <FavouriteToggle id={id} />}
         </div>
         {locked ? (
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200'}`}>
-            <Lock size={18}/>
+          <div className={`h-10 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm border ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 border-zinc-700/50' : 'bg-zinc-100 text-zinc-400 border-zinc-200/50'}`}>
+            <Lock size={16}/>
+            <span className="text-xs font-bold uppercase tracking-wider">Bloqueado</span>
           </div>
         ) : (
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${isDarkTheme ? 'bg-blue-600 text-white group-hover:bg-cyan-500 group-hover:scale-110 shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-zinc-900 text-white group-hover:bg-blue-600 group-hover:scale-110'}`}>
-            <Play size={20} fill="currentColor" className="ml-1"/>
-          </div>
+          <button className="ep-card-play-btn">
+            <div className="flex items-center gap-1.5 relative z-10">
+              <Play size={14} fill="currentColor" className="transition-transform group-hover:scale-110" />
+              <span>Jugar</span>
+            </div>
+            <div className="star-1"><StarSVG /></div>
+            <div className="star-2"><StarSVG /></div>
+            <div className="star-3"><StarSVG /></div>
+            <div className="star-4"><StarSVG /></div>
+            <div className="star-5"><StarSVG /></div>
+            <div className="star-6"><StarSVG /></div>
+          </button>
         )}
       </div>
     </div>
