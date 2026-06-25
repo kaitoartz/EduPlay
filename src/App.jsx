@@ -9,6 +9,7 @@ import { MOCK_GAMES, parseApiResponsePayload } from './data/mockData';
 // UI Components
 import Button from './components/ui/Button';
 import AstronautLoader from './components/ui/AstronautLoader';
+import { FrostedGlassCard } from './components/ui/interactive-frosted-glass-card';
 
 // Layout Components
 import Navbar from './components/Navbar';
@@ -25,6 +26,7 @@ import PricingPanel from './pages/PricingPanel';
 
 const App = () => {
   const [view, setView] = useState('landing');
+  const [showSplash, setShowSplash] = useState(true);
   const [params, setParams] = useState({});
   const [lockedGame, setLockedGame] = useState(null);
   const [appLoading, setAppLoading] = useState(true);
@@ -445,6 +447,33 @@ const App = () => {
                 <button className="declineButton" onClick={() => setShowCookies(false)}>Rechazar</button>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Entry Splash Overlay with Frosted Glass Card */}
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ 
+              opacity: 0,
+              transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } 
+            }}
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-zinc-950/70 backdrop-blur-3xl"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ 
+                opacity: 0, 
+                scale: 0.92,
+                transition: { duration: 0.35, ease: [0.32, 0.72, 0, 1] }
+              }}
+              transition={{ type: 'spring', duration: 0.5, bounce: 0.1 }}
+            >
+              <FrostedGlassCard onEnter={() => setShowSplash(false)} />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
