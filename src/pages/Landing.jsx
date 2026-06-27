@@ -15,6 +15,7 @@ import GitHubStarButton from '../components/ui/GitHubStarButton';
 import StarsBg from '../components/ui/StarsBg';
 import PageSkeleton from '../components/ui/PageSkeleton';
 import { BlurReveal } from '../components/ui/blur-reveal';
+import FeatureSection from '../components/ui/stack-feature-section';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -177,7 +178,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
   }, [games]);
 
   return (
-    <div className={`min-h-screen pt-20 bg-zinc-950 text-zinc-900 dark:text-white transition-all duration-700 ${isLoading ? 'blur-md opacity-40 pointer-events-none' : 'blur-none opacity-100'}`}>
+    <div className={`min-h-screen bg-zinc-950 text-zinc-900 dark:text-white transition-all duration-700 ${isLoading ? 'blur-md opacity-40 pointer-events-none' : 'blur-none opacity-100'}`}>
       {/* Scroll Container wrapper (400vh height to trigger scroll timeline) */}
       <div className="relative h-[400vh] w-full hero-scroll-container">
         {/* Sticky Stage (pinned container) */}
@@ -227,85 +228,42 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
 
           {/* Panel 2: Showcase Cards */}
           <div className="panel-2 absolute inset-0 flex justify-center items-center z-10 pointer-events-none opacity-0">
-            <div className="relative w-full max-w-6xl h-full flex justify-between items-center px-12">
-              <div className="hero-img-left absolute left-10 w-72 h-[340px] generic-card rotate-[-12deg]">
-                <div className="title-1 flex items-center gap-3">
-                  <Gamepad2 size={24} className="text-blue-400" />
-                  <span>Aventura Matemática</span>
-                </div>
-                <div className="content mt-8 text-zinc-300">
-                  Resuelve acertijos matemáticos y sube de nivel.
-                </div>
-                <button className="btn" onClick={() => onNavigate('catalog')}>Jugar</button>
-                <div className="bar">
-                  <div className="emptybar" />
-                  <div className="filledbar" />
-                </div>
-              </div>
-              
-              <div className="hero-img-center absolute bottom-12 left-1/2 -translate-x-1/2 w-80 h-[360px] generic-card z-20">
-                <div className="title-1 flex items-center gap-3">
-                  <Brain size={24} className="text-purple-400" />
-                  <span>Memoria Espacial</span>
-                </div>
-                <div className="content mt-8 text-zinc-300">
-                  Pon a prueba tu retención visual y memoriza.
-                </div>
-                <button className="btn" onClick={() => onNavigate('catalog')}>Jugar</button>
-                <div className="bar">
-                  <div className="emptybar" />
-                  <div className="filledbar" />
-                </div>
-              </div>
-
-              <div className="hero-img-right absolute right-10 w-72 h-[340px] generic-card rotate-[12deg]">
-                <div className="title-1 flex items-center gap-3">
-                  <FlaskConical size={24} className="text-green-400" />
-                  <span>Laboratorio Químico</span>
-                </div>
-                <div className="content mt-8 text-zinc-300">
-                  Combina elementos en el lab virtual.
-                </div>
-                <button className="btn" onClick={() => onNavigate('catalog')}>Jugar</button>
-                <div className="bar">
-                  <div className="emptybar" />
-                  <div className="filledbar" />
-                </div>
-              </div>
+            {/* Contenedor responsivo: absoluto en desktop, flex-row deslizable en móvil */}
+            <div className="relative w-full max-w-6xl h-full flex flex-row md:flex-col justify-start md:justify-between items-center px-6 md:px-12 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory gap-6 md:gap-0 pointer-events-auto py-16 md:py-0 scrollbar-hide">
             </div>
           </div>
 
           {/* Panel 3: Stats */}
-          <div className="panel-3 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-16 text-zinc-900 dark:text-white">
+          <div className="panel-3 absolute inset-0 flex flex-col justify-center items-center text-center p-4 md:p-6 z-10 opacity-0 pointer-events-none overflow-y-auto max-h-[85dvh] md:max-h-none py-12 md:py-0">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 text-zinc-900 dark:text-white">
               Aprendizaje que <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">engancha.</span>
             </h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl w-full">
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
-                <div className="text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">+10k</div>
-                <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Estudiantes Activos</div>
-                <div className="text-zinc-650 dark:text-zinc-300 text-sm">Entrenando su mente a diario en todo el mundo.</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-5xl w-full">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+                <div className="text-4xl md:text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">+10k</div>
+                <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Estudiantes Activos</div>
+                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Entrenando su mente a diario en todo el mundo.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
-                <div className="text-5xl font-black text-tertiary mb-2">98%</div>
-                <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Retención Escolar</div>
-                <div className="text-zinc-650 dark:text-zinc-300 text-sm">Altamente motivados con rachas y medallas.</div>
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+                <div className="text-4xl md:text-5xl font-black text-tertiary mb-2">98%</div>
+                <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Retención Escolar</div>
+                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Altamente motivados con rachas y medallas.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
-                <div className="text-5xl font-black text-cyan-600 dark:text-cyan-400 mb-2">+50</div>
-                <div className="font-bold text-zinc-900 dark:text-white text-lg mb-1">Juegos Premium</div>
-                <div className="text-zinc-650 dark:text-zinc-300 text-sm">Desarrollados por pedagogos y diseñadores.</div>
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none col-span-1 sm:col-span-2 md:col-span-1">
+                <div className="text-4xl md:text-5xl font-black text-cyan-600 dark:text-cyan-400 mb-2">+50</div>
+                <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Juegos Premium</div>
+                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Desarrollados por pedagogos y diseñadores.</div>
               </div>
             </div>
           </div>
 
           {/* Panel 4: Final CTA */}
-          <div className="panel-4 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10 opacity-0 pointer-events-none">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-zinc-900 dark:text-white">¿Listo para la aventura?</h2>
-            <p className="text-lg md:text-xl text-zinc-650 dark:text-zinc-400 mb-8 max-w-2xl">
+          <div className="panel-4 absolute inset-0 flex flex-col justify-center items-center text-center p-4 md:p-6 z-10 opacity-0 pointer-events-none max-h-[85dvh] overflow-y-auto py-12">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 md:mb-6 tracking-tight text-zinc-900 dark:text-white">¿Listo para la aventura?</h2>
+            <p className="text-base md:text-lg lg:text-xl text-zinc-650 dark:text-zinc-450 mb-6 md:mb-8 max-w-2xl px-2">
               Únete hoy a la comunidad educativa líder. Demostrativo disponible o regístrate para obtener novedades.
             </p>
-            <div className="flex-container w-full max-w-lg z-20 pointer-events-auto">
+            <div className="flex-container w-full max-w-lg z-20 pointer-events-auto px-2">
               {status === 'success' ? (
                 <motion.div 
                   className="bg-green-100/80 dark:bg-green-950/40 border border-green-200 dark:border-green-800/50 text-green-800 dark:text-green-200 p-6 rounded-3xl w-full shadow-lg text-center"
@@ -329,7 +287,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
                     className="flex-1 bg-transparent px-5 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 font-semibold focus:outline-none text-sm sm:text-base"
                     disabled={loading}
                   />
-                  <Button type="submit" disabled={loading} className="py-3 px-6 shadow-blue-500/10 whitespace-nowrap text-sm sm:text-base rounded-2xl">
+                  <Button type="submit" disabled={loading} className="py-3 px-6 shadow-blue-500/10 whitespace-nowrap text-sm sm:text-base rounded-2xl w-full sm:w-auto">
                     {loading ? 'Registrando...' : 'Unirse a la lista'}
                   </Button>
                 </form>
@@ -345,7 +303,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
       </div>
 
       {/* Benefits Section */}
-      <section className="py-36 md:py-48 bg-zinc-950 text-zinc-900 dark:text-white px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
+      <section className="py-20 md:py-36 lg:py-48 bg-zinc-950 text-zinc-900 dark:text-white px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent"></div>
         {/* Ambient gradients */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6B8BB4]/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -383,65 +341,11 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="px-6 lg:px-8 py-36 md:py-48 bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden">
+      {/* Categories / Feature Section */}
+      <div className="px-6 lg:px-8 py-16 bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent"></div>
-        <div className="max-w-7xl mx-auto mb-16 text-center">
-          <h2 className="text-4xl font-black text-zinc-900 dark:text-white mb-4">Explora por Categorías</h2>
-          <p className="text-xl text-zinc-650 dark:text-zinc-400 font-medium">Aprende lo que más te apasiona en nuestro universo.</p>
-        </div>
-
-        {/* Marquee Wrapper */}
-        <div className="ep-marquee-container">
-          {/* Row 1: Forward */}
-          <div className="ep-marquee-track">
-            {[
-              { name: "Cálculo Orbital", icon: Zap, color: "#8DA9C4" },
-              { name: "Física Solar", icon: FlaskConical, color: "#10b981" },
-              { name: "Bitácoras del Espacio", icon: BookOpen, color: "#ef4444" },
-              { name: "Sistemas Estelares", icon: Brain, color: "#E0B0FF" },
-              { name: "Código de Navegación", icon: Code, color: "#ec4899" },
-              { name: "Astronomía Kepler", icon: Sparkles, color: "#f59e0b" },
-              // Duplicate items for seamless loop
-              { name: "Cálculo Orbital", icon: Zap, color: "#8DA9C4" },
-              { name: "Física Solar", icon: FlaskConical, color: "#10b981" },
-              { name: "Bitácoras del Espacio", icon: BookOpen, color: "#ef4444" },
-              { name: "Sistemas Estelares", icon: Brain, color: "#E0B0FF" },
-              { name: "Código de Navegación", icon: Code, color: "#ec4899" },
-              { name: "Astronomía Kepler", icon: Sparkles, color: "#f59e0b" },
-            ].map((cat, i) => (
-              <div key={i} onClick={() => onNavigate('catalog')} className="ep-marquee-card group rounded-full">
-                <cat.icon size={22} style={{ color: cat.color }} className="group-hover:scale-110 transition-transform" />
-                <span>{cat.name}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Row 2: Reverse */}
-          <div className="ep-marquee-track-reverse">
-            {[
-              { name: "Cronología Galáctica", icon: Compass, color: "#14b8a6" },
-              { name: "Cartografía Exoplanetaria", icon: Globe, color: "#06b6d4" },
-              { name: "Frecuencias Cósmicas", icon: Music, color: "#f43f5e" },
-              { name: "Órbitas y Nebulosas", icon: Star, color: "#eab308" },
-              { name: "Fusión Artística", icon: Sparkles, color: "#a855f7" },
-              { name: "Biosfera de Cabina", icon: Heart, color: "#10b981" },
-              // Duplicate items for seamless loop
-              { name: "Cronología Galáctica", icon: Compass, color: "#14b8a6" },
-              { name: "Cartografía Exoplanetaria", icon: Globe, color: "#06b6d4" },
-              { name: "Frecuencias Cósmicas", icon: Music, color: "#f43f5e" },
-              { name: "Órbitas y Nebulosas", icon: Star, color: "#eab308" },
-              { name: "Fusión Artística", icon: Sparkles, color: "#a855f7" },
-              { name: "Biosfera de Cabina", icon: Heart, color: "#10b981" },
-            ].map((cat, i) => (
-              <div key={i} onClick={() => onNavigate('catalog')} className="ep-marquee-card group rounded-full">
-                <cat.icon size={22} style={{ color: cat.color }} className="group-hover:scale-110 transition-transform" />
-                <span>{cat.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <FeatureSection onNavigate={onNavigate} />
+      </div>
 
       {/* Featured Games */}
       <section className="featured-games-section py-36 md:py-48 relative bg-zinc-950 text-zinc-900 dark:text-white">

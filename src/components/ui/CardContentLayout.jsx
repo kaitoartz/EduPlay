@@ -4,15 +4,15 @@ import { Sparkles, Lock, Star, User, Play } from 'lucide-react';
 import Badge from './Badge';
 import FavouriteToggle from './FavouriteToggle';
 
-const StarSVG = () => (
+const StarSVG = ({ fill = "currentColor" }) => (
   <svg viewBox="0 0 784.11 815.53" style={{ shapeRendering: 'geometricPrecision', textRendering: 'geometricPrecision', imageRendering: 'optimizeQuality', fillRule: 'evenodd', clipRule: 'evenodd' }} version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g id="Layer_x0020_1">
-      <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" className="fil0" />
+      <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" fill={fill} />
     </g>
   </svg>
 );
 
-const CardContentLayout = ({ id, title, subject, level, duration, points, bg, icon: Icon, finalImageUrl, description, locked, isDarkTheme, tag }) => {
+const CardContentLayout = ({ id, title, subject, level, duration, points, bg, icon: Icon, finalImageUrl, description, locked, isDarkTheme, tag, isAnimating }) => {
   return (
     <div className={`relative p-6 h-full flex flex-col z-10 overflow-hidden ${isDarkTheme ? 'bg-transparent text-white' : 'bg-white text-zinc-900'}`}>
       {!isDarkTheme && <div className={`absolute -right-10 -top-10 w-32 h-32 rounded-full ${bg} opacity-50 blur-2xl group-hover:blur-3xl transition-all duration-500`} />}
@@ -102,17 +102,17 @@ const CardContentLayout = ({ id, title, subject, level, duration, points, bg, ic
             <span className="text-xs font-bold uppercase tracking-wider">Bloqueado</span>
           </div>
         ) : (
-          <button className="ep-card-play-btn">
+          <button className={`ep-card-play-btn ${isAnimating ? 'animating' : ''}`}>
             <div className="flex items-center gap-1.5 relative z-10">
               <Play size={14} fill="currentColor" className="transition-transform group-hover:scale-110" />
               <span>Jugar</span>
             </div>
-            <div className="star-1"><StarSVG /></div>
-            <div className="star-2"><StarSVG /></div>
-            <div className="star-3"><StarSVG /></div>
-            <div className="star-4"><StarSVG /></div>
-            <div className="star-5"><StarSVG /></div>
-            <div className="star-6"><StarSVG /></div>
+            <div className="star-1 text-[#6B8BB4]"><StarSVG fill="currentColor" /></div>
+            <div className="star-2 text-[#E0B0FF]"><StarSVG fill="currentColor" /></div>
+            <div className="star-3 text-blue-400"><StarSVG fill="currentColor" /></div>
+            <div className="star-4 text-purple-400"><StarSVG fill="currentColor" /></div>
+            <div className="star-5 text-yellow-550"><StarSVG fill="currentColor" /></div>
+            <div className="star-6 text-pink-400"><StarSVG fill="currentColor" /></div>
           </button>
         )}
       </div>

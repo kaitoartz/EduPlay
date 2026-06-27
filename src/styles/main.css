@@ -831,22 +831,31 @@ body {
 }
 .ep-stack-card {
   position: sticky;
-  top: 15vh;
-  min-height: 350px;
+  top: 10vh;
+  min-height: 240px;
   width: 100%;
   background: rgba(24, 24, 27, 0.8);
   border: 1px solid rgba(63, 63, 70, 0.5);
-  border-radius: 2.5rem;
+  border-radius: 2rem;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  padding: 3rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transform-origin: center top;
-  margin-bottom: 8vh;
+  margin-bottom: 6vh;
   transition: border-color 0.3s ease;
+}
+@media (min-width: 768px) {
+  .ep-stack-card {
+    top: 15vh;
+    min-height: 350px;
+    border-radius: 2.5rem;
+    padding: 3rem;
+    margin-bottom: 8vh;
+  }
 }
 .ep-stack-card:hover {
   border-color: #3b82f6;
@@ -857,22 +866,28 @@ body {
 .ep-card-play-btn {
   position: relative;
   height: 40px;
-  padding: 0 20px;
-  background: #ffffff;
+  padding: 0 24px;
+  background: #18181b;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #000000 !important;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.5);
+  color: #ffffff !important;
+  box-shadow: 0px 4px 12px rgba(24, 24, 27, 0.15);
   border-radius: 100px;
-  border: none;
-  transition: all 0.3s ease-in-out;
+  border: 1px solid rgba(24, 24, 27, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
+}
+.dark .ep-card-play-btn {
+  background: #ffffff;
+  color: #09090b !important;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+  border: none;
 }
 .ep-card-play-btn .star-1,
 .ep-card-play-btn .star-2,
@@ -882,72 +897,78 @@ body {
 .ep-card-play-btn .star-6 {
   position: absolute;
   height: auto;
-  filter: drop-shadow(0 0 0 #fffdef);
   z-index: -5;
+  transition: all 0.8s cubic-bezier(0.05, 0.83, 0.43, 0.96);
 }
 .ep-card-play-btn .star-1 {
   top: 20%; left: 20%; width: 25px;
-  transition: all 0.8s cubic-bezier(0.05, 0.83, 0.43, 0.96);
 }
 .ep-card-play-btn .star-2 {
   top: 45%; left: 45%; width: 15px;
-  transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 .ep-card-play-btn .star-3 {
   top: 40%; left: 40%; width: 5px;
-  transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 .ep-card-play-btn .star-4 {
   top: 20%; left: 40%; width: 8px;
-  transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 .ep-card-play-btn .star-5 {
   top: 25%; left: 45%; width: 15px;
-  transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 .ep-card-play-btn .star-6 {
   top: 5%; left: 50%; width: 5px;
-  transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
-.ep-card-play-btn:hover {
-  background: #000000;
+.ep-card-play-btn:hover,
+.ep-card-play-btn.animating {
+  background: #3b82f6;
   color: #ffffff !important;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+  transform: scale(0.97);
 }
-.ep-card-play-btn:hover .star-1 {
-  top: -30%; left: -30%; width: 20px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+.dark .ep-card-play-btn:hover,
+.dark .ep-card-play-btn.animating {
+  background: #3b82f6;
+  color: #ffffff !important;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
 }
-.ep-card-play-btn:hover .star-2 {
-  top: 35%; left: -35%; width: 15px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+
+.ep-card-play-btn:hover .star-1,
+.ep-card-play-btn.animating .star-1 {
+  top: -35%; left: -35%; width: 20px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
-.ep-card-play-btn:hover .star-3 {
-  top: 80%; left: -20%; width: 10px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+.ep-card-play-btn:hover .star-2,
+.ep-card-play-btn.animating .star-2 {
+  top: 35%; left: -40%; width: 15px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
-.ep-card-play-btn:hover .star-4 {
-  top: -30%; left: 110%; width: 20px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+.ep-card-play-btn:hover .star-3,
+.ep-card-play-btn.animating .star-3 {
+  top: 85%; left: -25%; width: 10px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
-.ep-card-play-btn:hover .star-5 {
-  top: 30%; left: 120%; width: 15px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+.ep-card-play-btn:hover .star-4,
+.ep-card-play-btn.animating .star-4 {
+  top: -35%; left: 115%; width: 20px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
-.ep-card-play-btn:hover .star-6 {
-  top: 80%; left: 110%; width: 10px;
-  filter: drop-shadow(0 0 10px #fffdef); z-index: 2;
+.ep-card-play-btn:hover .star-5,
+.ep-card-play-btn.animating .star-5 {
+  top: 30%; left: 125%; width: 15px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
-.ep-card-play-btn .fil0 {
-  fill: #fffdef;
+.ep-card-play-btn:hover .star-6,
+.ep-card-play-btn.animating .star-6 {
+  top: 85%; left: 115%; width: 10px;
+  filter: drop-shadow(0 0 8px currentColor); z-index: 2;
 }
 
 /* ── ep-3d-globe: 3D Line Globe Animation ── */
 .ep-orbit-wrapper {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: min(80vw, 300px);
+  height: min(80vw, 300px);
   border-radius: 50%;
   perspective: 120em;
   transform-style: preserve-3d;
@@ -959,8 +980,26 @@ body {
 }
 @media (min-width: 768px) {
   .ep-orbit-wrapper {
-    width: 480px;
-    height: 480px;
+    width: 450px;
+    height: 450px;
+  }
+}
+@media (min-width: 1280px) {
+  .ep-orbit-wrapper {
+    width: 520px;
+    height: 520px;
+  }
+}
+@media (min-width: 1920px) {
+  .ep-orbit-wrapper {
+    width: 700px;
+    height: 700px;
+  }
+}
+@media (min-width: 2560px) {
+  .ep-orbit-wrapper {
+    width: 900px;
+    height: 900px;
   }
 }
 .ep-orbit-line-wrapper {
