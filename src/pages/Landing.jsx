@@ -28,6 +28,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
   const [loading, setLoading] = useState(false);
 
   const modelViewerRef = useRef(null);
+  const lenisRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,6 +53,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
+      lenisRef.current = lenis;
 
       // Update ScrollTrigger on Lenis scroll events
       lenis.on('scroll', ScrollTrigger.update);
@@ -172,10 +174,21 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
       ctx.revert();
       gsap.ticker.remove(tickerCallback);
       if (lenis) {
+        lenisRef.current = null;
         lenis.destroy();
       }
     };
   }, [games]);
+
+  useEffect(() => {
+    const lenis = lenisRef.current;
+    if (!lenis) return;
+    if (isSplashActive) {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+  }, [isSplashActive]);
 
   return (
     <div className={`min-h-screen bg-zinc-950 text-zinc-900 dark:text-white transition-all duration-700 ${isLoading ? 'blur-md opacity-40 pointer-events-none' : 'blur-none opacity-100'}`}>

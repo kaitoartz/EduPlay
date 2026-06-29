@@ -60,6 +60,15 @@ const App = () => {
     localStorage.setItem('eduplay_theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (showSplash) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showSplash]);
+
   // Estado del Usuario (Caché del navegador)
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('eduplay_user');
