@@ -132,6 +132,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
         className={`ludi-rainbow-wrap group w-full max-w-md cursor-pointer select-none`}
         style={{
           transformStyle: 'preserve-3d',
+          transition: hasClicked ? 'none' : 'transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1)',
           animation: hasClicked 
             ? (flipped ? 'balatro-flip-to-back 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards' : 'balatro-flip-to-front 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards')
             : undefined,
