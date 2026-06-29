@@ -1,35 +1,57 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Pointer, Sparkles } from 'lucide-react';
+import { Pointer, Sparkles, Star, Zap, Heart, Award, Sun, Moon } from 'lucide-react';
 import { RobotFaceIcon } from './RobotFaceIcon';
 
-// ─── Particle system ──────────────────────────────────────────────────────────
+// ─── Particle icons & colors ──────────────────────────────────────────────────
+const PARTICLE_ICONS = [Star, Sparkles, Zap, Heart, Award, Sun, Moon];
 const PARTICLE_COLORS = [
-  '#FFD700', '#FFC300', '#FFE066',   // gold
-  '#ffffff', '#f0f0ff', '#e8e8ff',   // white/silver
-  '#a855f7', '#E0B0FF', '#c084fc',   // purple
-  '#06b6d4', '#67e8f9',              // cyan
-  '#ec4899', '#f9a8d4',              // pink
-  '#6B8BB4', '#91aed4',              // blue
+  '#FFD700', '#FFC300', '#FFE066',
+  '#ffffff', '#f0f0ff',
+  '#a855f7', '#E0B0FF',
+  '#06b6d4', '#67e8f9',
+  '#ec4899', '#f9a8d4',
+  '#6B8BB4', '#91aed4',
 ];
-const PARTICLE_SHAPES = ['✦', '★', '✶', '✸', '◆', '•', '✧', '⭐'];
 
-function createParticles(count = 26) {
+// Spawn particles around the card perimeter
+function createParticles(width, height, count = 18) {
+  const cx = width / 2;
+  const cy = height / 2;
+  const perimeter = 2 * (width + height);
+
   return Array.from({ length: count }, (_, i) => {
-    const baseAngle = (360 / count) * i;
-    const jitter = (Math.random() - 0.5) * (360 / count) * 1.8;
-    const angle = baseAngle + jitter;
-    const distance = 75 + Math.random() * 100;
-    const rad = (angle * Math.PI) / 180;
+    // Evenly distributed around perimeter with slight jitter
+    const t = (perimeter / count) * i + Math.random() * (perimeter / count) * 0.6;
+    let px, py;
+
+    if (t < width) {
+      px = t; py = 0;
+    } else if (t < width + height) {
+      px = width; py = t - width;
+    } else if (t < 2 * width + height) {
+      px = width - (t - width - height); py = height;
+    } else {
+      px = 0; py = height - (t - 2 * width - height);
+    }
+
+    // Direction: outward from card center
+    const dx = px - cx;
+    const dy = py - cy;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const flyDist = 45 + Math.random() * 65;
+
     return {
-      id: `p_${Date.now()}_${i}_${Math.random()}`,
-      tx: Math.cos(rad) * distance,
-      ty: Math.sin(rad) * distance,
+      id: `p_${Date.now()}_${i}`,
+      startX: px,
+      startY: py,
+      tx: (dx / len) * flyDist,
+      ty: (dy / len) * flyDist,
+      Icon: PARTICLE_ICONS[Math.floor(Math.random() * PARTICLE_ICONS.length)],
       color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-      shape: PARTICLE_SHAPES[Math.floor(Math.random() * PARTICLE_SHAPES.length)],
-      size: 8 + Math.random() * 10,
-      duration: 0.5 + Math.random() * 0.45,
-      delay: Math.random() * 0.12,
-      spin: (Math.random() - 0.5) * 720,
+      size: 11 + Math.random() * 9,
+      duration: 0.55 + Math.random() * 0.4,
+      delay: Math.random() * 0.1,
+      spin: (Math.random() < 0.5 ? 1 : -1) * (120 + Math.random() * 200),
     };
   });
 }
@@ -40,13 +62,13 @@ export const FrostedGlassCard = ({ onEnter }) => {
   const flippedRef   = useRef(false);
   const animatingRef = useRef(false);
 
-  const [flipped,    setFlipped]    = useState(false);
-  const [animState,  setAnimState]  = useState('idle'); // 'idle' | 'flipping' | 'unflipping'
-  const [particles,  setParticles]  = useState([]);
-  const [backHovered,setBackHovered]= useState(false);
-  const [ageInput,   setAgeInput]   = useState('');
+  const [flipped,     setFlipped]    = useState(false);
+  const [animState,   setAnimState]  = useState('idle');
+  const [particles,   setParticles]  = useState([]);
+  const [backHovered, setBackHovered]= useState(false);
+  const [ageInput,    setAgeInput]   = useState('');
 
-  // ── 3D tilt on mouse move ──────────────────────────────────────────────────
+  // ── 3D tilt ────────────────────────────────────────────────────────────────
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
@@ -68,32 +90,35 @@ export const FrostedGlassCard = ({ onEnter }) => {
       card.style.setProperty('--holo-x', `${lp}%`);
       card.style.setProperty('--holo-y', `${tp}%`);
     };
+
     const onLeave = () => {
       if (flippedRef.current || animatingRef.current) return;
       card.style.transform = '';
     };
 
-    card.addEventListener('mousemove', onMove);
-    card.addEventListener('mouseleave', onLeave);
+    card.addEventListener('mousemove', onMove, { passive: true });
+    card.addEventListener('mouseleave', onLeave, { passive: true });
     return () => {
       card.removeEventListener('mousemove', onMove);
       card.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 
-  // ── Flip click ─────────────────────────────────────────────────────────────
+  // ── Click → particles + bounce flip ───────────────────────────────────────
   const handleCardClick = () => {
     if (animatingRef.current) return;
     animatingRef.current = true;
-    if (cardRef.current) cardRef.current.style.transform = '';
-    // Spawn particles
-    setParticles(createParticles(26));
-    setTimeout(() => setParticles([]), 1200);
-    // Trigger bounce animation
+
+    if (cardRef.current) {
+      cardRef.current.style.transform = '';
+      const rect = cardRef.current.getBoundingClientRect();
+      setParticles(createParticles(rect.width, rect.height, 18));
+    }
+
+    setTimeout(() => setParticles([]), 1300);
     setAnimState(flipped ? 'unflipping' : 'flipping');
   };
 
-  // ── Animation end → settle state ──────────────────────────────────────────
   const handleAnimEnd = () => {
     const next = !flipped;
     flippedRef.current  = next;
@@ -102,43 +127,33 @@ export const FrostedGlassCard = ({ onEnter }) => {
     animatingRef.current = false;
   };
 
-  // ── Wrapper 3D style (swap between animation and settled transform) ─────────
   const wrapperStyle = (() => {
     const base = { transformStyle: 'preserve-3d', position: 'relative' };
-    if (animState === 'flipping')   return { ...base, animation: 'cardFlip 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
-    if (animState === 'unflipping') return { ...base, animation: 'cardUnflip 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
+    if (animState === 'flipping')   return { ...base, animation: 'cardFlip 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
+    if (animState === 'unflipping') return { ...base, animation: 'cardUnflip 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
     return { ...base, transform: flipped ? 'rotateY(180deg)' : undefined };
   })();
 
   return (
     <>
-      {/* ── Keyframes injected so LightningCSS can't strip them ── */}
       <style>{`
         @keyframes cardFlip {
           0%   { transform: rotateY(0deg); }
-          55%  { transform: rotateY(205deg); }
-          72%  { transform: rotateY(168deg); }
-          88%  { transform: rotateY(184deg); }
+          52%  { transform: rotateY(205deg); }
+          70%  { transform: rotateY(168deg); }
+          86%  { transform: rotateY(184deg); }
           100% { transform: rotateY(180deg); }
         }
         @keyframes cardUnflip {
           0%   { transform: rotateY(180deg); }
-          55%  { transform: rotateY(-25deg); }
-          72%  { transform: rotateY(12deg); }
-          88%  { transform: rotateY(-4deg); }
+          52%  { transform: rotateY(-25deg); }
+          70%  { transform: rotateY(12deg); }
+          86%  { transform: rotateY(-4deg); }
           100% { transform: rotateY(0deg); }
         }
         @keyframes particleFly {
-          0%   { transform: translate(-50%, -50%) scale(1.3) rotate(0deg); opacity: 1; }
-          40%  { opacity: 0.9; }
-          100% {
-            transform: translate(calc(-50% + var(--ptx)), calc(-50% + var(--pty))) scale(0) rotate(var(--pspin));
-            opacity: 0;
-          }
-        }
-        @keyframes particlePop {
-          0%   { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-          20%  { transform: translate(-50%, -50%) scale(1.6); opacity: 1; }
+          0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+          18%  { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); opacity: 1; }
           100% {
             transform: translate(calc(-50% + var(--ptx)), calc(-50% + var(--pty))) scale(0) rotate(var(--pspin));
             opacity: 0;
@@ -148,40 +163,9 @@ export const FrostedGlassCard = ({ onEnter }) => {
 
       <div
         className="card-container flex items-center justify-center p-4"
-        style={{ perspective: '1000px', position: 'relative' }}
+        style={{ perspective: '1000px' }}
       >
-        {/* ── Particle burst (portal above card) ── */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%', left: '50%',
-            pointerEvents: 'none',
-            zIndex: 9999,
-          }}
-        >
-          {particles.map((p) => (
-            <span
-              key={p.id}
-              style={{
-                position: 'absolute',
-                fontSize: `${p.size}px`,
-                color: p.color,
-                '--ptx': `${p.tx}px`,
-                '--pty': `${p.ty}px`,
-                '--pspin': `${p.spin}deg`,
-                animation: `particlePop ${p.duration}s ease-out ${p.delay}s both`,
-                userSelect: 'none',
-                lineHeight: 1,
-                textShadow: `0 0 10px ${p.color}, 0 0 20px ${p.color}`,
-                filter: `drop-shadow(0 0 5px ${p.color})`,
-              }}
-            >
-              {p.shape}
-            </span>
-          ))}
-        </div>
-
-        {/* ── Rainbow border wrapper (3D flip root) ── */}
+        {/* ── Rainbow wrapper ── */}
         <div
           ref={cardRef}
           onClick={handleCardClick}
@@ -191,10 +175,40 @@ export const FrostedGlassCard = ({ onEnter }) => {
         >
           <div className="ludi-rainbow-glow" />
 
-          {/* Inner preserve-3d container */}
+          {/* ── Particle layer (inside wrapper, overflow:visible) ── */}
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 9999 }}>
+            {particles.map((p) => (
+              <div
+                key={p.id}
+                style={{
+                  position: 'absolute',
+                  left: p.startX,
+                  top: p.startY,
+                  '--ptx': `${p.tx}px`,
+                  '--pty': `${p.ty}px`,
+                  '--pspin': `${p.spin}deg`,
+                  animation: `particleFly ${p.duration}s ease-out ${p.delay}s both`,
+                  willChange: 'transform, opacity',
+                  contain: 'layout style',
+                }}
+              >
+                <p.Icon
+                  size={p.size}
+                  color={p.color}
+                  strokeWidth={2.5}
+                  style={{
+                    display: 'block',
+                    filter: `drop-shadow(0 0 6px ${p.color}) drop-shadow(0 0 2px ${p.color})`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* ── 3D inner ── */}
           <div style={{ position: 'relative', width: '100%', transformStyle: 'preserve-3d' }}>
 
-            {/* ═══ FRONT ═══ */}
+            {/* FRONT */}
             <div
               className="card-ludi rounded-[2.45rem] p-10 text-white"
               style={{
@@ -210,7 +224,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
                 WebkitBackfaceVisibility: 'hidden',
               }}
             >
-              {/* Holographic cursor-spotlight overlay */}
+              {/* Holographic spotlight */}
               <div
                 className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[2.45rem]"
                 style={{
@@ -223,7 +237,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
                   WebkitMaskImage: 'radial-gradient(180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black 20%, transparent 100%)',
                 }}
               />
-              {/* Sparkles GIF overlay */}
+              {/* Sparkles GIF */}
               <div
                 className="pointer-events-none absolute inset-0 opacity-30 group-hover:opacity-60 transition-opacity duration-300 rounded-[2.45rem]"
                 style={{
@@ -261,7 +275,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
               </div>
             </div>
 
-            {/* ═══ BACK ═══ */}
+            {/* BACK */}
             <div
               className="card-ludi rounded-[2.45rem] p-10 text-white flex flex-col items-center justify-center text-center"
               onMouseEnter={() => setBackHovered(true)}
@@ -286,10 +300,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
                 style={{ transform: 'translateZ(60px)', transformStyle: 'preserve-3d' }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center"
-                  style={{ transform: 'translateZ(30px)' }}
-                >
+                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ transform: 'translateZ(30px)' }}>
                   <RobotFaceIcon
                     state={(() => {
                       if (ageInput.trim() !== '') {
