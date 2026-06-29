@@ -111,7 +111,7 @@ const CardContentLayout = ({ id, title, subject, level, duration, points, bg, ic
             <div className="star-2 text-[#E0B0FF]"><StarSVG fill="currentColor" /></div>
             <div className="star-3 text-blue-400"><StarSVG fill="currentColor" /></div>
             <div className="star-4 text-purple-400"><StarSVG fill="currentColor" /></div>
-            <div className="star-5 text-yellow-550"><StarSVG fill="currentColor" /></div>
+            <div className="star-5 text-yellow-500"><StarSVG fill="currentColor" /></div>
             <div className="star-6 text-pink-400"><StarSVG fill="currentColor" /></div>
           </button>
         )}

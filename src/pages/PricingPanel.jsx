@@ -28,7 +28,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
         'Escaneo de progreso estándar'
       ],
       buttonText: 'Iniciar Reconocimiento',
-      color: 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white',
+      color: 'border-zinc-200 dark:border-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-300 bg-white dark:bg-zinc-50 text-zinc-900 dark:text-white',
       badge: null
     },
     {
@@ -87,31 +87,31 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
       <div className="absolute bottom-20 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-cyan-300/10 to-indigo-300/15 dark:from-cyan-900/10 dark:to-indigo-900/10 rounded-full blur-[140px] -z-10" />
 
       <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
-        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-955/30 border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 font-bold text-sm shadow-sm mb-6">
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 font-bold text-sm shadow-sm mb-6">
           <Sparkles size={16} className="text-yellow-500 animate-pulse"/> Planes simples, sin sorpresas
         </span>
 
         <h1 className="text-5xl md:text-6xl font-black text-zinc-900 dark:text-white tracking-tight mb-6">
           Invierte en su <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">futuro digital</span>
         </h1>
-        <p className="text-xl text-zinc-555 dark:text-zinc-400 font-medium max-w-2xl mb-12">
+        <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl mb-12">
           Elige el plan ideal para expandir la mente de tus hijos y profesores. Cancela en cualquier momento con un solo clic.
         </p>
 
         {/* Toggle Anual/Mensual */}
-        <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2 rounded-2xl border border-zinc-200/65 dark:border-zinc-800 shadow-sm mb-16 relative z-10">
+        <div className="flex items-center gap-4 bg-white dark:bg-zinc-50 p-2 rounded-2xl border border-zinc-200/65 dark:border-zinc-200 shadow-sm mb-16 relative z-10">
           <button
             onClick={() => setBillingCycle('monthly')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow' : 'text-zinc-555 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
           >
             Mensual
           </button>
           <button
             onClick={() => setBillingCycle('annual')}
-            className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow' : 'text-zinc-555 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
+            className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
           >
             Anual
-            <span className="absolute -top-3 -right-6 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow border border-white dark:border-zinc-900">
+            <span className="absolute -top-3 -right-6 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow border border-white dark:border-zinc-50">
               -20%
             </span>
           </button>
@@ -174,7 +174,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                       <ul className="space-y-2.5 text-left flex-grow">
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                            <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-blue-50 dark:bg-blue-955/30 text-blue-600 dark:text-blue-400">
+                            <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400">
                               <Check size={10} strokeWidth={3}/>
                             </span>
                             <span>{feature}</span>
@@ -215,11 +215,11 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
+              className="bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-200 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
             >
               <button
                 onClick={() => { setCheckoutPlan(null); setCheckoutStep('form'); }}
-                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-555 dark:text-zinc-400 flex items-center justify-center transition-colors"
+                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-150 hover:bg-zinc-200 dark:hover:bg-zinc-200 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition-colors"
                 aria-label="Cerrar modal"
               >
                 <XCircle size={20} />
@@ -228,12 +228,12 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
               {checkoutStep === 'form' ? (
                 <div>
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-955/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                       <Sparkles size={24} />
                     </div>
                     <div>
                       <h3 className="text-2xl font-black text-zinc-900 dark:text-white">Activar {checkoutPlan.name}</h3>
-                      <p className="text-sm text-zinc-555 dark:text-zinc-400 font-medium">Prueba simulada de suscripción</p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Prueba simulada de suscripción</p>
                     </div>
                   </div>
 
@@ -293,11 +293,11 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                 </div>
               ) : (
                 <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-green-100 dark:bg-green-955/30 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 dark:text-green-400">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 dark:text-green-400">
                     <CheckCircle2 size={36} />
                   </div>
                   <h3 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">¡Suscripción Activada!</h3>
-                  <p className="text-zinc-555 dark:text-zinc-400 font-medium text-sm mb-8">
+                  <p className="text-zinc-500 dark:text-zinc-400 font-medium text-sm mb-8">
                     Felicidades, has activado tu membresía simulada para <strong className="text-zinc-800 dark:text-zinc-200">{checkoutPlan.name}</strong>. Disfruta de la mejor experiencia educativa.
                   </p>
                   <Button

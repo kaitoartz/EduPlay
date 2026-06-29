@@ -40,7 +40,7 @@ const Catalog = ({ onNavigate, onLockClick, games = [], theme, isLoading: isPage
           {subjects.map(subj => (
             <button
               key={subj} onClick={() => handleFilterChange(subj)}
-              className={`whitespace-nowrap px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${filter === subj ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg shadow-zinc-900/20 dark:shadow-none scale-105' : 'bg-white dark:bg-zinc-900 text-zinc-650 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:border-zinc-300'}`}
+              className={`whitespace-nowrap px-6 py-3 rounded-2xl font-bold transition-all duration-300 ${filter === subj ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-lg shadow-zinc-900/20 dark:shadow-none scale-105' : 'bg-white dark:bg-zinc-50 text-zinc-650 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-150 hover:border-zinc-300'}`}
             >{subj}</button>
           ))}
         </div>

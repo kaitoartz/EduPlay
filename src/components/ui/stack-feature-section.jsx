@@ -1,4 +1,4 @@
-import { Button } from "./button.tsx";
+import Button from "./Button";
 import { 
   Zap, FlaskConical, BookOpen, Brain, Code, Globe, Star, 
   Sparkles, Compass, Music, Heart, Award, Cpu, Shield, 
@@ -6,23 +6,23 @@ import {
 } from "lucide-react";
 
 const iconConfigs = [
-  { Icon: Zap, color: "#f59e0b" },          // Rayos/Física
-  { Icon: FlaskConical, color: "#10b981" }, // Ciencia/Laboratorio
-  { Icon: BookOpen, color: "#3b82f6" },     // Lectura/Bitácoras
-  { Icon: Brain, color: "#E0B0FF" },        // Memoria/Sistemas Estelares
-  { Icon: Code, color: "#ec4899" },         // Programación/Código
-  { Icon: Globe, color: "#06b6d4" },        // Cartografía
-  { Icon: Star, color: "#eab308" },         // Misiones/Estrellas
-  { Icon: Sparkles, color: "#a855f7" },     // Magia/Creatividad
-  { Icon: Compass, color: "#14b8a6" },      // Exploración
-  { Icon: Music, color: "#f43f5e" },        // Frecuencias Cósmicas
-  { Icon: Heart, color: "#ef4444" },        // Salud/Vida
-  { Icon: Award, color: "#f59e0b" },        // Premios/Rachas
-  { Icon: Cpu, color: "#6366f1" },          // Tecnología/IA
-  { Icon: Shield, color: "#3b82f6" },       // Seguridad/Padres
-  { Icon: Rocket, color: "#6B8BB4" },       // Navegación
-  { Icon: Target, color: "#ef4444" },       // Retos diarios
-  { Icon: HelpCircle, color: "#a855f7" }    // Acertijos
+  { Icon: Zap, color: "#f59e0b", label: "Física" },          // Rayos/Física
+  { Icon: FlaskConical, color: "#10b981", label: "Ciencias" }, // Ciencia/Laboratorio
+  { Icon: BookOpen, color: "#3b82f6", label: "Lectura" },     // Lectura/Bitácoras
+  { Icon: Brain, color: "#E0B0FF", label: "Memoria" },        // Memoria/Sistemas Estelares
+  { Icon: Code, color: "#ec4899", label: "Programación" },    // Programación/Código
+  { Icon: Globe, color: "#06b6d4", label: "Geografía" },      // Cartografía
+  { Icon: Star, color: "#eab308", label: "Misiones" },         // Misiones/Estrellas
+  { Icon: Sparkles, color: "#a855f7", label: "Creatividad" }, // Magia/Creatividad
+  { Icon: Compass, color: "#14b8a6", label: "Exploración" },  // Exploración
+  { Icon: Music, color: "#f43f5e", label: "Música" },         // Frecuencias Cósmicas
+  { Icon: Heart, color: "#ef4444", label: "Salud" },          // Salud/Vida
+  { Icon: Award, color: "#f59e0b", label: "Logros" },         // Premios/Rachas
+  { Icon: Cpu, color: "#6366f1", label: "Tecnología" },       // Tecnología/IA
+  { Icon: Shield, color: "#3b82f6", label: "Seguridad" },     // Seguridad/Padres
+  { Icon: Rocket, color: "#6B8BB4", label: "Navegación" },    // Navegación
+  { Icon: Target, color: "#ef4444", label: "Retos" },         // Retos diarios
+  { Icon: HelpCircle, color: "#a855f7", label: "Acertijos" }  // Acertijos
 ];
 
 export default function FeatureSection({ onNavigate }) {
@@ -31,18 +31,19 @@ export default function FeatureSection({ onNavigate }) {
   const iconsPerOrbit = Math.ceil(iconConfigs.length / orbitCount);
 
   return (
-    <section className="relative w-full max-w-6xl mx-auto my-20 flex flex-col md:flex-row items-center justify-between min-h-[30rem] border border-zinc-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl overflow-hidden rounded-3xl p-8 md:p-12 shadow-xl dark:shadow-none">
+    <section className="feature-section-container relative w-full max-w-7xl mx-auto px-6 lg:px-8 py-16 my-0 flex flex-col md:flex-row items-center justify-between min-h-[30rem] bg-transparent shadow-none border-none dark:border-none backdrop-blur-none rounded-none">
       
       {/* Background gradients for premium feel */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
       
       {/* Left side: Heading and Text */}
       <div className="w-full md:w-1/2 z-10 flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-6">
-          <Sparkles size={12} className="animate-pulse" /> Aprendizaje Activo
+        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-bold text-sm border border-blue-100 dark:border-blue-900/30 mb-6">
+          <Sparkles size={14}/> EXPANDIENDO FRONTERAS
         </span>
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-4 tracking-tight leading-[1.15] text-zinc-900 dark:text-white">
-          Expande tu mente
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-900 dark:text-white mb-6 tracking-tight leading-tight">
+          Expande tu mente <br className="hidden md:inline"/>
+          <span className="bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 bg-clip-text text-transparent">más allá del cielo</span>
         </h2>
         <p className="text-zinc-550 dark:text-zinc-400 mb-8 max-w-md text-base sm:text-lg font-medium leading-relaxed">
           Navega por múltiples disciplinas diseñadas especialmente para mentes curiosas. Matemáticas, ciencias, programación y lectura en un solo universo.

@@ -342,7 +342,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
       </section>
 
       {/* Categories / Feature Section */}
-      <div className="px-6 lg:px-8 py-16 bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden">
+      <div className="feature-section-wrapper bg-zinc-950 text-zinc-900 dark:text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent"></div>
         <FeatureSection onNavigate={onNavigate} />
       </div>
@@ -393,7 +393,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
             { text: "Excelente bitácora para asignar misiones adicionales a la tripulación. Muy intuitiva.", author: "Carlos R.", role: "Comandante (Profesor)", avatar: "C" },
             { text: "Me encanta alinear constelaciones y ganar estrellas cada vez que completo misiones de ciencias.", author: "Sofi (10 años)", role: "Luminauta", avatar: "S" }
           ].map((test, i) => (
-            <div key={i} className="stack-card ep-stack-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-md dark:shadow-none">
+            <div key={i} className="stack-card ep-stack-card bg-white dark:bg-zinc-50 border border-zinc-200 dark:border-zinc-200 shadow-md dark:shadow-none">
               <div className="flex flex-col gap-6">
                 <div className="flex text-yellow-500 dark:text-yellow-400">
                   {[1,2,3,4,5].map(star => <Star key={star} size={24} fill="currentColor" className="filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]" />)}
@@ -408,7 +408,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
                 </div>
                 <div>
                   <div className="font-extrabold text-zinc-900 dark:text-white text-lg">{test.author}</div>
-                  <div className="text-sm text-zinc-555 dark:text-zinc-400 font-semibold">{test.role}</div>
+                  <div className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold">{test.role}</div>
                 </div>
               </div>
             </div>

@@ -5,9 +5,9 @@ const Shimmer = () => (
 );
 
 export const CardSkeleton = () => (
-  <div className="relative w-full rounded-[2rem] p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden min-h-[420px] flex flex-col justify-between">
+  <div className="relative w-full rounded-[2rem] p-6 bg-white dark:bg-zinc-50 border border-zinc-200 dark:border-zinc-200 shadow-sm overflow-hidden min-h-[420px] flex flex-col justify-between">
     <div>
-      <div className="relative w-full h-44 rounded-2xl bg-zinc-150 dark:bg-zinc-800 overflow-hidden mb-5">
+      <div className="relative w-full h-44 rounded-2xl bg-zinc-150 dark:bg-zinc-150 overflow-hidden mb-5">
         <Shimmer />
       </div>
       <div className="flex justify-between items-start mb-4">
@@ -130,9 +130,9 @@ const PageSkeleton = ({ view }) => {
     <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50 dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Profile Card Header Skeleton */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white dark:bg-zinc-900 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white dark:bg-zinc-50 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="flex items-center gap-8">
-            <div className="w-28 h-28 rounded-full bg-zinc-200 dark:bg-zinc-800 relative overflow-hidden">
+            <div className="w-28 h-28 rounded-full bg-zinc-200 dark:bg-zinc-150 relative overflow-hidden">
               <Shimmer />
             </div>
             <div className="space-y-3">
@@ -156,7 +156,7 @@ const PageSkeleton = ({ view }) => {
 
         {/* Ticket Profile Card + Alerts Skeletons */}
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <div className="w-full lg:w-80 h-96 bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 relative overflow-hidden">
+          <div className="w-full lg:w-80 h-96 bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-200 relative overflow-hidden">
             <Shimmer />
           </div>
           <div className="flex-1 w-full space-y-3">
@@ -176,9 +176,9 @@ const PageSkeleton = ({ view }) => {
           <div className="h-6 w-96 bg-zinc-150 dark:bg-zinc-850 rounded-xl relative overflow-hidden"><Shimmer /></div>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="h-32 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-150 dark:border-zinc-800 relative overflow-hidden"><Shimmer /></div>
-          <div className="h-32 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-150 dark:border-zinc-800 relative overflow-hidden"><Shimmer /></div>
-          <div className="h-32 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-150 dark:border-zinc-800 relative overflow-hidden"><Shimmer /></div>
+          <div className="h-32 bg-white dark:bg-zinc-50 rounded-2xl border border-zinc-150 dark:border-zinc-200 relative overflow-hidden"><Shimmer /></div>
+          <div className="h-32 bg-white dark:bg-zinc-50 rounded-2xl border border-zinc-150 dark:border-zinc-200 relative overflow-hidden"><Shimmer /></div>
+          <div className="h-32 bg-white dark:bg-zinc-50 rounded-2xl border border-zinc-150 dark:border-zinc-200 relative overflow-hidden"><Shimmer /></div>
         </div>
       </div>
     </div>
@@ -186,7 +186,7 @@ const PageSkeleton = ({ view }) => {
 
   const renderProfileSkeleton = () => (
     <div className="min-h-screen pt-32 pb-20 px-6 lg:px-8 bg-zinc-50/50 dark:bg-zinc-950">
-      <div className="max-w-3xl mx-auto bg-white dark:bg-zinc-900 p-8 md:p-10 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-800 shadow-sm space-y-8">
+      <div className="max-w-3xl mx-auto bg-white dark:bg-zinc-550/10 p-8 md:p-10 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-200 shadow-sm space-y-8">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-28 h-28 rounded-full bg-zinc-250 dark:bg-zinc-800 relative overflow-hidden"><Shimmer /></div>
           <div className="h-6 w-40 bg-zinc-200 dark:bg-zinc-800 rounded-md relative overflow-hidden"><Shimmer /></div>
@@ -214,8 +214,8 @@ const PageSkeleton = ({ view }) => {
           <div className="h-6 w-96 bg-zinc-150 dark:bg-zinc-850 rounded-xl mx-auto relative overflow-hidden"><Shimmer /></div>
         </div>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="h-[500px] bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-800 relative overflow-hidden"><Shimmer /></div>
-          <div className="h-[500px] bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-800 relative overflow-hidden"><Shimmer /></div>
+          <div className="h-[500px] bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-200 relative overflow-hidden"><Shimmer /></div>
+          <div className="h-[500px] bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-150 dark:border-zinc-200 relative overflow-hidden"><Shimmer /></div>
         </div>
       </div>
     </div>

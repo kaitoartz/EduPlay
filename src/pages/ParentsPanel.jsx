@@ -93,7 +93,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
             <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight flex items-center gap-4">
               <Users className="text-blue-500" size={40}/> Panel para Padres
             </h1>
-            <p className="text-zinc-555 dark:text-zinc-400 font-medium text-lg mt-2">
+            <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg mt-2">
               Registra y gestiona el progreso de aprendizaje de tus hijos.
             </p>
           </div>
@@ -104,7 +104,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
 
         {/* Tarjetas de Resumen Global */}
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+          <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
             <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Tiempo Total</span>
             <span className="text-5xl font-black text-zinc-900 dark:text-white">
               {totalHours}<span className="text-2xl text-zinc-400">h</span> {totalMins}<span className="text-2xl text-zinc-400">m</span>
@@ -114,7 +114,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
             </span>
           </div>
           
-          <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+          <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
             <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Estudiantes</span>
             <span className="text-5xl font-black text-zinc-900 dark:text-white">
               {kids.length}
@@ -122,7 +122,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
             <span className="text-zinc-400 dark:text-zinc-500 font-bold mt-3 text-xs">Aventureros activos</span>
           </div>
 
-          <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 flex flex-col items-center justify-center text-center">
+          <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
             <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">XP Acumulado</span>
             <span className="text-5xl font-black text-yellow-500 flex items-center gap-2">
               <Star fill="currentColor" size={32}/> {totalXp}
@@ -137,20 +137,20 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
             <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Aventureros Registrados</h3>
             
             {kids.length === 0 ? (
-              <div className="bg-white dark:bg-zinc-900/50 rounded-[2rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800 p-12 text-center flex flex-col items-center justify-center">
+              <div className="bg-white dark:bg-zinc-50/50 rounded-[2rem] border-2 border-dashed border-zinc-200 dark:border-zinc-200 p-12 text-center flex flex-col items-center justify-center">
                 <Users size={48} className="text-zinc-300 dark:text-zinc-700 mb-4"/>
                 <h4 className="text-xl font-bold text-zinc-800 dark:text-zinc-200 mb-2">No hay hijos registrados</h4>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
+                <p className="text-zinc-550 dark:text-zinc-400 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
               </div>
             ) : (
-              <div className="bg-white dark:bg-zinc-900 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800">
+              <div className="bg-white dark:bg-zinc-50 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-200">
                 {kids.map((kid) => (
-                  <div key={kid.id} className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-zinc-50/40 dark:hover:bg-zinc-850/40 transition-colors">
+                  <div key={kid.id} className="p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:bg-zinc-50/40 dark:hover:bg-zinc-150/40 transition-colors">
                     <div className="flex items-center gap-6">
                       <img 
                         src={kid.avatar} 
                         alt={`Avatar de ${kid.name}`} 
-                        className="w-16 h-16 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 shadow-sm flex-shrink-0"
+                        className="w-16 h-16 rounded-2xl bg-zinc-50 dark:bg-zinc-150 border border-zinc-100 dark:border-zinc-200 shadow-sm flex-shrink-0"
                       />
                       <div>
                         <h4 className="font-black text-2xl text-zinc-900 dark:text-white">{kid.name}</h4>
@@ -193,7 +193,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
           <div className="space-y-6">
             <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Registrar Aventurero</h3>
             
-            <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+            <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
               
               <form onSubmit={handleAddKid} className="space-y-6">
@@ -210,7 +210,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                     placeholder="Ej. Sofía, Lucas..."
                     value={newKidName}
                     onChange={(e) => setNewKidName(e.target.value)}
-                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors"
+                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-200 bg-white dark:bg-zinc-150 text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors"
                     disabled={loading}
                   />
                 </div>
@@ -223,7 +223,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                     id="kid-grade-input"
                     value={newKidGrade}
                     onChange={(e) => setNewKidGrade(e.target.value)}
-                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-200 focus:border-blue-500 focus:outline-none font-semibold text-base transition-colors bg-white dark:bg-zinc-150 text-zinc-900 dark:text-white cursor-pointer"
                     disabled={loading}
                   >
                     <option value="Pre-Kinder">Pre-Kinder</option>
@@ -249,8 +249,8 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                         onClick={() => setSelectedAvatar(preset.name)}
                         className={`p-1 rounded-2xl border-2 flex-shrink-0 transition-all ${
                           selectedAvatar === preset.name 
-                            ? 'border-blue-600 scale-105 bg-blue-50 dark:bg-blue-950/30 shadow-sm' 
-                            : 'border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 bg-white dark:bg-zinc-800'
+                            ? 'border-blue-600 scale-105 bg-blue-50 dark:bg-blue-955/30 shadow-sm' 
+                            : 'border-zinc-100 dark:border-zinc-200 hover:border-zinc-250 dark:hover:border-zinc-300 bg-white dark:bg-zinc-150'
                         }`}
                         disabled={loading}
                         aria-label={`Seleccionar avatar ${preset.name}`}
@@ -275,9 +275,9 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
         </div>
 
         {/* Sección Premium Bloqueada */}
-        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-200/60 dark:border-zinc-800 p-8 md:p-10 relative overflow-hidden shadow-sm">
-          <div className="absolute inset-0 bg-zinc-50/40 dark:bg-zinc-955/80 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-6">
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-95/30 border border-blue-100 dark:border-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm">
+        <div className="bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-200/60 dark:border-zinc-200 p-8 md:p-10 relative overflow-hidden shadow-sm">
+          <div className="absolute inset-0 bg-zinc-50/40 dark:bg-zinc-950/80 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-6">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-955/30 border border-blue-100 dark:border-blue-200/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-sm">
               <Award size={28} />
             </div>
             <h4 className="text-2xl font-black text-zinc-900 dark:text-white mb-2">Reportes de Rendimiento Avanzados</h4>
@@ -288,10 +288,10 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
           </div>
           
           <div className="opacity-20 select-none pointer-events-none space-y-6">
-            <div className="h-6 w-48 bg-zinc-200 dark:bg-zinc-850 rounded"></div>
+            <div className="h-6 w-48 bg-zinc-200 dark:bg-zinc-150 rounded"></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="h-28 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
-              <div className="h-28 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
+              <div className="h-28 bg-zinc-100 dark:bg-zinc-150 rounded-xl"></div>
+              <div className="h-28 bg-zinc-100 dark:bg-zinc-150 rounded-xl"></div>
             </div>
             <div className="h-40 bg-zinc-100 dark:bg-zinc-850 rounded-xl"></div>
           </div>
