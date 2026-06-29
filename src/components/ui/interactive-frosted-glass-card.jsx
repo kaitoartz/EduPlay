@@ -65,16 +65,46 @@ export const FrostedGlassCard = ({ onEnter }) => {
       cardRef.current.style.transform = '';
     }
 
-    // Spawn Balatro premium particles
-    const particleCount = 28;
+    // Spawn Balatro premium particles from the card boundaries
+    const particleCount = 32;
+    const cardWidth = 448; // max-w-md is 448px
+    const cardHeight = 560; // Approximate card height
+
     const newParticles = Array.from({ length: particleCount }).map((_, idx) => {
-      const angle = (idx / particleCount) * 2 * Math.PI + (Math.random() - 0.5) * 0.15;
-      const speed = 100 + Math.random() * 150;
-      const tx = Math.cos(angle) * speed;
-      const ty = Math.sin(angle) * speed + 40; // gravity bias downwards
-      const size = 10 + Math.random() * 14;
+      // Determine which edge to spawn on: 0=top, 1=right, 2=bottom, 3=left
+      const edge = idx % 4;
+      let startX = 0;
+      let startY = 0;
+      let angle = 0;
+
+      if (edge === 0) {
+        // Top edge
+        startX = (Math.random() - 0.5) * cardWidth;
+        startY = -cardHeight / 2;
+        angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.5; // Upwards
+      } else if (edge === 1) {
+        // Right edge
+        startX = cardWidth / 2;
+        startY = (Math.random() - 0.5) * cardHeight;
+        angle = (Math.random() - 0.5) * 1.5; // Rightwards
+      } else if (edge === 2) {
+        // Bottom edge
+        startX = (Math.random() - 0.5) * cardWidth;
+        startY = cardHeight / 2;
+        angle = Math.PI / 2 + (Math.random() - 0.5) * 1.5; // Downwards
+      } else {
+        // Left edge
+        startX = -cardWidth / 2;
+        startY = (Math.random() - 0.5) * cardHeight;
+        angle = Math.PI + (Math.random() - 0.5) * 1.5; // Leftwards
+      }
+
+      const speed = 60 + Math.random() * 90;
+      const tx = startX + Math.cos(angle) * speed;
+      const ty = startY + Math.sin(angle) * speed + 30; // some gravity downward shift
+      const size = 10 + Math.random() * 12;
       const rot = (Math.random() - 0.5) * 720;
-      const duration = 0.6 + Math.random() * 0.4;
+      const duration = 0.7 + Math.random() * 0.4;
       const delay = Math.random() * 0.05;
       
       // Balatro / premium theme colors
@@ -83,6 +113,8 @@ export const FrostedGlassCard = ({ onEnter }) => {
 
       return {
         id: `p-${idx}-${Math.random()}`,
+        startX,
+        startY,
         tx,
         ty,
         size,
@@ -113,6 +145,8 @@ export const FrostedGlassCard = ({ onEnter }) => {
             key={p.id}
             className="absolute"
             style={{
+              '--sx': `${p.startX}px`,
+              '--sy': `${p.startY}px`,
               '--tx': `${p.tx}px`,
               '--ty': `${p.ty}px`,
               '--rot': `${p.rot}deg`,
@@ -344,12 +378,12 @@ export const FrostedGlassCard = ({ onEnter }) => {
 
         @keyframes particle-explode {
           0% {
-            transform: translate3d(0, 0, 0) scale(0) rotate(0deg);
+            transform: translate3d(var(--sx), var(--sy), 0) scale(0) rotate(0deg);
             opacity: 0;
           }
           15% {
             opacity: 1;
-            transform: translate3d(calc(var(--tx) * 0.25), calc(var(--ty) * 0.25), 0) scale(1.4) rotate(45deg);
+            transform: translate3d(calc(var(--sx) + (var(--tx) - var(--sx)) * 0.25), calc(var(--sy) + (var(--ty) - var(--sy)) * 0.25), 0) scale(1.4) rotate(45deg);
           }
           100% {
             transform: translate3d(var(--tx), var(--ty), 0) scale(0) rotate(var(--rot));
