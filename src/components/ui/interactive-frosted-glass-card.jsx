@@ -27,7 +27,9 @@ export const FrostedGlassCard = ({ onEnter }) => {
       const rotateY = ((x - centerX) / centerX) * 15;
       const rotateX = ((y - centerY) / centerY) * -15;
 
-      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04) translateZ(10px)`;
+      card.style.setProperty('--rx', `${rotateX}deg`);
+      card.style.setProperty('--ry', `${rotateY}deg`);
+      card.style.setProperty('--scale', `1.04`);
       card.style.setProperty('--mouse-x', `${x}px`);
       card.style.setProperty('--mouse-y', `${y}px`);
 
@@ -40,8 +42,9 @@ export const FrostedGlassCard = ({ onEnter }) => {
     };
 
     const handleMouseLeave = () => {
-      if (flippedRef.current) return;
-      card.style.transform = '';
+      card.style.setProperty('--rx', `0deg`);
+      card.style.setProperty('--ry', `0deg`);
+      card.style.setProperty('--scale', `1`);
     };
 
     card.addEventListener('mousemove', handleMouseMove);
@@ -132,11 +135,10 @@ export const FrostedGlassCard = ({ onEnter }) => {
         className={`ludi-rainbow-wrap group w-full max-w-md cursor-pointer select-none`}
         style={{
           transformStyle: 'preserve-3d',
-          transition: hasClicked ? 'none' : 'transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1)',
-          animation: hasClicked 
-            ? (flipped ? 'balatro-flip-to-back 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards' : 'balatro-flip-to-front 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards')
-            : undefined,
-          transform: !hasClicked ? (flipped ? 'rotateY(180deg)' : undefined) : undefined,
+          transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)',
+          transform: flipped 
+            ? 'rotateY(180deg)' 
+            : 'rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--scale, 1)) translateZ(10px)',
         }}
       >
         {/* Soft Rainbow Glow Shadow */}
