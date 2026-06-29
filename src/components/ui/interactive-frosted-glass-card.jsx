@@ -2,56 +2,63 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Pointer, Sparkles, Star, Zap, Heart, Award, Sun, Moon } from 'lucide-react';
 import { RobotFaceIcon } from './RobotFaceIcon';
 
-// ─── Particle icons & colors ──────────────────────────────────────────────────
+// ─── Particle Icons & Colors ──────────────────────────────────────────────────
 const PARTICLE_ICONS = [Star, Sparkles, Zap, Heart, Award, Sun, Moon];
 const PARTICLE_COLORS = [
-  '#FFD700', '#FFC300', '#FFE066',
-  '#ffffff', '#f0f0ff',
-  '#a855f7', '#E0B0FF',
-  '#06b6d4', '#67e8f9',
-  '#ec4899', '#f9a8d4',
-  '#6B8BB4', '#91aed4',
+  '#FFD700', '#FFC300', '#FFE066',   // gold
+  '#ffffff', '#f0f0ff', '#e8e8ff',   // white/silver
+  '#a855f7', '#E0B0FF', '#c084fc',   // purple
+  '#06b6d4', '#67e8f9',              // cyan
+  '#ec4899', '#f9a8d4',              // pink
+  '#6B8BB4', '#91aed4',              // blue
 ];
 
-// Spawn particles around the card perimeter
-function createParticles(width, height, count = 18) {
-  const cx = width / 2;
-  const cy = height / 2;
-  const perimeter = 2 * (width + height);
+function createParticles(width, height, count = 28) {
+  // Ajuste fino para la forma de la tarjeta (el borde)
+  const cardW = width || 320;
+  const cardH = height || 450;
 
   return Array.from({ length: count }, (_, i) => {
-    // Evenly distributed around perimeter with slight jitter
-    const t = (perimeter / count) * i + Math.random() * (perimeter / count) * 0.6;
-    let px, py;
+    // Distribuir a lo largo del perímetro de la tarjeta
+    const side = i % 4; // 0: arriba, 1: derecha, 2: abajo, 3: izquierda
+    let startX = 0;
+    let startY = 0;
+    let angle = 0;
 
-    if (t < width) {
-      px = t; py = 0;
-    } else if (t < width + height) {
-      px = width; py = t - width;
-    } else if (t < 2 * width + height) {
-      px = width - (t - width - height); py = height;
-    } else {
-      px = 0; py = height - (t - 2 * width - height);
+    // Agregar un offset aleatorio a lo largo de cada borde para que salgan en cualquier punto del contorno
+    if (side === 0) { // Borde Superior
+      startX = (Math.random() - 0.5) * cardW;
+      startY = -cardH / 2;
+      angle = -90 + (Math.random() - 0.5) * 80; // Volar hacia arriba-afuera
+    } else if (side === 1) { // Borde Derecho
+      startX = cardW / 2;
+      startY = (Math.random() - 0.5) * cardH;
+      angle = 0 + (Math.random() - 0.5) * 80;  // Volar hacia la derecha-afuera
+    } else if (side === 2) { // Borde Inferior
+      startX = (Math.random() - 0.5) * cardW;
+      startY = cardH / 2;
+      angle = 90 + (Math.random() - 0.5) * 80;  // Volar hacia abajo-afuera
+    } else { // Borde Izquierdo
+      startX = -cardW / 2;
+      startY = (Math.random() - 0.5) * cardH;
+      angle = 180 + (Math.random() - 0.5) * 80; // Volar hacia la izquierda-afuera
     }
 
-    // Direction: outward from card center
-    const dx = px - cx;
-    const dy = py - cy;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    const flyDist = 45 + Math.random() * 65;
-
+    const distance = 50 + Math.random() * 90;
+    const rad = (angle * Math.PI) / 180;
+    
     return {
-      id: `p_${Date.now()}_${i}`,
-      startX: px,
-      startY: py,
-      tx: (dx / len) * flyDist,
-      ty: (dy / len) * flyDist,
-      Icon: PARTICLE_ICONS[Math.floor(Math.random() * PARTICLE_ICONS.length)],
+      id: `p_${Date.now()}_${i}_${Math.random()}`,
+      startX,
+      startY,
+      tx: Math.cos(rad) * distance,
+      ty: Math.sin(rad) * distance,
       color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-      size: 11 + Math.random() * 9,
-      duration: 0.55 + Math.random() * 0.4,
-      delay: Math.random() * 0.1,
-      spin: (Math.random() < 0.5 ? 1 : -1) * (120 + Math.random() * 200),
+      Icon: PARTICLE_ICONS[Math.floor(Math.random() * PARTICLE_ICONS.length)],
+      size: 12 + Math.random() * 12,
+      duration: 0.6 + Math.random() * 0.4,
+      delay: Math.random() * 0.08,
+      spin: (Math.random() - 0.5) * 540,
     };
   });
 }
@@ -62,13 +69,13 @@ export const FrostedGlassCard = ({ onEnter }) => {
   const flippedRef   = useRef(false);
   const animatingRef = useRef(false);
 
-  const [flipped,     setFlipped]    = useState(false);
-  const [animState,   setAnimState]  = useState('idle');
-  const [particles,   setParticles]  = useState([]);
-  const [backHovered, setBackHovered]= useState(false);
-  const [ageInput,    setAgeInput]   = useState('');
+  const [flipped,    setFlipped]    = useState(false);
+  const [animState,  setAnimState]  = useState('idle'); // 'idle' | 'flipping' | 'unflipping'
+  const [particles,  setParticles]  = useState([]);
+  const [backHovered,setBackHovered]= useState(false);
+  const [ageInput,   setAgeInput]   = useState('');
 
-  // ── 3D tilt ────────────────────────────────────────────────────────────────
+  // ── 3D tilt on mouse move ──────────────────────────────────────────────────
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
@@ -90,35 +97,43 @@ export const FrostedGlassCard = ({ onEnter }) => {
       card.style.setProperty('--holo-x', `${lp}%`);
       card.style.setProperty('--holo-y', `${tp}%`);
     };
-
     const onLeave = () => {
       if (flippedRef.current || animatingRef.current) return;
       card.style.transform = '';
     };
 
-    card.addEventListener('mousemove', onMove, { passive: true });
-    card.addEventListener('mouseleave', onLeave, { passive: true });
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('mouseleave', onLeave);
     return () => {
       card.removeEventListener('mousemove', onMove);
       card.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 
-  // ── Click → particles + bounce flip ───────────────────────────────────────
+  // ── Flip click ─────────────────────────────────────────────────────────────
   const handleCardClick = () => {
     if (animatingRef.current) return;
     animatingRef.current = true;
-
+    
+    // Obtener dimensiones reales del card para posicionar las partículas en sus bordes
+    let width = 320;
+    let height = 450;
     if (cardRef.current) {
-      cardRef.current.style.transform = '';
       const rect = cardRef.current.getBoundingClientRect();
-      setParticles(createParticles(rect.width, rect.height, 18));
+      width = rect.width;
+      height = rect.height;
+      cardRef.current.style.transform = '';
     }
 
-    setTimeout(() => setParticles([]), 1300);
+    // Spawn particles
+    setParticles(createParticles(width, height, 32));
+    setTimeout(() => setParticles([]), 1200);
+    
+    // Trigger bounce animation
     setAnimState(flipped ? 'unflipping' : 'flipping');
   };
 
+  // ── Animation end → settle state ──────────────────────────────────────────
   const handleAnimEnd = () => {
     const next = !flipped;
     flippedRef.current  = next;
@@ -127,33 +142,36 @@ export const FrostedGlassCard = ({ onEnter }) => {
     animatingRef.current = false;
   };
 
+  // ── Wrapper 3D style (swap between animation and settled transform) ─────────
   const wrapperStyle = (() => {
     const base = { transformStyle: 'preserve-3d', position: 'relative' };
-    if (animState === 'flipping')   return { ...base, animation: 'cardFlip 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
-    if (animState === 'unflipping') return { ...base, animation: 'cardUnflip 0.88s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
+    if (animState === 'flipping')   return { ...base, animation: 'cardFlip 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
+    if (animState === 'unflipping') return { ...base, animation: 'cardUnflip 0.92s cubic-bezier(0.22, 1, 0.36, 1) forwards' };
     return { ...base, transform: flipped ? 'rotateY(180deg)' : undefined };
   })();
 
   return (
     <>
+      {/* ── Keyframes injected so LightningCSS can't strip them ── */}
       <style>{`
         @keyframes cardFlip {
           0%   { transform: rotateY(0deg); }
-          52%  { transform: rotateY(205deg); }
-          70%  { transform: rotateY(168deg); }
-          86%  { transform: rotateY(184deg); }
+          55%  { transform: rotateY(205deg); }
+          72%  { transform: rotateY(168deg); }
+          88%  { transform: rotateY(184deg); }
           100% { transform: rotateY(180deg); }
         }
         @keyframes cardUnflip {
           0%   { transform: rotateY(180deg); }
-          52%  { transform: rotateY(-25deg); }
-          70%  { transform: rotateY(12deg); }
-          86%  { transform: rotateY(-4deg); }
+          55%  { transform: rotateY(-25deg); }
+          72%  { transform: rotateY(12deg); }
+          88%  { transform: rotateY(-4deg); }
           100% { transform: rotateY(0deg); }
         }
         @keyframes particleFly {
           0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
-          18%  { transform: translate(-50%, -50%) scale(1.15) rotate(15deg); opacity: 1; }
+          15%  { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); opacity: 1; }
+          40%  { opacity: 0.9; }
           100% {
             transform: translate(calc(-50% + var(--ptx)), calc(-50% + var(--pty))) scale(0) rotate(var(--pspin));
             opacity: 0;
@@ -163,9 +181,9 @@ export const FrostedGlassCard = ({ onEnter }) => {
 
       <div
         className="card-container flex items-center justify-center p-4"
-        style={{ perspective: '1000px' }}
+        style={{ perspective: '1000px', position: 'relative' }}
       >
-        {/* ── Rainbow wrapper ── */}
+        {/* ── Rainbow border wrapper (3D flip root) ── */}
         <div
           ref={cardRef}
           onClick={handleCardClick}
@@ -176,7 +194,16 @@ export const FrostedGlassCard = ({ onEnter }) => {
           <div className="ludi-rainbow-glow" />
 
           {/* ── Particle layer (inside wrapper, overflow:visible) ── */}
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 9999 }}>
+          <div 
+            style={{ 
+              position: 'absolute', 
+              left: '50%', 
+              top: '50%', 
+              pointerEvents: 'none', 
+              overflow: 'visible', 
+              zIndex: 9999 
+            }}
+          >
             {particles.map((p) => (
               <div
                 key={p.id}
@@ -189,16 +216,14 @@ export const FrostedGlassCard = ({ onEnter }) => {
                   '--pspin': `${p.spin}deg`,
                   animation: `particleFly ${p.duration}s ease-out ${p.delay}s both`,
                   willChange: 'transform, opacity',
-                  contain: 'layout style',
                 }}
               >
                 <p.Icon
                   size={p.size}
                   color={p.color}
-                  strokeWidth={2.5}
                   style={{
                     display: 'block',
-                    filter: `drop-shadow(0 0 6px ${p.color}) drop-shadow(0 0 2px ${p.color})`,
+                    filter: `drop-shadow(0 0 5px ${p.color}) drop-shadow(0 0 2px ${p.color})`,
                   }}
                 />
               </div>
@@ -208,7 +233,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
           {/* ── 3D inner ── */}
           <div style={{ position: 'relative', width: '100%', transformStyle: 'preserve-3d' }}>
 
-            {/* FRONT */}
+            {/* ═══ FRONT ═══ */}
             <div
               className="card-ludi rounded-[2.45rem] p-10 text-white"
               style={{
@@ -275,7 +300,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
               </div>
             </div>
 
-            {/* BACK */}
+            {/* ═══ BACK ═══ */}
             <div
               className="card-ludi rounded-[2.45rem] p-10 text-white flex flex-col items-center justify-center text-center"
               onMouseEnter={() => setBackHovered(true)}
@@ -300,7 +325,10 @@ export const FrostedGlassCard = ({ onEnter }) => {
                 style={{ transform: 'translateZ(60px)', transformStyle: 'preserve-3d' }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ transform: 'translateZ(30px)' }}>
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center"
+                  style={{ transform: 'translateZ(30px)' }}
+                >
                   <RobotFaceIcon
                     state={(() => {
                       if (ageInput.trim() !== '') {
