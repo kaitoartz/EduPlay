@@ -40,7 +40,7 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
             </div>
             <div>
               <h1 className="text-4xl font-black text-zinc-900 dark:text-white mb-2">¡Hola, {user.name}!</h1>
-              <p className="text-zinc-550 dark:text-zinc-400 font-medium text-lg">Estás a <strong className="text-zinc-900 dark:text-zinc-100">{user.nextLevelXp - user.xp} XP</strong> del nivel {user.level + 1}</p>
+              <p className="text-zinc-550 dark:text-zinc-550 font-medium text-lg">Estás a <strong className="text-zinc-900 dark:text-zinc-100">{user.nextLevelXp - user.xp} XP</strong> del nivel {user.level + 1}</p>
             </div>
           </div>
           
@@ -50,14 +50,14 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
                 <Zap className="text-yellow-500" size={24}/>
               </div>
               <span className="text-3xl font-black text-zinc-900 dark:text-white mb-1">{user.streak}</span>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">Días seguidos</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider">Días seguidos</span>
             </div>
             <div className="bg-white dark:bg-zinc-50 px-8 py-6 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-200 shadow-sm flex flex-col items-center min-w-[140px] hover:shadow-md transition-all duration-300">
               <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/30 flex items-center justify-center mb-3">
                 <Star className="text-blue-500" size={24}/>
               </div>
               <span className="text-3xl font-black text-zinc-900 dark:text-white mb-1">{user.xp}</span>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider">XP Total</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider">XP Total</span>
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
                   <div className="absolute inset-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[shimmer_1s_linear_infinite]" />
                 </motion.div>
               </div>
-              <div className="flex justify-between text-base font-bold text-zinc-500 dark:text-zinc-400">
+              <div className="flex justify-between text-base font-bold text-zinc-500 dark:text-zinc-550">
                 <span>Lvl {user.level} <span className="text-zinc-400 dark:text-zinc-500 font-medium">({user.xp} XP)</span></span>
                 <span>Lvl {user.level + 1} <span className="text-zinc-400 dark:text-zinc-500 font-medium">({user.nextLevelXp} XP)</span></span>
               </div>
@@ -104,7 +104,7 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
                     <Trophy size={32} />
                   </div>
                   <h4 className="text-xl font-black text-zinc-900 dark:text-white mb-2">¡Misión Cumplida! 🚀</h4>
-                  <p className="text-zinc-650 dark:text-zinc-400 text-sm max-w-sm font-medium">
+                  <p className="text-zinc-650 dark:text-zinc-550 text-sm max-w-sm font-medium">
                     Has completado todos tus retos diarios de hoy. Tu rango y XP han aumentado estelarmente. ¡Vuelve mañana para nuevas misiones!
                   </p>
                 </motion.div>
@@ -161,7 +161,7 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
             <div className="bg-white dark:bg-zinc-50 p-10 rounded-[2rem] border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden group transition-colors duration-300">
               <div className="absolute inset-0 bg-zinc-50/20 dark:bg-zinc-950/40 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center text-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="px-4 py-1.5 bg-yellow-100 dark:bg-yellow-950/30 text-yellow-850 dark:text-yellow-400 font-black text-xs rounded-full uppercase tracking-wider mb-2">Próximamente</div>
-                <p className="text-xs text-zinc-550 dark:text-zinc-400 font-bold">¡Desafía a otros niños en vivo!</p>
+                <p className="text-xs text-zinc-550 dark:text-zinc-550 font-bold">¡Desafía a otros niños en vivo!</p>
               </div>
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -169,7 +169,7 @@ const Dashboard = ({ onNavigate, user, onAddXp, isLoading }) => {
                 </h3>
                 <span className="text-xs bg-zinc-100 dark:bg-zinc-150 text-zinc-400 dark:text-zinc-500 font-bold px-3 py-1 rounded-full uppercase">Bloqueado</span>
               </div>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-4">Competencias de matemáticas y ciencias los fines de semana. Gana premios exclusivos.</p>
+              <p className="text-zinc-500 dark:text-zinc-550 text-sm leading-relaxed mb-4">Competencias de matemáticas y ciencias los fines de semana. Gana premios exclusivos.</p>
               <div className="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-full"></div>
             </div>
 

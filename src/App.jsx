@@ -23,6 +23,7 @@ const QuizGame = lazy(() => import('./pages/QuizGame'));
 const ParentsPanel = lazy(() => import('./pages/ParentsPanel'));
 const ProfilePanel = lazy(() => import('./pages/ProfilePanel'));
 const PricingPanel = lazy(() => import('./pages/PricingPanel'));
+const Adventure = lazy(() => import('./pages/Adventure'));
 
 const App = () => {
   const [view, setView] = useState('landing');
@@ -31,6 +32,8 @@ const App = () => {
   const [lockedGame, setLockedGame] = useState(null);
   const [appLoading, setAppLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showProgress, setShowProgress] = useState(false);
   const [isTostadora] = useState(() => {
     // Detect slow network
     const connection = navigator.connection;
@@ -68,6 +71,34 @@ const App = () => {
     }
     return () => { document.body.style.overflow = ''; };
   }, [showSplash]);
+
+  useEffect(() => {
+    let interval;
+    if (pageLoading) {
+      setShowProgress(true);
+      setLoadingProgress(0);
+      
+      interval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev < 80) {
+            const diff = Math.max(1, Math.floor((80 - prev) / 3));
+            return prev + diff;
+          }
+          return prev;
+        });
+      }, 60);
+    } else {
+      if (showProgress) {
+        setLoadingProgress(100);
+        const timeout = setTimeout(() => {
+          setShowProgress(false);
+          setLoadingProgress(0);
+        }, 400);
+        return () => clearTimeout(timeout);
+      }
+    }
+    return () => clearInterval(interval);
+  }, [pageLoading]);
 
   // Estado del Usuario (Caché del navegador)
   const [user, setUser] = useState(() => {
@@ -136,6 +167,10 @@ const App = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const navigate = (newView, newParams = {}) => {
+    if (newView === 'adventure' && !import.meta.env.DEV) {
+      setLockedGame({ title: 'Aventura Estelar' });
+      return;
+    }
     setView(newView);
     setParams(newParams);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -267,7 +302,8 @@ const App = () => {
     game: <QuizGame onNavigate={navigate} onAddXp={addXp} gameId={params.gameId} games={games} apiUrl={apiUrl} />,
     parents: <ParentsPanel onNavigate={navigate} isLoading={isTostadora && pageLoading && view === 'parents'} />,
     profile: <ProfilePanel onNavigate={navigate} user={user} onSaveUser={saveUser} isLoading={isTostadora && pageLoading && view === 'profile'} />,
-    pricing: <PricingPanel onNavigate={navigate} isLoading={isTostadora && pageLoading && view === 'pricing'} />
+    pricing: <PricingPanel onNavigate={navigate} isLoading={isTostadora && pageLoading && view === 'pricing'} />,
+    adventure: <Adventure onNavigate={navigate} user={user} />
   };
 
   if (appLoading) {
@@ -276,6 +312,29 @@ const App = () => {
 
   return (
     <div className="w-full min-h-screen relative font-sans text-zinc-900 dark:text-white selection:bg-blue-200 dark:selection:bg-blue-800">
+      {/* Sleek top perceived-performance progress bar */}
+      <AnimatePresence>
+        {showProgress && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-0 left-0 right-0 h-1.5 z-[9999] bg-zinc-900/10 dark:bg-white/10 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ width: '0%' }}
+              animate={{ width: `${loadingProgress}%` }}
+              transition={{ ease: "easeOut", duration: 0.2 }}
+              className="h-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 shadow-[0_0_12px_rgba(99,102,241,0.8)] relative"
+            >
+              <div className="absolute right-0 top-3 bg-zinc-900/90 border border-zinc-800 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transform translate-x-1/2">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+                {loadingProgress}%
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Navbar 
         currentView={view} 
         onNavigate={navigate} 
@@ -351,7 +410,7 @@ const App = () => {
                       className="w-full px-5 py-4 rounded-2xl border-2 border-zinc-200 focus:border-blue-500 focus:outline-none font-medium transition-colors text-base"
                     />
                   </div>
-                  <p className="text-xs text-zinc-400 mt-2 font-medium">Pega la URL pública generada por Ngrok (ej: `ngrok http 8000`).</p>
+                  <p className="text-xs dark:text-zinc-550 mt-2 font-medium">Pega la URL pública generada por Ngrok (ej: `ngrok http 8000`).</p>
                 </div>
 
                 {/* Detalles de Estado de Conexión */}

@@ -45,7 +45,7 @@ export default function FeatureSection({ onNavigate }) {
           Expande tu mente <br className="hidden md:inline"/>
           <span className="bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 bg-clip-text text-transparent">más allá del cielo</span>
         </h2>
-        <p className="text-zinc-550 dark:text-zinc-400 mb-8 max-w-md text-base sm:text-lg font-medium leading-relaxed">
+        <p className="text-zinc-550 dark:text-zinc-550 mb-8 max-w-md text-base sm:text-lg font-medium leading-relaxed">
           Navega por múltiples disciplinas diseñadas especialmente para mentes curiosas. Matemáticas, ciencias, programación y lectura en un solo universo.
         </p>
         <div className="flex items-center gap-3">

@@ -93,7 +93,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
             <h1 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tight flex items-center gap-4">
               <Users className="text-blue-500" size={40}/> Panel para Padres
             </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 font-medium text-lg mt-2">
+            <p className="text-zinc-500 dark:text-zinc-550 font-medium text-lg mt-2">
               Registra y gestiona el progreso de aprendizaje de tus hijos.
             </p>
           </div>
@@ -105,7 +105,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
         {/* Tarjetas de Resumen Global */}
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
-            <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Tiempo Total</span>
+            <span className="text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider text-sm mb-3">Tiempo Total</span>
             <span className="text-5xl font-black text-zinc-900 dark:text-white">
               {totalHours}<span className="text-2xl text-zinc-400">h</span> {totalMins}<span className="text-2xl text-zinc-400">m</span>
             </span>
@@ -115,7 +115,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
           </div>
           
           <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
-            <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">Estudiantes</span>
+            <span className="text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider text-sm mb-3">Estudiantes</span>
             <span className="text-5xl font-black text-zinc-900 dark:text-white">
               {kids.length}
             </span>
@@ -123,7 +123,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
           </div>
 
           <div className="bg-white dark:bg-zinc-50 p-8 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex flex-col items-center justify-center text-center">
-            <span className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-3">XP Acumulado</span>
+            <span className="text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider text-sm mb-3">XP Acumulado</span>
             <span className="text-5xl font-black text-yellow-500 flex items-center gap-2">
               <Star fill="currentColor" size={32}/> {totalXp}
             </span>
@@ -140,7 +140,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
               <div className="bg-white dark:bg-zinc-50/50 rounded-[2rem] border-2 border-dashed border-zinc-200 dark:border-zinc-200 p-12 text-center flex flex-col items-center justify-center">
                 <Users size={48} className="text-zinc-300 dark:text-zinc-700 mb-4"/>
                 <h4 className="text-xl font-bold text-zinc-800 dark:text-zinc-200 mb-2">No hay hijos registrados</h4>
-                <p className="text-zinc-550 dark:text-zinc-400 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
+                <p className="text-zinc-550 dark:text-zinc-550 text-sm max-w-sm">Registra a tu primer hijo usando el formulario de la derecha para comenzar a seguir su progreso.</p>
               </div>
             ) : (
               <div className="bg-white dark:bg-zinc-50 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-200 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-200">
@@ -165,12 +165,12 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                         <div className="font-black text-xl text-zinc-900 dark:text-white flex items-center gap-1">
                           <Star fill="currentColor" size={16} className="text-yellow-500"/> {kid.xp}
                         </div>
-                        <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider">XP</span>
+                        <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-550 uppercase tracking-wider">XP</span>
                       </div>
                       
                       <div className="text-center sm:text-right">
                         <div className="font-black text-xl text-zinc-900 dark:text-white">{kid.time}</div>
-                        <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-500 uppercase tracking-wider">Tiempo</span>
+                        <span className="text-[10px] font-bold text-zinc-450 dark:text-zinc-550 uppercase tracking-wider">Tiempo</span>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
               
               <form onSubmit={handleAddKid} className="space-y-6">
                 <div>
-                  <label htmlFor="kid-name-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+                  <label htmlFor="kid-name-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-wider mb-2">
                     Nombre del Aventurero
                   </label>
                   <input
@@ -216,7 +216,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                 </div>
 
                 <div>
-                  <label htmlFor="kid-grade-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+                  <label htmlFor="kid-grade-input" className="block text-xs font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-wider mb-2">
                     Grado Escolar
                   </label>
                   <select
@@ -238,7 +238,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
                 </div>
 
                 <div>
-                  <span className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">
+                  <span className="block text-xs font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-wider mb-3">
                     Elige un Personaje
                   </span>
                   <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
@@ -281,7 +281,7 @@ const ParentsPanel = ({ onNavigate, isLoading }) => {
               <Award size={28} />
             </div>
             <h4 className="text-2xl font-black text-zinc-900 dark:text-white mb-2">Reportes de Rendimiento Avanzados</h4>
-            <p className="text-zinc-550 dark:text-zinc-400 text-sm max-w-sm font-medium mb-6">Gráficos de progreso semanal, análisis de fortalezas y sugerencias personalizadas por IA.</p>
+            <p className="text-zinc-550 dark:text-zinc-550 text-sm max-w-sm font-medium mb-6">Gráficos de progreso semanal, análisis de fortalezas y sugerencias personalizadas por IA.</p>
             <Button variant="primary" onClick={() => onNavigate('pricing')} className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider shadow shadow-blue-500/20">
               Adquirir EduPlay Pro
             </Button>

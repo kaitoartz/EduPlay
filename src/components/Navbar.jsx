@@ -32,6 +32,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
   const navs = [
     { id: 'landing', label: 'Bitácora' },
     { id: 'catalog', label: 'Mapa Estelar' },
+    { id: 'adventure', label: import.meta.env.DEV ? 'Aventura' : 'Aventura (Próximamente)' },
     { id: 'pricing', label: 'Suscripción' },
     { id: 'dashboard', label: 'Misiones' }
   ];
@@ -55,7 +56,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
               <button 
                 key={nav.id} 
                 onClick={() => onNavigate(nav.id)} 
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${currentView === nav.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-md' : 'text-zinc-555 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-200'}`}
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${currentView === nav.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow-md' : 'text-zinc-555 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-200'}`}
               >
                 {nav.label}
               </button>
@@ -81,8 +82,8 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
 
             {/* Parents / Profile Desktop Buttons */}
             <div className="hidden lg:flex items-center gap-2">
-              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
-              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
+              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
+              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
             </div>
 
             {/* "Jugar Ahora" Button (Desktop) */}
@@ -135,7 +136,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
                   
                   <button 
                     onClick={() => setIsOpen(false)}
-                    className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-200 text-zinc-555 dark:text-zinc-400 transition-colors"
+                    className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-200 text-zinc-555 dark:text-zinc-550 transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -147,7 +148,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
                     <button 
                       key={nav.id} 
                       onClick={() => onNavigate(nav.id)} 
-                      className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center justify-between ${currentView === nav.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md' : 'text-zinc-650 dark:text-zinc-400 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
+                      className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center justify-between ${currentView === nav.id ? 'bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white shadow-md' : 'text-zinc-650 dark:text-zinc-550 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
                     >
                       {nav.label}
                     </button>
@@ -157,14 +158,14 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
 
                   <button 
                     onClick={() => onNavigate('parents')} 
-                    className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center gap-3 ${currentView === 'parents' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md' : 'text-zinc-650 dark:text-zinc-400 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
+                    className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center gap-3 ${currentView === 'parents' ? 'bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white shadow-md' : 'text-zinc-650 dark:text-zinc-550 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
                   >
                     <Shield size={20} /> Padres
                   </button>
                   
                   <button 
                     onClick={() => onNavigate('profile')} 
-                    className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center gap-3 ${currentView === 'profile' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md' : 'text-zinc-650 dark:text-zinc-400 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
+                    className={`w-full text-left px-4 py-3 rounded-2xl text-lg font-bold transition-all flex items-center gap-3 ${currentView === 'profile' ? 'bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white shadow-md' : 'text-zinc-650 dark:text-zinc-550 hover:bg-zinc-550/20 dark:hover:bg-zinc-200'}`}
                   >
                     <User size={20} /> Perfil
                   </button>
@@ -185,7 +186,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
                     <span className={`w-2.5 h-2.5 rounded-full ${apiStatus === 'connected' ? 'bg-green-500 animate-pulse' : apiStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'}`} />
                     <span>Configuración API</span>
                   </div>
-                  <span className="text-xs text-zinc-400 font-medium">
+                  <span className="text-xs dark:text-zinc-550 font-medium">
                     {apiStatus === 'connected' ? 'Conectado' : apiStatus === 'connecting' ? 'Probando...' : 'Desconectado'}
                   </span>
                 </button>

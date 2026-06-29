@@ -302,7 +302,7 @@ export const FrostedGlassCard = ({ onEnter }) => {
                       setAgeInput(val);
                     }
                   }}
-                  className="w-full px-4 py-3 rounded-full bg-zinc-900 border-2 border-white/20 text-white text-center focus:outline-none focus:border-[#E0B0FF] transition-colors"
+                  className="w-full px-4 py-3 rounded-full border-2 border-white/20 text-white text-center focus:outline-none focus:border-[#E0B0FF] transition-colors"
                 />
                 <button 
                   onClick={onEnter}

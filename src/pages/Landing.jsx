@@ -233,9 +233,6 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
           
           {/* Panel 1: Title & Eyebrow */}
           <div className="panel-1 absolute inset-0 flex flex-col justify-center items-center text-center p-6 z-10">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 dark:bg-zinc-800/40 border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-350 font-bold text-sm shadow-sm mb-6 uppercase tracking-wider">
-              <Sparkles size={16} className="text-yellow-500"/> Nueva forma de aprender
-            </span>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1] max-w-5xl mb-6 text-zinc-900 dark:text-white">
               <BlurReveal trigger={!isSplashActive} delay={0.15}>Descubre&nbsp;</BlurReveal>
               <BlurReveal trigger={!isSplashActive} delay={0.25}>un&nbsp;</BlurReveal>
@@ -244,7 +241,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
               <BlurReveal trigger={!isSplashActive} delay={0.55}>conocimiento.</BlurReveal>
             </h1>
             <BlurReveal trigger={!isSplashActive} delay={0.7} duration={1.2}>
-              <p className="text-lg sm:text-xl text-zinc-650 dark:text-zinc-400 max-w-2xl font-medium leading-relaxed">
+              <p className="text-lg sm:text-xl text-zinc-900 dark:text-zinc-550 max-w-2xl font-medium leading-relaxed">
                 Plataforma premium de aprendizaje gamificado. Retos diarios, medallas y un catálogo infinito para entrenar tu mente de forma interactiva.
               </p>
             </BlurReveal>
@@ -263,20 +260,20 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
               Aprendizaje que <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">engancha.</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-5xl w-full">
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
                 <div className="text-4xl md:text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">+10k</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Estudiantes Activos</div>
-                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Entrenando su mente a diario en todo el mundo.</div>
+                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Entrenando su mente a diario en todo el mundo.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
                 <div className="text-4xl md:text-5xl font-black text-tertiary mb-2">98%</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Retención Escolar</div>
-                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Altamente motivados con rachas y medallas.</div>
+                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Altamente motivados con rachas y medallas.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none col-span-1 sm:col-span-2 md:col-span-1">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none col-span-1 sm:col-span-2 md:col-span-1">
                 <div className="text-4xl md:text-5xl font-black text-cyan-600 dark:text-cyan-400 mb-2">+50</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Juegos Premium</div>
-                <div className="text-zinc-650 dark:text-zinc-350 text-xs md:text-sm">Desarrollados por pedagogos y diseñadores.</div>
+                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Desarrollados por pedagogos y diseñadores.</div>
               </div>
             </div>
           </div>
@@ -284,7 +281,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
           {/* Panel 4: Final CTA */}
           <div className="panel-4 absolute inset-0 flex flex-col justify-center items-center text-center p-4 md:p-6 z-10 opacity-0 pointer-events-none max-h-[85dvh] overflow-y-auto py-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 md:mb-6 tracking-tight text-zinc-900 dark:text-white">¿Listo para la aventura?</h2>
-            <p className="text-base md:text-lg lg:text-xl text-zinc-650 dark:text-zinc-450 mb-6 md:mb-8 max-w-2xl px-2">
+            <p className="text-base md:text-lg lg:text-xl text-zinc-650 text-zinc-550 mb-6 md:mb-8 max-w-2xl px-2">
               Únete hoy a la comunidad educativa líder. Demostrativo disponible o regístrate para obtener novedades.
             </p>
             <div className="flex-container w-full max-w-lg z-20 pointer-events-auto px-2">
@@ -301,7 +298,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
                   </div>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200 dark:border-zinc-800 shadow-md">
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white/80 dark:bg-zinc-50/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200 dark:border-zinc-200/30 shadow-md">
                   <input 
                     type="email" 
                     required 
@@ -338,7 +335,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
             <h2 className="text-4xl lg:text-5xl font-black mb-6 text-zinc-900 dark:text-white">
               Exploración que <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8DA9C4] to-[#E0B0FF]">fascina.</span>
             </h2>
-            <p className="text-zinc-650 dark:text-zinc-400 max-w-2xl mx-auto text-xl font-medium">Tematizado para alimentar la curiosidad innata de los Luminautas y asegurar la retención activa.</p>
+            <p className="text-zinc-650 dark:text-zinc-550 max-w-2xl mx-auto text-xl font-medium">Tematizado para alimentar la curiosidad innata de los Luminautas y asegurar la retención activa.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -379,7 +376,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
         <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-16 w-full flex flex-col md:flex-row justify-between items-center md:items-end gap-6 z-10">
           <div>
             <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4">Misiones Destacadas</h2>
-            <p className="text-xl text-zinc-650 dark:text-zinc-400 font-medium">Inicia el viaje con las misiones más aclamadas de la tripulación.</p>
+            <p className="text-xl text-zinc-650 dark:text-zinc-550 font-medium">Inicia el viaje con las misiones más aclamadas de la tripulación.</p>
           </div>
           <Button variant="secondary" onClick={() => onNavigate('catalog')} className="gap-2 bg-zinc-100 dark:bg-zinc-900 border-zinc-250 dark:border-zinc-850 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-white rounded-2xl">
             Ver Mapa Estelar <ArrowRight size={18}/>
@@ -407,7 +404,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent"></div>
         <div className="max-w-7xl mx-auto mb-20 text-center">
           <h2 className="text-4xl font-black text-zinc-900 dark:text-white mb-4">Señales del Control de Misiones</h2>
-          <p className="text-xl text-zinc-650 dark:text-zinc-400 font-medium">Comentarios de las tripulaciones y comandantes de LumiNauts.</p>
+          <p className="text-xl text-zinc-650 dark:text-zinc-550 font-medium">Comentarios de las tripulaciones y comandantes de LumiNauts.</p>
         </div>
 
         {/* Sticky Stack Cards Container */}
@@ -432,7 +429,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
                 </div>
                 <div>
                   <div className="font-extrabold text-zinc-900 dark:text-white text-lg">{test.author}</div>
-                  <div className="text-sm text-zinc-500 dark:text-zinc-400 font-semibold">{test.role}</div>
+                  <div className="text-sm text-zinc-500 dark:text-zinc-550 font-semibold">{test.role}</div>
                 </div>
               </div>
             </div>
@@ -467,11 +464,11 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
               <div className="flex items-center gap-2 mb-6 text-white">
                 <Rocket size={28} className="text-[#8DA9C4]"/> <span className="font-extrabold text-2xl tracking-tight">LumiNauts</span>
               </div>
-              <p className="text-zinc-400 text-lg max-w-sm mb-6">La estación estelar donde el conocimiento y la aventura espacial convergen para inspirar a los Luminautas.</p>
+              <p className="text-zinc-400 dark:text-zinc-550 text-lg max-w-sm mb-6">La estación estelar donde el conocimiento y la aventura espacial convergen para inspirar a los Luminautas.</p>
             </div>
             <div>
               <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Plataforma</h3>
-              <ul className="space-y-4 text-zinc-400 font-medium flex flex-col items-start">
+              <ul className="space-y-4 text-zinc-400 dark:text-zinc-550 font-medium flex flex-col items-start">
                 <li><button onClick={() => onNavigate('catalog')} className="hover:text-[#8DA9C4] transition-colors text-left">Mapa Estelar</button></li>
                 <li><button onClick={() => onNavigate('parents')} className="hover:text-[#8DA9C4] transition-colors text-left">Comandantes</button></li>
                 <li><button onClick={() => onNavigate('pricing')} className="hover:text-[#8DA9C4] transition-colors text-left">Suscripciones</button></li>
@@ -479,7 +476,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
             </div>
             <div>
               <h3 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">Legal</h3>
-              <ul className="space-y-4 text-zinc-400 font-medium">
+              <ul className="space-y-4 text-zinc-400 dark:text-zinc-550 font-medium">
                 <li><a href="#" className="hover:text-[#8DA9C4] transition-colors">Privacidad</a></li>
                 <li><a href="#" className="hover:text-[#8DA9C4] transition-colors">Términos</a></li>
                 <li><a href="#" className="hover:text-[#8DA9C4] transition-colors">Contacto</a></li>
@@ -490,7 +487,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
             <p>© 2026 LumiNauts. Todos los derechos reservados.</p>
             <div className="flex items-center gap-4">
               <GitHubStarButton />
-              <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-850 flex items-center justify-center hover:bg-blue-500/10 hover:text-blue-400 transition-colors cursor-pointer text-zinc-400"><Globe size={18}/></div>
+              <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-850 flex items-center justify-center hover:bg-blue-500/10 hover:text-blue-400 transition-colors cursor-pointer text-zinc-400 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:bg-zinc-700"><Globe size={18}/></div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Check, XCircle, CheckCircle2 } from 'lucide-react';
+import { Sparkles, Check, XCircle, CheckCircle2, Gift, Users, Heart, AlertTriangle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import '../components/ui/PricingCards.css';
 import PageSkeleton from '../components/ui/PageSkeleton';
@@ -14,6 +14,20 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState('form');
+  
+  // Referral code state
+  const [referralCode, setReferralCode] = useState('');
+  const [isReferralApplied, setIsReferralApplied] = useState(false);
+  const [referralError, setReferralError] = useState('');
+
+  // Active Subscription & Retention state
+  const [activeSubscription, setActiveSubscription] = useState(() => {
+    return localStorage.getItem('eduplay_subscribed_plan') || null;
+  });
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [retentionStep, setRetentionStep] = useState('offer'); // 'offer' | 'success' | 'cancelled'
+  const [isRetentionApplied, setIsRetentionApplied] = useState(false);
+
   const plans = [
     {
       id: 'free',
@@ -46,7 +60,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
         'Desafíos e incursiones semanales'
       ],
       buttonText: 'Ascender a Comandante',
-      color: 'border-blue-500 bg-gradient-to-b from-white to-blue-50/50 dark:from-zinc-900 dark:to-blue-950/20 hover:shadow-blue-500/10 text-zinc-900 dark:text-white ring-2 ring-blue-600/15 dark:ring-blue-500/30',
+      color: 'border-blue-500 bg-gradient-to-b from-white to-blue-50/50 dark:bg-[#0c1b33] hover:shadow-blue-500/10 text-zinc-900 dark:text-white ring-2 ring-blue-600/15 dark:ring-blue-500/30',
       badge: 'NIVEL RECOMENDADO'
     },
     {
@@ -57,7 +71,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
       priceAnnual: 15.99,
       features: [
         'Reclutamiento ilimitado de cadetes',
-        'Asignación de misiones and tareas',
+        'Asignación de misiones y tareas',
         'Consola general de comandancia docente',
         'Canal de soporte prioritario instantáneo',
         'Enlace con sistemas de la Federación',
@@ -75,9 +89,37 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
     setTimeout(() => {
       setLoading(false);
       setCheckoutStep('success');
-      // Guardar estado de suscripción mockeado
       localStorage.setItem('eduplay_subscribed_plan', checkoutPlan.name);
+      setActiveSubscription(checkoutPlan.name);
     }, 1500);
+  };
+
+  const applyReferral = () => {
+    if (referralCode.trim().toLowerCase() === 'amigo15' || referralCode.trim().toLowerCase() === 'lumi15') {
+      setIsReferralApplied(true);
+      setReferralError('');
+    } else {
+      setReferralError('Código inválido. Intenta con "AMIGO15"');
+      setIsReferralApplied(false);
+    }
+  };
+
+  const handleCancelSubscription = () => {
+    setShowCancelModal(true);
+    setRetentionStep('offer');
+  };
+
+  const acceptRetentionOffer = () => {
+    setIsRetentionApplied(true);
+    setRetentionStep('success');
+    localStorage.setItem('eduplay_subscribed_plan_deal', 'true');
+  };
+
+  const confirmCancel = () => {
+    localStorage.removeItem('eduplay_subscribed_plan');
+    localStorage.removeItem('eduplay_subscribed_plan_deal');
+    setActiveSubscription(null);
+    setRetentionStep('cancelled');
   };
 
   return (
@@ -86,7 +128,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
       <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/15 to-purple-300/15 dark:from-blue-900/10 dark:to-purple-900/10 rounded-full blur-[120px] -z-10" />
       <div className="absolute bottom-20 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-cyan-300/10 to-indigo-300/15 dark:from-cyan-900/10 dark:to-indigo-900/10 rounded-full blur-[140px] -z-10" />
 
-      <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
+      <div className="max-w-6xl mx-auto flex flex-col items-center text-center space-y-12">
         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/30 text-blue-700 dark:text-blue-400 font-bold text-sm shadow-sm mb-6">
           <Sparkles size={16} className="text-yellow-500 animate-pulse"/> Planes simples, sin sorpresas
         </span>
@@ -94,21 +136,63 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
         <h1 className="text-5xl md:text-6xl font-black text-zinc-900 dark:text-white tracking-tight mb-6">
           Invierte en su <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">futuro digital</span>
         </h1>
-        <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl mb-12">
+        <p className="text-xl text-zinc-500 dark:text-zinc-550 font-medium max-w-2xl mb-12">
           Elige el plan ideal para expandir la mente de tus hijos y profesores. Cancela en cualquier momento con un solo clic.
         </p>
 
+        {/* Invite Friends Referral Card */}
+        <section className="w-full max-w-2xl bg-white dark:bg-zinc-50 border border-zinc-100 dark:border-zinc-200 p-6 md:p-8 rounded-3xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4 text-left">
+            <div className="w-12 h-12 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <Users size={24} />
+            </div>
+            <div>
+              <h3 className="font-black text-lg text-zinc-850 dark:text-white flex items-center gap-1.5">
+                <Gift size={16} className="text-pink-500" /> ¡Invita amigos y ahorra!
+              </h3>
+              <p className="text-xs text-zinc-550 dark:text-zinc-550 leading-relaxed font-medium">
+                Usa el código <strong className="text-indigo-400">AMIGO15</strong> para obtener 15% de descuento mensual. ¡Regalamos un Cofre Galáctico a ti y a tu amigo!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-2 w-full md:w-auto">
+            <input 
+              type="text" 
+              value={referralCode} 
+              onChange={(e) => setReferralCode(e.target.value)}
+              placeholder="Código de referido" 
+              className="flex-1 md:w-44 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-200 bg-zinc-50 dark:bg-zinc-150 text-sm font-bold focus:outline-none focus:border-indigo-500 text-zinc-900 dark:text-white"
+            />
+            <Button onClick={applyReferral} size="sm" className="rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700">
+              Aplicar
+            </Button>
+          </div>
+        </section>
+
+        {isReferralApplied && (
+          <div className="w-full max-w-2xl p-4 bg-emerald-100/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/30 rounded-2xl text-sm font-bold">
+            ¡Código de referido aplicado! -15% de descuento activo en todas las membresías.
+          </div>
+        )}
+
+        {referralError && (
+          <div className="w-full max-w-2xl p-4 bg-rose-150/50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-450 border border-rose-250 dark:border-rose-900/30 rounded-2xl text-sm font-bold">
+            {referralError}
+          </div>
+        )}
+
         {/* Toggle Anual/Mensual */}
-        <div className="flex items-center gap-4 bg-white dark:bg-zinc-50 p-2 rounded-2xl border border-zinc-200/65 dark:border-zinc-200 shadow-sm mb-16 relative z-10">
+        <div className="flex items-center gap-4 bg-white dark:bg-zinc-900 p-2 rounded-2xl border border-zinc-200/65 dark:border-zinc-800 shadow-sm mb-16 relative z-10">
           <button
             onClick={() => setBillingCycle('monthly')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-550 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
           >
             Mensual
           </button>
           <button
             onClick={() => setBillingCycle('annual')}
-            className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
+            className={`relative px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${billingCycle === 'annual' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 shadow' : 'text-zinc-500 dark:text-zinc-550 hover:text-zinc-800 dark:hover:text-zinc-200'}`}
           >
             Anual
             <span className="absolute -top-3 -right-6 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow border border-white dark:border-zinc-50">
@@ -118,9 +202,10 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
         </div>
 
         {/* Cards Grid */}
-        <div className="pricing-grid relative z-10">
+        <div className="pricing-grid relative z-10 w-full">
           {plans.map(plan => {
-            const price = billingCycle === 'monthly' ? plan.priceMonthly : plan.priceAnnual;
+            const rawPrice = billingCycle === 'monthly' ? plan.priceMonthly : plan.priceAnnual;
+            const price = isReferralApplied ? parseFloat((rawPrice * 0.85).toFixed(2)) : rawPrice;
             const totalAnnually = price * 12;
 
             return (
@@ -150,7 +235,7 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
 
                     {/* Text Container */}
                     <div className="card__text flex-grow flex flex-col gap-4 text-left">
-                      <p className="card__description text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
+                      <p className="card__description text-xs text-zinc-500 dark:text-zinc-550 font-medium leading-relaxed">
                         {plan.description}
                       </p>
                       
@@ -160,10 +245,13 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                           ${price}
                         </span>
                         <span className="text-zinc-400 font-bold text-xs">/ mes</span>
+                        {isReferralApplied && plan.priceMonthly > 0 && (
+                          <span className="text-xs text-zinc-400 line-through font-semibold">${rawPrice}</span>
+                        )}
                       </div>
                       
                       {billingCycle === 'annual' && price > 0 && (
-                        <div className="text-[10px] text-green-600 dark:text-green-400 font-bold bg-green-50 dark:bg-green-950/30 border border-green-200/50 dark:border-green-900/30 px-2.5 py-0.5 rounded-lg inline-block self-start">
+                        <div className="text-[10px] text-green-600 dark:text-green-400 font-bold bg-green-50 dark:bg-green-950/30 border border-green-250/50 dark:border-green-900/30 px-2.5 py-0.5 rounded-lg inline-block self-start">
                           Facturado anualmente (${totalAnnually.toFixed(2)}/año)
                         </div>
                       )}
@@ -199,6 +287,22 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
             );
           })}
         </div>
+
+        {/* Manage Subscription / Active Subscription Section at the bottom */}
+        {activeSubscription && (
+          <section className="w-full max-w-2xl bg-zinc-100 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-inner text-center space-y-4">
+            <h3 className="text-xl font-black text-zinc-850 dark:text-white">Tu Membresía Activa</h3>
+            <p className="text-sm font-medium text-zinc-500 dark:text-zinc-550">
+              Estás suscrito actualmente al plan <strong className="text-indigo-400">{activeSubscription}</strong>.
+            </p>
+            <button 
+              onClick={handleCancelSubscription}
+              className="text-xs text-rose-500 hover:text-rose-600 font-bold hover:underline"
+            >
+              Cancelar Suscripción
+            </button>
+          </section>
+        )}
       </div>
 
       {/* Checkout Simulator Modal */}
@@ -215,11 +319,11 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-zinc-50 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-200 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
+              className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
             >
               <button
                 onClick={() => { setCheckoutPlan(null); setCheckoutStep('form'); }}
-                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-150 hover:bg-zinc-200 dark:hover:bg-zinc-200 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition-colors"
+                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-550 flex items-center justify-center transition-colors"
                 aria-label="Cerrar modal"
               >
                 <XCircle size={20} />
@@ -233,13 +337,13 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-black text-zinc-900 dark:text-white">Activar {checkoutPlan.name}</h3>
-                      <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Prueba simulada de suscripción</p>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-550 font-medium">Prueba simulada de suscripción</p>
                     </div>
                   </div>
 
                   <form onSubmit={handleCheckoutSubmit} className="space-y-6">
                     <div>
-                      <label htmlFor="checkout-email" className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
+                      <label htmlFor="checkout-email" className="block text-xs font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-wider mb-2">
                         Correo Electrónico
                       </label>
                       <input
@@ -257,15 +361,17 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
 
                     <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-850 border border-zinc-100 dark:border-zinc-800 space-y-2">
                       <div className="flex justify-between text-sm font-semibold">
-                        <span className="text-zinc-500 dark:text-zinc-400">Plan:</span>
+                        <span className="text-zinc-500 dark:text-zinc-550">Plan:</span>
                         <span className="text-zinc-950 dark:text-white font-bold">{checkoutPlan.name}</span>
                       </div>
                       <div className="flex justify-between text-sm font-semibold">
-                        <span className="text-zinc-500 dark:text-zinc-400">Precio:</span>
-                        <span className="text-zinc-950 dark:text-white font-bold">${billingCycle === 'monthly' ? checkoutPlan.priceMonthly : checkoutPlan.priceAnnual} / mes</span>
+                        <span className="text-zinc-500 dark:text-zinc-550">Precio:</span>
+                        <span className="text-zinc-950 dark:text-white font-bold">
+                          ${isReferralApplied ? (billingCycle === 'monthly' ? (checkoutPlan.priceMonthly * 0.85).toFixed(2) : (checkoutPlan.priceAnnual * 0.85).toFixed(2)) : (billingCycle === 'monthly' ? checkoutPlan.priceMonthly : checkoutPlan.priceAnnual)} / mes
+                        </span>
                       </div>
-                      <div className="w-full h-px bg-zinc-250 dark:bg-zinc-700 my-2" />
-                      <p className="text-[11px] text-zinc-400 dark:text-zinc-500 leading-relaxed">
+                      <div className="w-full h-px bg-zinc-200 dark:bg-zinc-700 my-2" />
+                      <p className="text-[11px] text-zinc-455 dark:text-zinc-500 leading-relaxed">
                         Esta es una pasarela de pago simulada. No se realizarán cargos reales a tu tarjeta de crédito o cuenta.
                       </p>
                     </div>
@@ -297,8 +403,8 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                     <CheckCircle2 size={36} />
                   </div>
                   <h3 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">¡Suscripción Activada!</h3>
-                  <p className="text-zinc-500 dark:text-zinc-400 font-medium text-sm mb-8">
-                    Felicidades, has activado tu membresía simulada para <strong className="text-zinc-800 dark:text-zinc-200">{checkoutPlan.name}</strong>. Disfruta de la mejor experiencia educativa.
+                  <p className="text-zinc-500 dark:text-zinc-550 font-medium text-sm mb-8">
+                    Felicidades, has activado tu membresía simulada para <strong className="text-zinc-850 dark:text-zinc-200">{checkoutPlan.name}</strong>. Disfruta de la mejor experiencia educativa.
                   </p>
                   <Button
                     variant="primary"
@@ -306,6 +412,107 @@ const PricingPanel = ({ onNavigate, isLoading }) => {
                     onClick={() => { setCheckoutPlan(null); setCheckoutStep('form'); onNavigate('landing'); }}
                   >
                     Ir al Inicio
+                  </Button>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Retention Deal Modal (Attempts to cancel subscription) */}
+      <AnimatePresence>
+        {showCancelModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+            style={{ zIndex: 130 }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-zinc-900 border border-zinc-800 text-white rounded-[2.5rem] p-8 md:p-10 w-full max-w-md shadow-2xl relative overflow-hidden"
+            >
+              {retentionStep === 'offer' && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="w-12 h-12 bg-amber-500/10 rounded-2xl border border-amber-500/20 flex items-center justify-center text-amber-450">
+                      <AlertTriangle size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black">¿Quieres dejar de pagar?</h3>
+                      <p className="text-xs text-zinc-400 font-medium">¡Espera! Tenemos una oferta para ti.</p>
+                    </div>
+                  </div>
+
+                  <p className="text-sm font-medium text-zinc-300 leading-relaxed">
+                    No queremos que tu tripulación se quede sin su aventura estelar. Te dejamos la siguiente suscripción mensual a solo:
+                  </p>
+
+                  <div className="py-6 px-4 bg-zinc-950 border border-zinc-800 rounded-3xl text-center space-y-1">
+                    <span className="text-xs text-zinc-500 uppercase tracking-widest font-black">Próximo Mes</span>
+                    <p className="text-5xl font-black text-white">$1.00 <span className="text-sm text-zinc-400 font-bold">/ mes</span></p>
+                    <span className="text-xs text-green-400 font-bold">¡Ahorras más del 80%!</span>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <Button 
+                      onClick={acceptRetentionOffer}
+                      className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black rounded-2xl"
+                    >
+                      Aceptar Oferta de $1
+                    </Button>
+                    <button 
+                      onClick={confirmCancel}
+                      className="text-xs text-zinc-500 hover:text-zinc-400 font-bold"
+                    >
+                      No gracias, deseo cancelar de todas formas
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {retentionStep === 'success' && (
+                <div className="text-center space-y-6">
+                  <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle2 size={36} />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black">¡Trato Hecho!</h3>
+                    <p className="text-sm text-zinc-450 font-medium mt-1">Has aceptado la oferta especial.</p>
+                  </div>
+                  <p className="text-sm text-zinc-300 font-medium leading-relaxed">
+                    Tu suscripción sigue activa. Tu próximo mes se cobrará a solo <strong className="text-white">$1.00</strong>.
+                  </p>
+                  <Button 
+                    onClick={() => { setShowCancelModal(false); }}
+                    className="w-full py-4 rounded-2xl"
+                  >
+                    Excelente
+                  </Button>
+                </div>
+              )}
+
+              {retentionStep === 'cancelled' && (
+                <div className="text-center space-y-6">
+                  <div className="w-16 h-16 bg-rose-500/10 border border-rose-500/20 text-rose-455 rounded-full flex items-center justify-center mx-auto">
+                    <XCircle size={36} />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black">Suscripción Cancelada</h3>
+                    <p className="text-sm text-zinc-450 font-medium mt-1">Esperamos verte pronto.</p>
+                  </div>
+                  <p className="text-sm text-zinc-300 font-medium leading-relaxed">
+                    Tu membresía ha sido cancelada con éxito. Seguirás teniendo acceso a tus beneficios hasta el final del ciclo de facturación actual.
+                  </p>
+                  <Button 
+                    onClick={() => { setShowCancelModal(false); }}
+                    className="w-full py-4 rounded-2xl bg-zinc-800 text-white"
+                  >
+                    Cerrar
                   </Button>
                 </div>
               )}

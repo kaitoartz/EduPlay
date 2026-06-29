@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 const GitHubStarButton = ({ className = '' }) => (
   <a
     href="#"
-    className={`inline-flex overflow-hidden items-center text-sm font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow hover:bg-zinc-800 dark:hover:bg-zinc-100 h-9 px-4 py-2 max-w-52 whitespace-pre group relative w-fit justify-center gap-2 rounded-xl transition-all duration-300 ease-out hover:ring-2 hover:ring-zinc-900 dark:hover:ring-zinc-300 hover:ring-offset-2 ${className}`}
+    className={`inline-flex overflow-hidden items-center text-sm font-medium bg-zinc-900 dark:bg-zinc-800 text-white dark:text-zinc-100 shadow hover:bg-zinc-800 dark:hover:bg-zinc-700 h-9 px-4 py-2 max-w-52 whitespace-pre group relative w-fit justify-center gap-2 rounded-xl transition-all duration-300 ease-out hover:ring-2 hover:ring-zinc-900 dark:hover:ring-zinc-700 hover:ring-offset-2 ${className}`}
   >
     <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-40"></span>
     <div className="flex items-center">
@@ -12,7 +12,7 @@ const GitHubStarButton = ({ className = '' }) => (
       <span className="ml-1">Star on GitHub</span>
     </div>
     <div className="ml-2 flex items-center gap-1 text-sm">
-      <Star size={14} className="text-zinc-400 group-hover:text-yellow-400 transition-colors duration-300" fill="currentColor" />
+      <Star size={14} className="dark:text-zinc-550 group-hover:text-yellow-400 transition-colors duration-300" fill="currentColor" />
       <span className="font-medium tabular-nums">6</span>
     </div>
   </a>

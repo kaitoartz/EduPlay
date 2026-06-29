@@ -59,12 +59,12 @@ const QuizGame = ({ onNavigate, onAddXp, gameId, games = [], apiUrl }) => {
             <Trophy size={64} />
           </motion.div>
           <h2 className="text-4xl font-black text-zinc-900 dark:text-white mb-3 tracking-tight">¡Misión Cumplida!</h2>
-          <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium mb-10">
+          <p className="text-xl text-zinc-500 dark:text-zinc-550 font-medium mb-10">
             {isApiGame ? `Has completado el juego "${game?.title}" con éxito.` : "Has completado el reto matemático con éxito."}
           </p>
           
           <div className="bg-zinc-50 dark:bg-zinc-150/50 rounded-[2rem] p-8 mb-6 border border-zinc-100 dark:border-zinc-200/50 shadow-sm">
-            <div className="text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-wider text-sm mb-2">Recompensa Obtenida</div>
+            <div className="text-zinc-500 dark:text-zinc-550 font-bold uppercase tracking-wider text-sm mb-2">Recompensa Obtenida</div>
             <div className="text-5xl font-black text-yellow-500 flex items-center justify-center gap-3">
               <Star fill="currentColor" size={40}/> +{score} XP
             </div>
@@ -77,7 +77,7 @@ const QuizGame = ({ onNavigate, onAddXp, gameId, games = [], apiUrl }) => {
 
           {/* Post-quiz Star Rating */}
           <div className="mb-8">
-            <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3">¿Qué te pareció el reto?</p>
+            <p className="text-sm font-bold text-zinc-500 dark:text-zinc-550 uppercase tracking-wider mb-3">¿Qué te pareció el reto?</p>
             <StarRatingInput />
           </div>
           
@@ -134,8 +134,8 @@ const QuizGame = ({ onNavigate, onAddXp, gameId, games = [], apiUrl }) => {
     <div className="min-h-screen flex flex-col items-center pt-32 pb-20 px-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-300">
       <div className="w-full max-w-3xl">
         <div className="flex items-center justify-between mb-10">
-          <Button variant="ghost" size="sm" onClick={() => onNavigate('catalog')} className="-ml-4 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white">&larr; Volver al catálogo</Button>
-          <div className="font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 shadow-sm text-sm">
+          <Button variant="ghost" size="sm" onClick={() => onNavigate('catalog')} className="-ml-4 text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white">&larr; Volver al catálogo</Button>
+          <div className="font-bold text-zinc-500 dark:text-zinc-550 bg-white dark:bg-zinc-900 px-5 py-2 rounded-full border border-zinc-200 dark:border-zinc-800 shadow-sm text-sm">
             Pregunta {currentQ + 1} de {MOCK_QUIZ.questions.length}
           </div>
           <div className="font-black text-yellow-500 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-5 py-2 rounded-full shadow-sm flex items-center gap-2 text-lg">

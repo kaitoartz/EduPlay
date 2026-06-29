@@ -30,23 +30,30 @@
   --color-tertiary: #9059C8;
   --color-accent: #D48D08;
   --color-border: #D4E2F0;
+
+  /* Tonos Luminauts Adicionales */
+  --color-luminauts-cosmic: #3B6290;
+  --color-luminauts-nebula: #51759C;
+  --color-luminauts-stellar: #6B8BB4;
+  --color-luminauts-aurora: #8DA9C4;
+  --color-luminauts-sky: #BCCEDF;
 }
 
 .dark {
   /* --- PALETA DE COLORES LUMINAUTS (MODO OSCURO) --- */
   --bg: #141923; /* Cielo Nocturno - Base general */
   
-  /* Zinc overrides for Tailwind */
-  --zinc-50: #1A202C; /* Carbón Orbital */
+  /* Zinc overrides for Tailwind - Corregidos para dark mode */
+  --zinc-50: #1a2230; /* Carbón Orbital */
   --zinc-100: #252D3C;
   --zinc-150: #2A3446;
   --zinc-200: #2D3748; /* Border / elevated */
   --zinc-300: #3E4E68;
   --zinc-350: #4A5A77;
-  --zinc-400: #6B8BB4; /* Azul Polvo Espacial */
+  --zinc-400: #232c3d; /* Azul Polvo Espacial - Corregido para hero stat card */
   --zinc-500: #6B8BB4;
   --zinc-550: #8DA9C4; /* Celeste Suave */
-  --zinc-600: #8DA9C4;
+  --zinc-600: #6B8BB4; /* Celeste Luminauts Claro */
   --zinc-650: #A0AEC0;
   --zinc-700: #CBD5E1;
   --zinc-750: #D8E2ED;
@@ -62,6 +69,13 @@
   --color-tertiary: #E0B0FF;
   --color-accent: #FDF9E2;
   --color-border: rgba(255, 255, 255, 0.08);
+
+  /* Tonos Luminauts Adicionales en Dark Mode */
+  --color-luminauts-cosmic: #1a2230;
+  --color-luminauts-nebula: #252D3C;
+  --color-luminauts-stellar: #2D3748;
+  --color-luminauts-aurora: #6B8BB4;
+  --color-luminauts-sky: #8DA9C4;
 }
 body {
   background-color: var(--bg);

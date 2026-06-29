@@ -76,12 +76,12 @@ const CardContentLayout = ({ id, title, subject, level, duration, points, bg, ic
         <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out opacity-80 group-hover:opacity-100">
           <div className="overflow-hidden">
             {description && (
-              <p className={`text-sm mb-4 leading-relaxed ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>{description}</p>
+              <p className={`text-sm mb-4 leading-relaxed ${isDarkTheme ? 'dark:text-zinc-550' : 'text-zinc-500'}`}>{description}</p>
             )}
           </div>
         </div>
 
-        <div className={`flex items-center gap-4 text-sm font-medium ${isDarkTheme ? 'text-zinc-400' : 'text-zinc-500'}`}>
+        <div className={`flex items-center gap-4 text-sm font-medium ${isDarkTheme ? 'dark:text-zinc-550' : 'text-zinc-500'}`}>
           <span className="flex items-center gap-1.5"><User size={16}/> Lvl {level}</span>
           <span className="flex items-center gap-1.5"><Play size={16}/> {duration}</span>
         </div>
@@ -97,7 +97,7 @@ const CardContentLayout = ({ id, title, subject, level, duration, points, bg, ic
           {!locked && <FavouriteToggle id={id} />}
         </div>
         {locked ? (
-          <div className={`h-10 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm border ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 border-zinc-700/50' : 'bg-zinc-100 text-zinc-400 border-zinc-200/50'}`}>
+          <div className={`h-10 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-sm border ${isDarkTheme ? 'bg-zinc-800 text-zinc-500 border-zinc-700/50' : 'bg-zinc-100 dark:text-zinc-550 border-zinc-200/50'}`}>
             <Lock size={16}/>
             <span className="text-xs font-bold uppercase tracking-wider">Bloqueado</span>
           </div>
