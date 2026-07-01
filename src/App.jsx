@@ -17,6 +17,7 @@ import ModalWaitlistForm from './components/ModalWaitlistForm';
 
 // Page Views (Lazy Loaded)
 const Landing = lazy(() => import('./pages/Landing'));
+const WaitlistLanding = lazy(() => import('./pages/WaitlistLanding'));
 const Catalog = lazy(() => import('./pages/Catalog'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const QuizGame = lazy(() => import('./pages/QuizGame'));
@@ -295,8 +296,27 @@ const App = () => {
     setIsSettingsOpen(false);
   };
 
+  const isWaitlistMode = import.meta.env.VITE_WAITLIST_ONLY === 'true';
+
   const views = {
-    landing: <Landing onNavigate={navigate} onLockClick={setLockedGame} games={games} theme={theme} isLoading={isTostadora && pageLoading && view === 'landing'} isSplashActive={showSplash} />,
+    landing: isWaitlistMode ? (
+      <WaitlistLanding 
+        onNavigate={navigate} 
+        games={games} 
+        theme={theme} 
+        isLoading={isTostadora && pageLoading && view === 'landing'} 
+        isSplashActive={false} 
+      />
+    ) : (
+      <Landing 
+        onNavigate={navigate} 
+        onLockClick={setLockedGame} 
+        games={games} 
+        theme={theme} 
+        isLoading={isTostadora && pageLoading && view === 'landing'} 
+        isSplashActive={showSplash} 
+      />
+    ),
     catalog: <Catalog onNavigate={navigate} onLockClick={setLockedGame} games={games} theme={theme} isLoading={isTostadora && pageLoading && view === 'catalog'} />,
     dashboard: <Dashboard onNavigate={navigate} user={user} onAddXp={addXp} isLoading={isTostadora && pageLoading && view === 'dashboard'} />,
     game: <QuizGame onNavigate={navigate} onAddXp={addXp} gameId={params.gameId} games={games} apiUrl={apiUrl} />,
@@ -305,6 +325,8 @@ const App = () => {
     pricing: <PricingPanel onNavigate={navigate} isLoading={isTostadora && pageLoading && view === 'pricing'} />,
     adventure: <Adventure onNavigate={navigate} user={user} />
   };
+
+  const activeView = isWaitlistMode ? 'landing' : view;
 
   if (appLoading) {
     return <AstronautLoader />;
@@ -336,7 +358,7 @@ const App = () => {
       </AnimatePresence>
 
       <Navbar 
-        currentView={view} 
+        currentView={activeView} 
         onNavigate={navigate} 
         apiStatus={apiStatus} 
         theme={theme}
@@ -345,11 +367,15 @@ const App = () => {
           setInputUrl(apiUrl);
           setIsSettingsOpen(true);
         }} 
+        isWaitlistMode={isWaitlistMode}
+        onJoinClick={() => {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }}
       />
       
       <AnimatePresence mode="wait">
         <motion.div 
-          key={view} 
+          key={activeView} 
           initial={{ opacity: 0, filter: 'blur(10px)' }} 
           animate={{ 
             opacity: pageLoading && !isTostadora ? 0.6 : 1, 
@@ -359,7 +385,7 @@ const App = () => {
           transition={{ duration: 0.4 }}
         >
           <Suspense fallback={<AstronautLoader />}>
-            {views[view]}
+            {views[activeView]}
           </Suspense>
         </motion.div>
       </AnimatePresence>
@@ -523,7 +549,7 @@ const App = () => {
 
       {/* Entry Splash Overlay with Frosted Glass Card */}
       <AnimatePresence>
-        {showSplash && (
+        {!isWaitlistMode && showSplash && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ 

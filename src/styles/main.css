@@ -43,24 +43,24 @@
   /* --- PALETA DE COLORES LUMINAUTS (MODO OSCURO) --- */
   --bg: #141923; /* Cielo Nocturno - Base general */
   
-  /* Zinc overrides for Tailwind - Corregidos para dark mode */
-  --zinc-50: #1a2230; /* Carbón Orbital */
-  --zinc-100: #252D3C;
-  --zinc-150: #2A3446;
-  --zinc-200: #2D3748; /* Border / elevated */
-  --zinc-300: #3E4E68;
-  --zinc-350: #4A5A77;
-  --zinc-400: #232c3d; /* Azul Polvo Espacial - Corregido para hero stat card */
-  --zinc-500: #6B8BB4;
-  --zinc-550: #8DA9C4; /* Celeste Suave */
-  --zinc-600: #6B8BB4; /* Celeste Luminauts Claro */
-  --zinc-650: #A0AEC0;
-  --zinc-700: #CBD5E1;
-  --zinc-750: #D8E2ED;
-  --zinc-800: #E2E8F0;
-  --zinc-850: #ECF0F4;
-  --zinc-900: #F7FAFC;
-  --zinc-950: #141923; /* Cielo Nocturno */
+  /* Zinc overrides for Tailwind - normalized monotonic scale for dark mode */
+  --zinc-50: #F7FAFC;
+  --zinc-100: #ECF0F4;
+  --zinc-150: #E2E8F0;
+  --zinc-200: #CBD5E1;
+  --zinc-300: #A0AEC0;
+  --zinc-350: #8DA9C4; /* Celeste Suave */
+  --zinc-400: #6B8BB4; /* Celeste Luminauts Claro */
+  --zinc-500: #5D7CA5;
+  --zinc-550: #4A5A77;
+  --zinc-600: #3E4E68;
+  --zinc-650: #2D3748; /* Border / elevated */
+  --zinc-700: #2A3446;
+  --zinc-750: #252D3C;
+  --zinc-800: #1a2230; /* Carbón Orbital */
+  --zinc-850: #171f2c;
+  --zinc-900: #141923; /* Cielo Nocturno */
+  --zinc-950: #0d1118;
 
   /* Semantic Theme Variables */
   --color-primary: #6B8BB4;

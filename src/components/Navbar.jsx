@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PremiumThemeToggle from './ui/PremiumThemeToggle';
 import Button from './ui/Button';
 
-const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onToggleTheme }) => {
+const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onToggleTheme, isWaitlistMode = false, onJoinClick }) => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   
@@ -43,7 +43,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
         <div className={`max-w-7xl mx-auto flex justify-between items-center transition-all duration-500 rounded-full px-6 ${scrolled ? 'bg-[#ffffff]/80 dark:bg-[#141923]/80 backdrop-blur-xl border border-zinc-200 dark:border-zinc-200 shadow-lg py-3' : 'bg-transparent py-2'}`}>
           
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onNavigate('landing')}>
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => !isWaitlistMode && onNavigate('landing')}>
             <div className="w-12 h-12 bg-gradient-to-tr from-[#6B8BB4] to-[#E0B0FF] rounded-[18px] flex items-center justify-center text-white shadow-lg shadow-indigo-500/10 group-hover:scale-105 group-hover:rotate-3 transition-transform">
               <Rocket size={24} />
             </div>
@@ -52,7 +52,7 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
           
           {/* Desktop Navigation Menu (hidden on mobile/tablet) */}
           <div className="hidden lg:flex items-center gap-2">
-            {navs.map(nav => (
+            {!isWaitlistMode && navs.map(nav => (
               <button 
                 key={nav.id} 
                 onClick={() => onNavigate(nav.id)} 
@@ -66,39 +66,51 @@ const Navbar = ({ currentView, onNavigate, apiStatus, onOpenSettings, theme, onT
           {/* Actions (Desktop & Mobile) */}
           <div className="flex items-center gap-4">
             {/* Indicador de Conexión de API (Desktop) */}
-            <button 
-              onClick={onOpenSettings}
-              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200/60 dark:border-zinc-200 bg-zinc-550/50 dark:bg-zinc-950/50 hover:bg-zinc-100/80 dark:hover:bg-zinc-200 text-zinc-650 dark:text-zinc-300 transition-all text-xs font-bold shadow-sm"
-              title="Configuración de API"
-            >
-              <span className={`w-2.5 h-2.5 rounded-full ${apiStatus === 'connected' ? 'bg-green-500 animate-pulse' : apiStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'}`} />
-              <span className="text-zinc-600 dark:text-zinc-300 hidden xl:inline">
-                {apiStatus === 'connected' ? 'API Conectada' : apiStatus === 'connecting' ? 'Conectando...' : 'API Desconectada'}
-              </span>
-            </button>
+            {!isWaitlistMode && (
+              <button 
+                onClick={onOpenSettings}
+                className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200/60 dark:border-zinc-200 bg-zinc-550/50 dark:bg-zinc-950/50 hover:bg-zinc-100/80 dark:hover:bg-zinc-200 text-zinc-650 dark:text-zinc-300 transition-all text-xs font-bold shadow-sm"
+                title="Configuración de API"
+              >
+                <span className={`w-2.5 h-2.5 rounded-full ${apiStatus === 'connected' ? 'bg-green-500 animate-pulse' : apiStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'}`} />
+                <span className="text-zinc-600 dark:text-zinc-300 hidden xl:inline">
+                  {apiStatus === 'connected' ? 'API Conectada' : apiStatus === 'connecting' ? 'Conectando...' : 'API Desconectada'}
+                </span>
+              </button>
+            )}
 
             {/* Premium Theme Toggle (Visible on all devices) */}
-            <PremiumThemeToggle isDark={theme === 'dark'} onToggle={onToggleTheme} />
+            {!isWaitlistMode && <PremiumThemeToggle isDark={theme === 'dark'} onToggle={onToggleTheme} />}
 
             {/* Parents / Profile Desktop Buttons */}
-            <div className="hidden lg:flex items-center gap-2">
-              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
-              <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
-            </div>
+            {!isWaitlistMode && (
+              <div className="hidden lg:flex items-center gap-2">
+                <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('parents')}>Padres</button>
+                <button className="text-sm font-bold text-zinc-500 dark:text-zinc-550 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/85 dark:hover:bg-zinc-200 transition-colors px-3 py-2 rounded-lg" onClick={() => onNavigate('profile')}>Perfil</button>
+              </div>
+            )}
 
-            {/* "Jugar Ahora" Button (Desktop) */}
-            <Button size="md" className="rounded-full shadow-lg shadow-blue-500/20 px-8 hidden lg:inline-flex" onClick={() => onNavigate('catalog')}>
-              Jugar Ahora
-            </Button>
+            {/* "Jugar Ahora" / "Unirse" Button (Desktop) */}
+            {isWaitlistMode ? (
+              <Button size="md" className="rounded-full shadow-lg shadow-blue-500/20 px-8 hidden lg:inline-flex" onClick={onJoinClick}>
+                Unirse a Waitlist
+              </Button>
+            ) : (
+              <Button size="md" className="rounded-full shadow-lg shadow-blue-500/20 px-8 hidden lg:inline-flex" onClick={() => onNavigate('catalog')}>
+                Jugar Ahora
+              </Button>
+            )}
 
             {/* Mobile Burger Menu Button (Visible on mobile/tablet) */}
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-200 bg-[#ffffff]/80 dark:bg-[#141923]/80 text-zinc-700 dark:text-zinc-300 lg:hidden flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-50 shadow-sm"
-              aria-label="Abrir menú"
-            >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {!isWaitlistMode && (
+              <button 
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-200 bg-[#ffffff]/80 dark:bg-[#141923]/80 text-zinc-700 dark:text-zinc-300 lg:hidden flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-50 shadow-sm"
+                aria-label="Abrir menú"
+              >
+                {isOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -260,20 +260,20 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
               Aprendizaje que <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-400">engancha.</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-5xl w-full">
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
                 <div className="text-4xl md:text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">+10k</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Estudiantes Activos</div>
-                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Entrenando su mente a diario en todo el mundo.</div>
+                <div className="text-zinc-650 dark:text-zinc-400 text-xs md:text-sm">Entrenando su mente a diario en todo el mundo.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none">
                 <div className="text-4xl md:text-5xl font-black text-tertiary mb-2">98%</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Retención Escolar</div>
-                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Altamente motivados con rachas y medallas.</div>
+                <div className="text-zinc-650 dark:text-zinc-400 text-xs md:text-sm">Altamente motivados con rachas y medallas.</div>
               </div>
-              <div className="hero-stat-card bg-white/50 dark:bg-zinc-50/50 border border-zinc-200 dark:border-zinc-200/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none col-span-1 sm:col-span-2 md:col-span-1">
+              <div className="hero-stat-card bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/30 p-6 md:p-8 rounded-3xl backdrop-blur-sm shadow-sm dark:shadow-none col-span-1 sm:col-span-2 md:col-span-1">
                 <div className="text-4xl md:text-5xl font-black text-cyan-600 dark:text-cyan-400 mb-2">+50</div>
                 <div className="font-bold text-zinc-900 dark:text-white text-base md:text-lg mb-1">Juegos Premium</div>
-                <div className="text-zinc-650 text-zinc-550 text-xs md:text-sm">Desarrollados por pedagogos y diseñadores.</div>
+                <div className="text-zinc-650 dark:text-zinc-400 text-xs md:text-sm">Desarrollados por pedagogos y diseñadores.</div>
               </div>
             </div>
           </div>
@@ -298,7 +298,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
                   </div>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white/80 dark:bg-zinc-50/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200 dark:border-zinc-200/30 shadow-md">
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md p-2 rounded-[22px] border border-zinc-200 dark:border-zinc-800/30 shadow-md">
                   <input 
                     type="email" 
                     required 
@@ -414,7 +414,7 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
             { text: "Excelente bitácora para asignar misiones adicionales a la tripulación. Muy intuitiva.", author: "Carlos R.", role: "Comandante (Profesor)", avatar: "C" },
             { text: "Me encanta alinear constelaciones y ganar estrellas cada vez que completo misiones de ciencias.", author: "Sofi (10 años)", role: "Luminauta", avatar: "S" }
           ].map((test, i) => (
-            <div key={i} className="stack-card ep-stack-card bg-white dark:bg-zinc-50 border border-zinc-200 dark:border-zinc-200 shadow-md dark:shadow-none">
+            <div key={i} className="stack-card ep-stack-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-md dark:shadow-none">
               <div className="flex flex-col gap-6">
                 <div className="flex text-yellow-500 dark:text-yellow-400">
                   {[1,2,3,4,5].map(star => <Star key={star} size={24} fill="currentColor" className="filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]" />)}
