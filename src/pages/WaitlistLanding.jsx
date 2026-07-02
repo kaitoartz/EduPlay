@@ -69,9 +69,8 @@ const WaitlistLanding = ({ onNavigate, theme, isLoading, isSplashActive, games =
 
   useEffect(() => {
     const isTouchDevice = 
-      window.matchMedia('(pointer: coarse)').matches || 
-      ('ontouchstart' in window) || 
-      (navigator.maxTouchPoints > 0);
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches || 
+      (window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(hover: hover)').matches);
     let lenis = null;
     let handleMouseDown = null;
     let handleMouseMove = null;

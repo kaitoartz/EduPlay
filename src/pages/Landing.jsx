@@ -45,9 +45,8 @@ const Landing = ({ onNavigate, onLockClick, games = [], theme, isLoading, isSpla
   useEffect(() => {
     // Detect touch-only device (like mobile/tablet, not hybrid touchscreen PC)
     const isTouchDevice = 
-      window.matchMedia('(pointer: coarse)').matches || 
-      ('ontouchstart' in window) || 
-      (navigator.maxTouchPoints > 0);
+      window.matchMedia('(hover: none) and (pointer: coarse)').matches || 
+      (window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(hover: hover)').matches);
 
     let lenis = null;
     let handleMouseDown = null;

@@ -27,6 +27,7 @@ const PricingPanel = lazy(() => import('./pages/PricingPanel'));
 const Adventure = lazy(() => import('./pages/Adventure'));
 
 const App = () => {
+  const isWaitlistMode = import.meta.env.VITE_WAITLIST_ONLY === 'true';
   const [view, setView] = useState('landing');
   const [showSplash, setShowSplash] = useState(true);
   const [params, setParams] = useState({});
@@ -65,13 +66,13 @@ const App = () => {
   }, [theme]);
 
   useEffect(() => {
-    if (showSplash) {
+    if (showSplash && !isWaitlistMode) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [showSplash]);
+  }, [showSplash, isWaitlistMode]);
 
   useEffect(() => {
     let interval;
@@ -296,7 +297,7 @@ const App = () => {
     setIsSettingsOpen(false);
   };
 
-  const isWaitlistMode = import.meta.env.VITE_WAITLIST_ONLY === 'true';
+
 
   const views = {
     landing: isWaitlistMode ? (
